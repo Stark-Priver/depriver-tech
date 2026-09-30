@@ -235,7 +235,7 @@ ${facts}`;
     if ((m.role === "user" || m.role === "assistant") && typeof m.content === "string") messages.push({ role: m.role, content: m.content.slice(0, 800) });
   }
   messages.push({ role: "user", content: question });
-  const out = await env.AI.run(env.AI_MODEL || "@cf/meta/llama-3.1-8b-instruct-fast", { messages, max_tokens: 400 });
+  const out = await env.AI.run(env.AI_MODEL || "@cf/meta/llama-4-scout-17b-16e-instruct", { messages, max_tokens: 400 });
   return (out.response || "").trim() || "Sorry, I couldn't answer that. You can reach Privatus on WhatsApp: +255 752 747 681.";
 }
 

@@ -4,9 +4,9 @@ export const site = {
   name: "Privatus Cosmas",
   // Cloudflare Worker in /worker: views, likes, comments, contact form and the "Ask AI" assistant.
   // e.g. "https://depriver-engage.<account>.workers.dev"
-  engageApi: "",
+  engageApi: "https://depriver-engage.depriver-tech.workers.dev",
   // Cloudflare Turnstile site key (public). Spam protection for comments and the contact form.
-  turnstileSiteKey: "",
+  turnstileSiteKey: "0x4AAAAAAFKMbkMOZjVX2Dkw",
   // Cloudflare Web Analytics token (public). Privacy-friendly, cookie-free visitor stats.
   cfAnalyticsToken: "",
 };

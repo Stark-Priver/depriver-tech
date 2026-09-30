@@ -8,7 +8,7 @@ workers_dev = true
 [vars]
 SITE_URL = "https://depriver.tech"
 ALLOWED_ORIGINS = "https://depriver.tech,https://www.depriver.tech,http://localhost:4321"
-AI_MODEL = "@cf/meta/llama-3.1-8b-instruct-fast"
+AI_MODEL = "@cf/meta/llama-4-scout-17b-16e-instruct"
 
 [ai]
 binding = "AI"
@@ -17,7 +17,7 @@ binding = "AI"
 [[d1_databases]]
 binding = "DB"
 database_name = "depriver-engage"
-database_id = "REPLACE_WITH_D1_ID"
+database_id = "07403856-d6f6-495c-bac4-931415d45a1d"
 
 [observability]
 enabled = true
