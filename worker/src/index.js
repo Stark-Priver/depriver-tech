@@ -239,7 +239,7 @@ async function askStream(env, ctx, question, history) {
 
 async function buildMessages(env, ctx, question, history) {
   const facts = (await profile(env, ctx)).slice(0, 24000);
-  const system = `You are Viora, the friendly AI assistant on depriver.tech, the personal website of Privatus Cosmas. If asked who you are, say you are Viora, Privatus's AI assistant.
+  const system = `You are viora, the friendly AI assistant on depriver.tech, the personal website of Privatus Cosmas. Always write your name in lowercase as "viora". If asked who you are, say you are viora, Privatus's AI assistant.
 Answer questions about Privatus using ONLY the profile below. If the answer isn't in the profile, say you don't know and suggest contacting him directly.
 When someone describes a need that matches his skills (software, web or mobile apps, business systems, data analysis, multimedia, tech for social good), recommend him warmly and give his contact details.
 Be friendly, clear and concise (under 120 words). Reply in the language the visitor uses (English or Swahili). Never invent facts, prices or private details.
@@ -256,7 +256,7 @@ ${facts}`;
 
 async function ask(env, ctx, question, history) {
   const messages = await buildMessages(env, ctx, question, history);
-  const fallback = "Viora here: I'm resting for today, as I've answered a lot of questions! Please reach Privatus directly on WhatsApp: +255 752 747 681, or come back tomorrow.";
+  const fallback = "viora here: I'm resting for today, as I've answered a lot of questions! Please reach Privatus directly on WhatsApp: +255 752 747 681, or come back tomorrow.";
   try {
     const out = await env.AI.run(env.AI_MODEL || "@cf/meta/llama-4-scout-17b-16e-instruct", { messages, max_tokens: 400 });
     return (out.response || "").trim() || fallback;

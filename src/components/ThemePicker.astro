@@ -46,7 +46,7 @@ const groups = [...new Set(themes.map((t) => t.group))].map((g) => ({ name: g, i
           <input type="text" placeholder={`Search ${themes.length} themes…`} autocomplete="off" spellcheck="false"
             role="combobox" aria-expanded="true" aria-controls="tp-list" aria-autocomplete="list" aria-label="Search themes" />
         </label>
-        <div class="tp-list" id="tp-list" role="listbox" aria-label="Themes">
+        <div class="tp-list" id="tp-list" role="listbox" aria-label="Themes" data-lenis-prevent>
           {groups.map((g) => (
             <div class="tp-group" role="group" aria-label={g.name}>
               <p class="tp-gname" aria-hidden="true">{g.name} <span>{g.items.length}</span></p>
