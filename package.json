@@ -8,7 +8,8 @@
     "build": "node scripts/terrain.mjs && astro build",
     "preview": "astro preview",
     "terrain": "node scripts/terrain.mjs",
-    "themes": "node scripts/omarchy-themes.mjs"
+    "themes": "node scripts/omarchy-themes.mjs",
+    "carousel": "python3 studio/build.py"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
@@ -18,7 +19,10 @@
     "lenis": "^1.3.26"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "d3-contour": "^4.0.2",
+    "satori": "^0.33.5",
+    "sharp": "^0.35.5",
     "simplex-noise": "^4.0.3"
   },
   "allowScripts": {

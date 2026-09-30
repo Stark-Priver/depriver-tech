@@ -1,0 +1,120 @@
+---
+// Views, likes and sharing for a post. Views/likes appear only when site.engageApi is set; sharing always works.
+import { site } from "../data/site";
+interface Props { slug: string; title: string; url: string }
+const { slug, title, url } = Astro.props;
+const text = encodeURIComponent(`${title} · ${site.name}`);
+const link = encodeURIComponent(url);
+---
+<div class="eg" data-engage data-slug={slug} data-api={site.engageApi} data-url={url} data-title={title}>
+  {site.engageApi && (
+    <>
+      <span class="eg-stat" title="Views">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+        <b data-views>–</b><span class="sr">views</span>
+      </span>
+      <button class="eg-like" type="button" data-like aria-pressed="false" aria-label="Like this post">
+        <svg class="heart" width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg>
+        <b data-likes>–</b><span class="sr">likes</span>
+        <span class="burst" aria-hidden="true"></span>
+      </button>
+    </>
+  )}
+  <div class="eg-share">
+    <span class="eg-label">Share</span>
+    <a href={`https://wa.me/?text=${text}%20${link}`} target="_blank" rel="noopener" aria-label="Share on WhatsApp" title="WhatsApp">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.8 0-1.4.7-2 1-2.3.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.4.6-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3Z"/></svg>
+    </a>
+    <a href={`https://x.com/intent/post?text=${text}&url=${link}`} target="_blank" rel="noopener" aria-label="Share on X" title="X">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.8 3h3.1l-6.8 7.7L22 21h-6.2l-4.9-6.4L5.3 21H2.2l7.2-8.3L1.8 3h6.4l4.4 5.8L17.8 3Zm-1.1 16.2h1.7L7.4 4.7H5.6l11.1 14.5Z"/></svg>
+    </a>
+    <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${link}`} target="_blank" rel="noopener" aria-label="Share on LinkedIn" title="LinkedIn">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9.75h4V21H3V9.75Zm6.5 0h3.8v1.6h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5c0-1.2 0-2.8-1.7-2.8s-2 1.3-2 2.7V21h-4V9.75Z"/></svg>
+    </a>
+    <a href={`https://www.facebook.com/sharer/sharer.php?u=${link}`} target="_blank" rel="noopener" aria-label="Share on Facebook" title="Facebook">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M14 8.5V6.8c0-.8.2-1.3 1.4-1.3H17V2.3c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2H7.5v3.6h2.8V22H14v-9.9h2.8l.4-3.6H14Z"/></svg>
+    </a>
+    <button type="button" data-copy aria-label="Copy link" title="Copy link">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+    </button>
+    <button type="button" data-native aria-label="More sharing options" title="Share…" hidden>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  const fmt = (n: number) => (n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, "") + "K" : String(n));
+
+  document.querySelectorAll<HTMLElement>("[data-engage]").forEach(async (el) => {
+    const { slug, api, url, title } = el.dataset as Record<string, string>;
+
+    // sharing
+    const copy = el.querySelector<HTMLButtonElement>("[data-copy]")!;
+    copy.addEventListener("click", async () => {
+      try { await navigator.clipboard.writeText(url); copy.classList.add("done"); setTimeout(() => copy.classList.remove("done"), 1600); } catch {}
+    });
+    const native = el.querySelector<HTMLButtonElement>("[data-native]")!;
+    if (navigator.share) {
+      native.hidden = false;
+      native.addEventListener("click", () => navigator.share({ title, url }).catch(() => {}));
+    }
+
+    if (!api) return;
+    const views = el.querySelector<HTMLElement>("[data-views]")!;
+    const likes = el.querySelector<HTMLElement>("[data-likes]")!;
+    const like = el.querySelector<HTMLButtonElement>("[data-like]")!;
+    const likedKey = `liked:${slug}`, viewedKey = `viewed:${slug}`;
+    const liked = () => { try { return localStorage.getItem(likedKey) === "1"; } catch { return false; } };
+    const show = (d: { views: number; likes: number }) => { views.textContent = fmt(d.views); likes.textContent = fmt(d.likes); };
+    like.setAttribute("aria-pressed", String(liked()));
+
+    try {
+      // count one view per browser session
+      const first = !sessionStorage.getItem(viewedKey);
+      const res = await fetch(`${api}/${first ? "view" : "stats"}/${encodeURIComponent(slug)}`, { method: first ? "POST" : "GET" });
+      if (res.ok) { show(await res.json()); sessionStorage.setItem(viewedKey, "1"); }
+    } catch {}
+
+    like.addEventListener("click", async () => {
+      const on = !liked();
+      like.setAttribute("aria-pressed", String(on));
+      like.classList.toggle("pop", on);
+      try { on ? localStorage.setItem(likedKey, "1") : localStorage.removeItem(likedKey); } catch {}
+      try {
+        const res = await fetch(`${api}/like/${encodeURIComponent(slug)}`, { method: on ? "POST" : "DELETE" });
+        if (res.ok) show(await res.json());
+      } catch {}
+    });
+  });
+</script>
+
+<style>
+  .eg { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 14px; padding: 12px; border-radius: 22px; background: var(--bg);
+    box-shadow: -6px -6px 16px var(--neu-hi), 8px 9px 20px var(--neu-lo); }
+  .eg-stat, .eg-like { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 14px; font: inherit; font-weight: 600; color: var(--heading);
+    background: var(--bg); box-shadow: inset 3px 3px 7px var(--neu-lo), inset -3px -3px 7px var(--neu-hi); }
+  .eg-stat svg { color: var(--muted); }
+  .eg-like { border: 0; cursor: pointer; position: relative; box-shadow: -4px -4px 10px var(--neu-hi), 5px 5px 12px var(--neu-lo); transition: box-shadow 0.3s, color 0.3s; }
+  .eg-like:hover { color: var(--accent); }
+  .heart { fill: transparent; transition: fill 0.3s, transform 0.4s var(--ease); }
+  .eg-like[aria-pressed="true"] { color: var(--accent); box-shadow: inset 3px 3px 7px var(--neu-lo), inset -3px -3px 7px var(--neu-hi); }
+  .eg-like[aria-pressed="true"] .heart { fill: currentColor; }
+  .eg-like.pop .heart { animation: pop 0.5s var(--ease); }
+  .eg-like.pop .burst { position: absolute; left: 26px; top: 50%; width: 8px; height: 8px; margin: -4px; border-radius: 50%;
+    box-shadow: 0 -16px var(--accent), 14px -8px var(--accent-2), 14px 8px var(--accent), 0 16px var(--accent-2), -14px 8px var(--accent), -14px -8px var(--accent-2);
+    animation: burst 0.6s ease-out forwards; }
+  @keyframes pop { 40% { transform: scale(1.35); } }
+  @keyframes burst { from { opacity: 1; transform: scale(0.3); } to { opacity: 0; transform: scale(1.4); } }
+  .eg-share { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+  .eg-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+  .eg-share a, .eg-share button { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; border: 0; cursor: pointer; color: var(--heading);
+    background: var(--bg); box-shadow: -3px -3px 8px var(--neu-hi), 4px 4px 10px var(--neu-lo); transition: color 0.25s, box-shadow 0.25s, transform 0.25s var(--ease); }
+  .eg-share a:hover, .eg-share button:hover { color: var(--accent); transform: translateY(-2px); }
+  .eg-share a:active, .eg-share button:active { box-shadow: inset 3px 3px 7px var(--neu-lo), inset -3px -3px 7px var(--neu-hi); }
+  .eg-share button.done { color: var(--accent); }
+  .eg-share button.done::after { content: "Copied"; position: absolute; translate: 0 -42px; font-size: 0.72rem; font-weight: 600; padding: 3px 8px; border-radius: 8px; background: var(--deep); color: var(--on-deep); }
+  .eg-share button { position: relative; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  @media (max-width: 560px) { .eg-share { margin-left: 0; } }
+</style>

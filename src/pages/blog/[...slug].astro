@@ -1,34 +1,60 @@
 ---
-import { getCollection, render } from "astro:content";
+import { render } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import PostCard from "../../components/PostCard.astro";
+import Carousel from "../../components/Carousel.astro";
+import Engage from "../../components/Engage.astro";
+import Comments from "../../components/Comments.astro";
+import { livePosts, slidesFor, readingMinutes, formatDate, type Post } from "../../lib/posts";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  const posts = await livePosts();
   return posts.map((post) => ({ params: { slug: post.id }, props: { post, posts } }));
 }
-const { post, posts } = Astro.props;
-const { Content, headings } = await render(post);
-const date = post.data.date.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
-const words = post.body?.split(/\s+/).length ?? 0;
-const minutes = Math.max(1, Math.round(words / 200));
-const more = posts.filter((p) => p.id !== post.id).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()).slice(0, 2);
+const { post, posts } = Astro.props as { post: Post; posts: Post[] };
+const { Content } = await render(post);
+const slides = slidesFor(post.data.carousel);
+const url = new URL(`/blog/${post.id}/`, Astro.site).toString();
+const more = posts.filter((p) => p.id !== post.id).slice(0, 3);
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.date.toISOString(),
+  dateModified: (post.data.updated ?? post.data.date).toISOString(),
+  image: new URL(`/og/blog/${post.id}.jpg`, Astro.site).toString(),
+  url,
+  author: { "@type": "Person", name: "Privatus Cosmas", url: "https://depriver.tech/story/" },
+  keywords: post.data.tags.join(", "),
+};
 ---
-<Base title={`${post.data.title} · Privatus Cosmas`} description={post.data.description} image={post.data.cover}>
+<Base title={`${post.data.title} · Privatus Cosmas`} description={post.data.description} image={`/og/blog/${post.id}.jpg`}
+  imageAlt={post.data.title} type="article" published={post.data.date} modified={post.data.updated} tags={post.data.tags}>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <article>
     <header class="wrap head">
       <a class="back" href="/">← All posts</a>
-      <p class="meta" data-reveal>{date} · {minutes} min read{post.data.tags.map((t) => <span class="tag">{t}</span>)}</p>
+      <p class="meta" data-reveal>
+        {formatDate(post.data.date, "long")} · {slides.length ? `${slides.length} slides` : `${readingMinutes(post)} min read`}
+        {post.data.tags.map((t) => <span class="tag">{t}</span>)}
+      </p>
       <h1 class="display" data-reveal>{post.data.title}</h1>
       <p class="desc" data-reveal>{post.data.description}</p>
       <div class="author" data-reveal>
-        <img src="/img/me.webp" alt="" width="48" height="48" />
+        <img src="/img/me-cut.webp" alt="" width="48" height="48" />
         <div><strong>Privatus Cosmas</strong><span>Software Engineer & Digital Innovator</span></div>
       </div>
     </header>
-    {post.data.cover && <img class="cover wrap" src={post.data.cover} alt="" data-reveal />}
+
+    {slides.length > 0 && <div class="wrap"><Carousel slides={slides} captions={post.data.slides} title={post.data.title} /></div>}
+    {!slides.length && post.data.cover && <img class="cover wrap" src={post.data.cover} alt="" data-reveal />}
+
     <div class="prose wrap" data-reveal><Content /></div>
+    <div class="wrap engage-wrap"><Engage slug={post.id} title={post.data.title} url={url} /></div>
   </article>
+
+  <div class="wrap"><Comments slug={post.id} /></div>
 
   {more.length > 0 && (
     <section class="wrap more">
@@ -39,29 +65,32 @@ const more = posts.filter((p) => p.id !== post.id).sort((a, b) => b.data.date.va
 </Base>
 
 <style>
-  .head { max-width: 820px; padding: 160px 0 40px; }
-  .back { display: inline-block; margin-bottom: 30px; text-decoration: none; font-weight: 600; color: var(--accent); }
+  .head { max-width: 820px; padding: 150px 0 40px; }
+  .back { display: inline-block; margin-bottom: 26px; text-decoration: none; font-weight: 600; color: var(--accent); }
   .meta { color: var(--muted); font-weight: 500; margin: 0 0 16px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
   .tag { padding: 3px 12px; border-radius: 999px; background: var(--deep); color: var(--on-deep); font-size: 0.8rem; text-transform: capitalize; }
-  h1 { font-size: clamp(2.4rem, 6vw, 4.4rem); }
-  .desc { font-size: 1.25rem; color: var(--muted); margin: 20px 0 30px; }
+  h1 { font-size: clamp(2.2rem, 5.5vw, 4rem); }
+  .desc { font-size: 1.2rem; color: var(--muted); margin: 20px 0 28px; }
   .author { display: flex; gap: 14px; align-items: center; }
-  .author img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; object-position: top; background: var(--surface); }
+  .author img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; object-position: top; background: var(--deep); filter: var(--photo-filter); }
   .author strong { display: block; color: var(--heading); }
   .author span { color: var(--muted); font-size: 0.9rem; }
   .cover { max-width: 1100px; border-radius: 32px; margin-bottom: 50px; aspect-ratio: 16 / 9; object-fit: cover; }
-  .prose { max-width: 820px; padding-bottom: 80px; font-size: 1.15rem; line-height: 1.8; color: var(--text); }
-  .prose :global(h2) { font-size: 1.9rem; color: var(--heading); line-height: 1.2; margin: 2em 0 0.6em; letter-spacing: -0.02em; }
-  .prose :global(h3) { font-size: 1.4rem; color: var(--heading); margin: 1.6em 0 0.5em; }
+  .prose { max-width: 820px; padding-bottom: 40px; font-size: 1.15rem; line-height: 1.8; color: var(--text); }
+  .prose :global(h2) { font-size: 1.8rem; color: var(--heading); line-height: 1.2; margin: 1.8em 0 0.6em; letter-spacing: -0.02em; }
+  .prose :global(h3) { font-size: 1.35rem; color: var(--heading); margin: 1.6em 0 0.5em; }
   .prose :global(a) { color: var(--accent); font-weight: 500; }
   .prose :global(strong) { color: var(--heading); }
-  .prose :global(blockquote) { margin: 1.6em 0; padding: 4px 0 4px 24px; border-left: 4px solid var(--accent); font-size: 1.3rem; font-weight: 500; color: var(--heading); }
+  .prose :global(blockquote) { margin: 1.6em 0; padding: 18px 24px; border-radius: 18px; border-left: 4px solid var(--accent); background: var(--surface-2); font-size: 1.05rem; color: var(--heading); }
+  .prose :global(blockquote p) { margin: 0; }
   .prose :global(img) { border-radius: 24px; margin: 1.6em 0; }
   .prose :global(pre) { background: var(--deep) !important; padding: 22px 24px; border-radius: 20px; overflow-x: auto; font-size: 0.95rem; line-height: 1.6; }
   .prose :global(:not(pre) > code) { background: var(--surface-2); color: var(--heading); padding: 2px 8px; border-radius: 6px; font-size: 0.92em; }
   .prose :global(li) { margin: 0.4em 0; }
   .prose :global(li::marker) { color: var(--accent); }
+  .engage-wrap { max-width: 820px; padding-bottom: 60px; }
   .more { padding: 40px 0 120px; border-top: 1px solid var(--line); }
-  .more-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 30px; max-width: 900px; }
+  .more-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 30px; }
+  @media (max-width: 960px) { .more-grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 640px) { .more-grid { grid-template-columns: 1fr; } }
 </style>

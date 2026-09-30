@@ -1,22 +1,39 @@
 ---
-import type { CollectionEntry } from "astro:content";
-interface Props { post: CollectionEntry<"blog">; featured?: boolean }
+import { coverFor, slidesFor, formatDate, type Post } from "../lib/posts";
+import { site } from "../data/site";
+interface Props { post: Post; featured?: boolean }
 const { post, featured = false } = Astro.props;
-const date = post.data.date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+const cover = coverFor(post);
+const slides = slidesFor(post.data.carousel).length;
 ---
-<a href={`/blog/${post.id}/`} class:list={["post", { featured }]} data-reveal>
+<a href={`/blog/${post.id}/`} class:list={["post", { featured, carousel: slides > 0 }]} data-reveal data-card-slug={post.id}>
   <div class="cover">
-    {post.data.cover
-      ? <img src={post.data.cover} alt="" loading="lazy" />
+    {slides > 0 && <span class="stack" aria-hidden="true"><i></i><i></i></span>}
+    {cover
+      ? <img src={cover} alt="" loading="lazy" decoding="async" />
       : <span class="cover-fallback deep" aria-hidden="true"><span class="script">{post.data.title.split(" ")[0]}</span></span>}
+    {slides > 0 && (
+      <span class="badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="3" width="14" height="14" rx="3"/><path d="M3 7v10a4 4 0 0 0 4 4h10"/></svg>
+        {slides} slides
+      </span>
+    )}
   </div>
   <div class="meta">
-    <p class="date">{date}{post.data.tags.length > 0 && <span> · {post.data.tags[0]}</span>}</p>
+    <p class="date">{formatDate(post.data.date)}{post.data.tags.length > 0 && <span> · {post.data.tags[0]}</span>}</p>
     <h3>{post.data.title}</h3>
     <p class="desc">{post.data.description}</p>
-    <span class="more">Read post
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-    </span>
+    <div class="foot">
+      <span class="more">{slides > 0 ? "View carousel" : "Read post"}
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </span>
+      {site.engageApi && (
+        <span class="stats" aria-label="Views and likes">
+          <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg><b data-card-views>–</b></span>
+          <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg><b data-card-likes>–</b></span>
+        </span>
+      )}
+    </div>
   </div>
 </a>
 
@@ -24,20 +41,57 @@ const date = post.data.date.toLocaleDateString("en-GB", { day: "numeric", month:
   .post { display: flex; flex-direction: column; background: var(--surface); border-radius: var(--radius); overflow: hidden; text-decoration: none; color: inherit;
     box-shadow: 0 1px 0 var(--line), 0 30px 60px -40px color-mix(in srgb, var(--shadow) 35%, transparent); transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease); }
   .post:hover { transform: translateY(-6px); box-shadow: 0 1px 0 var(--line), 0 40px 70px -36px color-mix(in srgb, var(--shadow) 45%, transparent); }
-  .cover { aspect-ratio: 16 / 10; overflow: hidden; background: var(--deep); }
-  .cover img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s var(--ease); }
+  .cover { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: var(--deep); }
+  .cover img { position: relative; width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s var(--ease); }
   .post:hover .cover img { transform: scale(1.05); }
+  /* carousel covers: portrait slide on a deep panel with two cards fanned behind it */
+  .carousel .cover { background: var(--deep); }
+  .carousel .cover img { position: absolute; top: 7%; left: 50%; translate: -50% 0; width: auto; height: 86%; aspect-ratio: 4 / 5;
+    border-radius: 14px; box-shadow: 0 20px 40px -14px rgba(0, 0, 0, 0.55); }
+  .carousel:hover .cover img { transform: translateY(-4px) scale(1.03); }
+  .stack { position: absolute; inset: 0; display: grid; place-items: center; }
+  .stack i { position: absolute; height: 80%; aspect-ratio: 4 / 5; border-radius: 14px; transition: transform 0.7s var(--ease); }
+  .stack i:first-child { background: var(--accent); transform: rotate(8deg) translateX(18px); opacity: 0.9; }
+  .stack i:last-child { background: var(--accent-2); transform: rotate(-7deg) translateX(-18px); opacity: 0.7; }
+  .carousel:hover .stack i:first-child { transform: rotate(14deg) translateX(46px); }
+  .carousel:hover .stack i:last-child { transform: rotate(-13deg) translateX(-46px); }
+  .badge { position: absolute; right: 14px; top: 14px; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px;
+    font-size: 0.78rem; font-weight: 600; background: color-mix(in srgb, var(--bg) 90%, transparent); color: var(--heading); backdrop-filter: blur(6px); }
   .cover-fallback { display: grid; place-items: center; width: 100%; height: 100%; background: var(--deep); }
   .cover-fallback .script { color: var(--on-deep); font-size: 3.6rem; }
-  .meta { padding: 24px 26px 28px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .meta { padding: 24px 26px 26px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
   .date { margin: 0; font-size: 0.85rem; font-weight: 500; color: var(--accent); text-transform: capitalize; }
   h3 { margin: 0; color: var(--heading); font-size: 1.3rem; line-height: 1.3; }
   .desc { margin: 0; color: var(--muted); flex: 1; }
-  .more { display: inline-flex; gap: 8px; align-items: center; font-weight: 600; color: var(--heading); margin-top: 8px; }
+  .foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px; }
+  .more { display: inline-flex; gap: 8px; align-items: center; font-weight: 600; color: var(--heading); }
   .post:hover .more { color: var(--accent); }
+  .stats { display: inline-flex; gap: 14px; color: var(--muted); font-size: 0.85rem; }
+  .stats span { display: inline-flex; align-items: center; gap: 5px; }
+  .stats b { font-weight: 600; }
   .featured { display: grid; grid-template-columns: 1.1fr 1fr; }
-  .featured .cover { aspect-ratio: auto; min-height: 320px; }
+  .featured .cover { aspect-ratio: auto; min-height: 340px; }
   .featured h3 { font-size: clamp(1.6rem, 3vw, 2.3rem); }
   .featured .meta { padding: 40px; justify-content: center; }
-  @media (max-width: 760px) { .featured { grid-template-columns: 1fr; } .featured .cover { min-height: 220px; } .featured .meta { padding: 26px; } }
+  @media (max-width: 760px) { .featured { grid-template-columns: 1fr; } .featured .cover { min-height: 260px; } .featured .meta { padding: 26px; } }
 </style>
+
+<script>
+  // Fill view/like counts on cards (one request for the whole page).
+  import { site } from "../data/site";
+  const cards = [...document.querySelectorAll<HTMLElement>("[data-card-slug]")];
+  if (site.engageApi && cards.length) {
+    const slugs = [...new Set(cards.map((c) => c.dataset.cardSlug!))];
+    fetch(`${site.engageApi}/stats?slugs=${slugs.map(encodeURIComponent).join(",")}`)
+      .then((r) => (r.ok ? r.json() : {}))
+      .then((all: Record<string, { views: number; likes: number }>) => {
+        cards.forEach((c) => {
+          const d = all[c.dataset.cardSlug!];
+          if (!d) return;
+          c.querySelector("[data-card-views]")!.textContent = String(d.views);
+          c.querySelector("[data-card-likes]")!.textContent = String(d.likes);
+        });
+      })
+      .catch(() => {});
+  }
+</script>

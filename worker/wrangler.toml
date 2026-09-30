@@ -1,0 +1,12 @@
+name = "depriver-engage"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+
+[vars]
+ALLOWED_ORIGINS = "https://depriver.tech,https://www.depriver.tech,http://localhost:4321"
+
+# Create with: npx wrangler d1 create depriver-engage   (then paste the id below)
+[[d1_databases]]
+binding = "DB"
+database_name = "depriver-engage"
+database_id = "REPLACE_WITH_D1_ID"

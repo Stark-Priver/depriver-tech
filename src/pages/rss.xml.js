@@ -1,10 +1,8 @@
 import rss from "@astrojs/rss";
-import { getCollection } from "astro:content";
+import { livePosts } from "../lib/posts";
 
 export async function GET(context) {
-  const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
-    (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
-  );
+  const posts = await livePosts();
   return rss({
     title: "Privatus Cosmas · Blog",
     description: "Notes on software, learning, tech life and the journey.",

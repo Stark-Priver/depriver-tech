@@ -3,6 +3,7 @@ title: "Welcome to my corner of the internet"
 description: "Why I built this site, and what I'll be writing about here."
 date: 2026-09-30
 tags: ["personal", "journey"]
+status: live
 ---
 
 Hi, I'm Privatus. This site tells my story, from Kitwe village in Kagera to writing software in Mbeya.

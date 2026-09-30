@@ -5,3 +5,6 @@ dist/
 
 # Private life-story notes: never publish
 STORY.md
+
+# Full-size carousel exports (regenerate with npm run carousel)
+studio/*/export/

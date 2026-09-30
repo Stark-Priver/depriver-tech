@@ -1,19 +1,17 @@
 ---
-import { getCollection } from "astro:content";
+import { livePosts } from "../lib/posts";
 import Base from "../layouts/Base.astro";
 import Title from "../components/Title.astro";
 import PostCard from "../components/PostCard.astro";
 import hero from "../data/hero-lines.json";
 import { chapters, lessons, services, outside, dreams, gratitude, contact } from "../data/story";
 
-const posts = (await getCollection("blog", ({ data }) => !data.draft))
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 3);
+const posts = (await livePosts()).slice(0, 3);
 const age = new Date().getFullYear() - 2006 - (new Date() < new Date(new Date().getFullYear(), 7, 14) ? 1 : 0);
 const pad = (n: number) => String(n).padStart(2, "0");
 const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary", "MUST", "Mbeya", "Software Engineer", "Digital Innovator"];
 ---
-<Base title="My story · Privatus Cosmas" description="From Kitwe village in Kagera to writing software in Mbeya: the story, the setbacks and the dreams of Privatus Cosmas.">
+<Base title="My story · Privatus Cosmas" image="/og/story.jpg" imageAlt="From Kitwe Village to Writing Code: the story of Privatus Cosmas" description="From Kitwe village in Kagera to writing software in Mbeya: the story, the setbacks and the dreams of Privatus Cosmas.">
   <!-- ── HERO ─────────────────────────────────────────── -->
   <section class="hero" data-hero>
     <svg class="contours" viewBox={`0 0 ${hero.w} ${hero.h}`} preserveAspectRatio="xMidYMid slice" aria-hidden="true">

@@ -1,0 +1,54 @@
+---
+// Comments + reactions via giscus (GitHub Discussions). Hidden until repoId/categoryId are filled in src/data/site.ts.
+import { site } from "../data/site";
+interface Props { slug: string }
+const { slug } = Astro.props;
+const g = site.giscus;
+const ready = Boolean(g.repoId && g.categoryId);
+---
+{ready && (
+  <section class="cm" id="comments" aria-labelledby="cm-title">
+    <p class="cm-label">Conversation</p>
+    <h2 id="cm-title">Comments</h2>
+    <p class="cm-note">Sign in with GitHub to comment or react. Be kind, be helpful.</p>
+    <div class="cm-box" data-giscus data-repo={g.repo} data-repo-id={g.repoId} data-category={g.category} data-category-id={g.categoryId} data-term={`blog/${slug}`}></div>
+  </section>
+)}
+
+<script>
+  // Load giscus lazily and keep its theme in sync with the site theme.
+  const box = document.querySelector<HTMLElement>("[data-giscus]");
+  if (box) {
+    const theme = () => {
+      const bg = getComputedStyle(document.documentElement).getPropertyValue("--bg").trim();
+      const [r, g, b] = bg.replace("#", "").match(/../g)!.map((h) => parseInt(h, 16));
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b > 140 ? "light" : "dark_dimmed";
+    };
+    const load = () => {
+      const s = document.createElement("script");
+      s.src = "https://giscus.app/client.js";
+      s.async = true;
+      s.crossOrigin = "anonymous";
+      const d = box.dataset;
+      Object.entries({
+        "data-repo": d.repo!, "data-repo-id": d.repoId!, "data-category": d.category!, "data-category-id": d.categoryId!,
+        "data-mapping": "specific", "data-term": d.term!, "data-strict": "1", "data-reactions-enabled": "1",
+        "data-emit-metadata": "0", "data-input-position": "top", "data-theme": theme(), "data-lang": "en", "data-loading": "lazy",
+      }).forEach(([k, v]) => s.setAttribute(k, v));
+      box.append(s);
+    };
+    new IntersectionObserver((entries, io) => { if (entries[0].isIntersecting) { io.disconnect(); load(); } }, { rootMargin: "400px" }).observe(box);
+    new MutationObserver(() => {
+      const frame = document.querySelector<HTMLIFrameElement>("iframe.giscus-frame");
+      frame?.contentWindow?.postMessage({ giscus: { setConfig: { theme: theme() } } }, "https://giscus.app");
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  }
+</script>
+
+<style>
+  .cm { max-width: 820px; margin: 0 auto; padding: 20px 0 80px; }
+  .cm-label { margin: 0; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+  .cm h2 { margin: 6px 0 4px; font-size: 2rem; color: var(--heading); }
+  .cm-note { margin: 0 0 24px; color: var(--muted); }
+  .cm-box { border-radius: 24px; padding: 18px; background: var(--bg); box-shadow: inset 4px 4px 10px var(--neu-lo), inset -4px -4px 10px var(--neu-hi); min-height: 120px; }
+</style>
