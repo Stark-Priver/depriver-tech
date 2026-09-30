@@ -163,7 +163,12 @@ def brand(s):
 ST = 'stroke="#0b1e3f" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"'
 
 
+ART_STYLE = globals().get("ART_STYLE", "cute")   # "print" = editorial style: no faces, no sparkles
+
+
 def face(x, y, sc=1):
+    if ART_STYLE == "print":
+        return ""
     return f'''<g transform="translate({x} {y}) scale({sc})">
     <circle cx="-16" cy="0" r="6" fill="#0b1e3f"/><circle cx="16" cy="0" r="6" fill="#0b1e3f"/>
     <circle cx="-14" cy="-2" r="2" fill="#fff"/><circle cx="18" cy="-2" r="2" fill="#fff"/>
@@ -172,6 +177,8 @@ def face(x, y, sc=1):
 
 
 def spark(x, y, sc=1, c="#ffc857"):
+    if ART_STYLE == "print":
+        return ""
     return f'<path transform="translate({x} {y}) scale({sc})" d="M0-18 L5-5 L18 0 L5 5 L0 18 L-5 5 L-18 0 L-5-5Z" fill="{c}" {ST} stroke-width="4"/>'
 
 
@@ -192,8 +199,8 @@ ART = {
       <rect x="162" y="152" width="276" height="156" rx="10" fill="#0b1e3f"/>
       <path d="M186 186 h70 M186 212 h120 M270 238 h60 M186 238 h54" stroke="#a9c4f5" stroke-width="8" stroke-linecap="round"/>
       <path d="M186 186 h30" stroke="#e8603a" stroke-width="8" stroke-linecap="round"/>
-      <g transform="translate(300 272) scale(0.7)"><circle cx="-16" cy="0" r="7" fill="#fff"/><circle cx="16" cy="0" r="7" fill="#fff"/>
-        <path d="M-10 14 Q0 24 10 14" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/></g>
+      {"" if ART_STYLE == "print" else '<g transform="translate(300 272) scale(0.7)"><circle cx="-16" cy="0" r="7" fill="#fff"/><circle cx="16" cy="0" r="7" fill="#fff"/><path d="M-10 14 Q0 24 10 14" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/></g>'}
+      <path d="M186 264 h96" stroke="#a9c4f5" stroke-width="8" stroke-linecap="round" opacity=".7"/>
       <g transform="translate(420 110) rotate(35)">
         <path d="M0-120 C40-80 44-10 30 40 H-30 C-44-10-40-80 0-120Z" fill="#fff" {ST}/>
         <circle cx="0" cy="-50" r="20" fill="#a9c4f5" {ST}/>
@@ -276,8 +283,7 @@ ART = {
       <path d="M160 190 L300 110 L440 190 L300 290Z M160 190 L440 190 M300 110 L300 290" fill="none" stroke="#a9c4f5" stroke-width="8" stroke-dasharray="4 16" stroke-linecap="round"/>
       {"".join(f"""<g transform="translate({x} {y})"><path d="M-58 90 a58 50 0 0 1 116 0z" fill="{shirt}" {ST}/>
         <circle r="48" fill="{skin}" {ST}/><path d="M-46 -14 a48 48 0 0 1 92 0 a40 30 0 0 0-92 0z" fill="#0b1e3f"/>
-        <g transform="translate(0 6)"><circle cx="-15" cy="0" r="5" fill="#fff"/><circle cx="15" cy="0" r="5" fill="#fff"/>
-        <path d="M-10 16 Q0 24 10 16" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></g></g>"""
+        {"" if ART_STYLE == "print" else '<g transform="translate(0 6)"><circle cx="-15" cy="0" r="5" fill="#fff"/><circle cx="15" cy="0" r="5" fill="#fff"/><path d="M-10 16 Q0 24 10 16" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></g>'}</g>"""
         for x, y, skin, shirt in [(300, 110, "#8d5524", "#e8603a"), (160, 190, "#6b3e1d", "#a9c4f5"), (440, 190, "#a0673a", "#ffc857"), (300, 290, "#7a4a26", "#3ddc84")])}
       {heart(300, 205, 1.1)}
       {spark(80, 80, 0.8)}{spark(530, 330, 0.8, "#e8603a")}'''),
@@ -319,3 +325,98 @@ ART = {
       {spark(525, 90, 0.8)}{spark(80, 90, 0.7, "#e8603a")}'''),
 }
 
+
+
+# ── editorial / print finishing (the "designed, not generated" layer) ───────────────────────────
+INK = (11, 30, 63)
+
+
+def grain(im, amount=0.07, seed_size=None):
+    """Film/paper grain over an RGB image (multiply-style), like a printed or Photoshop-finished piece."""
+    noise = Image.effect_noise(im.size, 64).convert("L")
+    noise = noise.point(lambda v: 255 - int((255 - v) * amount * 2.2) if v < 128 else 255)
+    return ImageChops.multiply(im, Image.merge("RGB", (noise, noise, noise)))
+
+
+def print_art(key, width):
+    """Illustration with grain in its fills (so flat vector reads like ink on paper)."""
+    art = svg_image(ART[key], width)
+    rgb = grain(art.convert("RGB"), 0.11)
+    out = Image.merge("RGBA", (*rgb.split(), art.getchannel("A")))
+    return out
+
+
+def paste_print(s, art, x, y, offset=(9, 11), opacity=0.16):
+    """Paste art with an offset ink shadow (risograph misregistration look)."""
+    a = art.getchannel("A").point(lambda v: int(v * opacity))
+    s.im.paste(Image.new("RGB", art.size, INK), (k(x + offset[0]), k(y + offset[1])), a)
+    s.im.paste(art, (k(x), k(y)), art)
+
+
+def outline_text(s, x, y, text, font, stroke=3, color=INK, anchor="ls", opacity=1.0):
+    """Hollow, outlined display type (huge background numerals)."""
+    full = Image.new("L", s.im.size, 0)
+    inner = Image.new("L", s.im.size, 0)
+    ImageDraw.Draw(full).text((k(x), k(y)), text, font=font, fill=255, anchor=anchor, stroke_width=k(stroke), stroke_fill=255)
+    ImageDraw.Draw(inner).text((k(x), k(y)), text, font=font, fill=255, anchor=anchor)
+    ring = ImageChops.subtract(full, inner).point(lambda v: int(v * opacity))
+    s.im.paste(Image.new("RGB", s.im.size, color), (0, 0), ring)
+
+
+def smallcaps(s, x, y, text, size, color, tracking=0.16, weight=None, anchor="left"):
+    """Letter-spaced uppercase label."""
+    font = f(weight or SEMI, size)
+    text = text.upper()
+    widths = [s.width(ch, font) for ch in text]
+    total = sum(widths) + tracking * size * (len(text) - 1)
+    cx = x - total if anchor == "right" else x
+    for ch, w in zip(text, widths):
+        s.text(cx, y, ch, font, color)
+        cx += w + tracking * size
+    return total
+
+
+def hairline(s, x0, x1, y, color=(200, 206, 218), w=2):
+    s.rect(x0, y, x1, y + w, color)
+
+
+def swash(s, x0, x1, y, color=ORANGE, thick=7, seed=3):
+    """Hand-drawn brush underline: tapered ends and a slight wobble."""
+    import math, random
+    rnd = random.Random(seed)
+    layer = Image.new("L", s.im.size, 0)
+    d = ImageDraw.Draw(layer)
+    n = 60
+    pts = []
+    for i in range(n + 1):
+        t = i / n
+        xx = x0 + (x1 - x0) * t
+        yy = y + math.sin(t * math.pi * 1.2 + 0.4) * 4 - t * 6 + rnd.uniform(-0.6, 0.6)
+        pts.append((xx, yy, thick * math.sin(math.pi * (0.08 + 0.84 * t)) ** 0.6))
+    for (xa, ya, wa), (xb, yb, wb) in zip(pts, pts[1:]):
+        w = max(1.0, (wa + wb) / 2)
+        d.line([k(xa), k(ya), k(xb), k(yb)], fill=235, width=k(w))
+        d.ellipse([k(xb - w / 2), k(yb - w / 2), k(xb + w / 2), k(yb + w / 2)], fill=235)
+    s.im.paste(Image.new("RGB", s.im.size, color), (0, 0), layer.filter(ImageFilter.GaussianBlur(k(0.6))))
+
+
+def sticker(s, cx, cy, text, angle=-6, bg=ORANGE, fg=(255, 255, 255), size=24, script=False):
+    """Rotated label, like a sticker placed by hand."""
+    font = f(SIG, size * 1.6) if script else f(BOLD, size)
+    tw = s.width(text, font)
+    w, h = tw + 56, size * (2.6 if script else 2.3)
+    lay = Image.new("RGBA", (k(w + 40), k(h + 40)), (0, 0, 0, 0))
+    ld = ImageDraw.Draw(lay)
+    ld.rounded_rectangle([k(20), k(20), k(20 + w), k(20 + h)], radius=k(12), fill=bg + (255,))
+    ld.text((k(20 + w / 2), k(20 + h / 2 + (2 if not script else 6))), text, font=font, fill=fg, anchor="mm")
+    lay = lay.rotate(angle, resample=Image.BICUBIC, expand=True)
+    sh = lay.getchannel("A").filter(ImageFilter.GaussianBlur(k(6))).point(lambda v: v * 70 // 255)
+    px, py = k(cx) - lay.width // 2, k(cy) - lay.height // 2
+    s.im.paste(Image.new("RGB", lay.size, INK), (px + k(4), py + k(8)), sh)
+    s.im.paste(lay, (px, py), lay)
+
+
+def finish(s, amount=0.045):
+    """Final pass: light paper grain over the whole page."""
+    s.im = grain(s.im, amount)
+    s.d = ImageDraw.Draw(s.im)
