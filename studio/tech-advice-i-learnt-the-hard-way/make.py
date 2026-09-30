@@ -49,17 +49,22 @@ assert len(LESSONS) + 2 == TOTAL
 POST_URL = "depriver.tech/blog/tech-advice-i-learnt-the-hard-way"
 
 
-def page(label_left, label_right="DEPRIVER.TECH"):
+BASE = 1060                                          # the navy horizon (one wave across all slides)
+
+
+def page(n, label_left, label_right="DEPRIVER.TECH"):
     s = Slide()
-    paper(s)
+    panorama_paper(s, n, TOTAL)                      # contour lines continue from slide to slide
     smallcaps(s, M, 96, label_left, 17, ORANGE)
     smallcaps(s, W - M, 96, label_right, 17, NAVY, anchor="right")
     hairline(s, M, W - M, 118, RULE)
     return s
 
 
-def navy_block(s, y0):
-    s.rect(0, y0, W, H, NAVY)
+def horizon(s, n):
+    """Continuous navy wave + seam badges that join neighbouring slides."""
+    navy_wave(s, n, BASE)
+    seam_nodes(s, n, TOTAL, BASE)
 
 
 def arrow(s, x, y, color=WHITE_T, w=3.4, size=12):
@@ -68,16 +73,16 @@ def arrow(s, x, y, color=WHITE_T, w=3.4, size=12):
 
 
 # ── 1 · cover ────────────────────────────────────────────────────────────────────────────────────
-s = page("A field guide · 9 lessons")
+s = page(1, "A field guide · 9 lessons")
 outline_text(s, W + 40, 1130, "9", f(BOLD, 980), stroke=3, color=RULE, anchor="rs")
 for i, (t, c) in enumerate([("Tech advice", NAVY), ("I learnt the", NAVY), ("hard way.", ORANGE)]):
     s.text(M - 6, 300 + i * 124, t, f(BOLD, 122), c)
 s.text(M, 654, "Mambo niliyojifunza kwa njia ngumu", f(SIG, 62), ORANGE)
 swash(s, M + 10, M + 560, 684, ORANGE, 6)
-s.para(M, 760, "Nine lessons from my journey, from a village classroom in Kagera to writing software in Mbeya.", f(REG, 27), 480, 40, GREY)
-navy_block(s, 1170)
-art = print_art("rocket", k(640))
-paste_print(s, art, 400, 1170 - art.height / K + 70)      # laptop sits on, and breaks into, the navy block
+s.para(M, 760, "Nine lessons from my journey, from a village classroom in Kagera to writing software in Mbeya.", f(REG, 27), 380, 40, GREY)
+horizon(s, 1)
+art = print_art("rocket", k(580))
+paste_print(s, art, 470, wave_y(760) - art.height / K + 66)   # laptop sits on, and breaks into, the navy wave
 s.text(M, 1262, "Swipe for all 9", f(SEMI, 30), WHITE_T)
 arrow(s, M + s.width("Swipe for all 9", f(SEMI, 30)) + 34, 1251)
 smallcaps(s, W - M, 1262, "Kwa wote kwenye tech", 16, SOFT, anchor="right")
@@ -88,7 +93,7 @@ s.save(1)
 # ── 2–10 · lessons ───────────────────────────────────────────────────────────────────────────────
 for i, (art_key, t1, t2, sw, body, todo) in enumerate(LESSONS):
     n = i + 2
-    s = page(f"Lesson {i + 1:02d} / 09")
+    s = page(n, f"Lesson {i + 1:02d} / 09")
     outline_text(s, W - M + 20, 590, f"{i + 1:02d}", f(BOLD, 380), stroke=3, color=RULE, anchor="rs")
     art = print_art(art_key, k(680))
     paste_print(s, art, 44, 138)
@@ -102,22 +107,21 @@ for i, (art_key, t1, t2, sw, body, todo) in enumerate(LESSONS):
     swash(s, M + 6, M + min(s.width(sw, f(SIG, sws)) * 0.9, 620), sy + 24, ORANGE, 5, seed=i)
     s.para(M, sy + 60, body, f(REG, 25), 720, 36, GREY)
 
-    top = 1052
-    navy_block(s, top)
-    sticker(s, W - M - 60, top, "Methali" if sw.startswith(("Haba", "Mtu ni", "Usiweke", "Afya")) else "Kiswahili", angle=-6, size=20)
-    smallcaps(s, M, top + 56, "Fanya hivi · Do this", 16, ORANGE)
+    horizon(s, n)
+    tag = "Methali" if sw.startswith(("Haba", "Mtu ni", "Usiweke", "Afya")) else "Kiswahili"
+    sticker(s, W - M - 150, wave_y((n - 1) * W + W - M - 150) - 4, tag, angle=-6, size=20)
+    smallcaps(s, M, BASE + 72, "Fanya hivi · Do this", 16, ORANGE)
     for j, t in enumerate(todo):
-        y = top + 104 + j * 68
+        y = BASE + 122 + j * 62
         s.text(M, y, f"{j + 1:02d}", f(BOLD, 22), ORANGE)
         s.text(M + 56, y, t, f(MED, 27), WHITE_T)
         if j < len(todo) - 1:
             hairline(s, M, W - M, y + 26, (38, 60, 100))
-    arrow(s, W - M - 4, top + 50, SOFT, 3, 11)
     finish(s)
     s.save(n)
 
 # ── 11 · closing ─────────────────────────────────────────────────────────────────────────────────
-s = page("The end · Mwisho")
+s = page(TOTAL, "The end · Mwisho")
 s.text(M - 6, 300, "Keep learning,", f(BOLD, 104), NAVY)
 s.text(M - 6, 410, "keep building.", f(BOLD, 104), ORANGE)
 s.text(M, 500, "Hifadhi, shiriki, tuendelee kujifunza pamoja", f(SIG, 50), ORANGE)
@@ -125,21 +129,21 @@ swash(s, M + 6, M + 600, 526, ORANGE, 5, seed=11)
 rows = [("Save", "Hifadhi kwa baadaye", "Come back to it when you need it."),
         ("Share", "Mtumie rafiki yako", "Send it to someone starting out."),
         ("Comment", "Niambie somo lako", "Which lesson hit home for you?")]
-y = 610
+y = 590
 for j, (a, b, c) in enumerate(rows):
     s.text(M, y + 52, f"{j + 1:02d}", f(BOLD, 24), ORANGE)
     s.text(M + 60, y + 52, a, f(BOLD, 40), NAVY)
     s.text(M + 60 + s.width(a, f(BOLD, 40)) + 18, y + 52, b, f(SIG, 40), ORANGE)
     s.text(M + 60, y + 92, c, f(REG, 24), GREY)
     hairline(s, M, W - M, y + 122, RULE)
-    y += 128
-navy_block(s, 1030)
-smallcaps(s, M, 1094, "Read the full post · Soma zaidi", 17, SOFT)
-s.text(M, 1160, POST_URL, f(BOLD, fit(s, POST_URL, BOLD, 40, W - 2 * M)), WHITE_T)
-hairline(s, M, W - M, 1196, (38, 60, 100))
-s.text(M, 1262, "Questions? Ask my AI assistant", f(REG, 24), SOFT)
-s.text(M + s.width("Questions? Ask my AI assistant", f(REG, 24)) + 18, 1266, "viora", f(SIG, 52), ORANGE)
-smallcaps(s, W - M, 1262, "@_depriver", 18, WHITE_T, anchor="right")
+    y += 124
+horizon(s, TOTAL)
+smallcaps(s, M, BASE + 72, "Read the full post · Soma zaidi", 17, SOFT)
+s.text(M, BASE + 132, POST_URL, f(BOLD, fit(s, POST_URL, BOLD, 40, W - 2 * M)), WHITE_T)
+hairline(s, M, W - M, BASE + 162, (38, 60, 100))
+s.text(M, BASE + 224, "Questions? Ask my AI assistant", f(REG, 24), SOFT)
+s.text(M + s.width("Questions? Ask my AI assistant", f(REG, 24)) + 18, BASE + 228, "viora", f(SIG, 52), ORANGE)
+smallcaps(s, W - M, BASE + 224, "@_depriver", 18, WHITE_T, anchor="right")
 finish(s)
 s.save(TOTAL)
 print("ok")

@@ -420,3 +420,77 @@ def finish(s, amount=0.045):
     """Final pass: light paper grain over the whole page."""
     s.im = grain(s.im, amount)
     s.d = ImageDraw.Draw(s.im)
+
+
+# ── panorama: elements that run continuously across carousel slides ─────────────────────────────
+import math
+import random as _random
+
+_FIELDS = {}
+
+
+def _field(total, seed=7):
+    """One wide, low-res height field spanning every slide, so contour lines flow across seams."""
+    if (total, seed) not in _FIELDS:
+        rnd = _random.Random(seed)
+        fw, fh = W * total // 4, H // 4
+        field = None
+        for cells, weight in ((5, 1.0), (11, 0.45), (23, 0.18)):
+            cw_, ch_ = int(cells * 0.8 * total) + 1, cells
+            small = Image.new("L", (cw_, ch_))
+            small.putdata([rnd.randint(0, 255) for _ in range(cw_ * ch_)])
+            layer = small.resize((fw, fh), Image.BICUBIC)
+            field = layer if field is None else Image.blend(field, layer, weight / (1 + weight))
+        _FIELDS[(total, seed)] = ImageOps.autocontrast(field.filter(ImageFilter.GaussianBlur(3)))
+    return _FIELDS[(total, seed)]
+
+
+def panorama_paper(s, n, total, seed=7):
+    """Paper with contour lines that continue from slide n-1 into n and on into n+1."""
+    field = _field(total, seed)
+    fw, pad = W // 4, 12                                   # pad so blurring never creates a seam
+    x0 = (n - 1) * fw
+    crop = field.crop((x0 - pad, 0, x0 + fw + pad, field.height))  # PIL pads outside with black; edges only
+    if n == 1 or n == total:                               # outer edges: mirror-free, just clamp
+        crop = field.crop((max(0, x0 - pad), 0, min(field.width, x0 + fw + pad), field.height))
+    scale = k(W) / fw
+    big = crop.resize((round(crop.width * scale), k(H)), Image.BICUBIC).filter(ImageFilter.GaussianBlur(14))
+    left = round((x0 - max(0, x0 - pad)) * scale)
+    step = 11
+    # detect contour edges on the padded strip, then crop: no artificial edge at the slide border
+    bands = big.point(lambda v: (v // step) * step)
+    edges = bands.filter(ImageFilter.FIND_EDGES).point(lambda v: 255 if v else 0).filter(ImageFilter.MaxFilter(3))
+    edges = edges.filter(ImageFilter.GaussianBlur(2.2)).point(lambda v: min(255, v * 3))
+    major = bands.point(lambda v: 255 if (v // step) % 5 == 0 else 0)
+    edges_major = ImageChops.multiply(edges, major.filter(ImageFilter.MaxFilter(5)))
+    box = (left, 0, left + k(W), k(H))
+    part, edges, edges_major = big.crop(box), edges.crop(box), edges_major.crop(box)
+    bg = Image.new("RGB", part.size, PAPER)
+    bg = Image.composite(Image.new("RGB", part.size, (234, 237, 243)), bg, part.point(lambda v: int(v * 0.35)))
+    bg.paste(Image.new("RGB", part.size, (212, 218, 230)), (0, 0), edges.point(lambda v: v * 120 // 255))
+    bg.paste(Image.new("RGB", part.size, (193, 202, 220)), (0, 0), edges_major.point(lambda v: v * 150 // 255))
+    s.im.paste(bg)
+    s.d = ImageDraw.Draw(s.im)
+
+
+def wave_y(X, base=1060, amp=22, length=1.55, phase=0.6):
+    """Height of the continuous navy horizon at panorama x (1080 px per slide)."""
+    return base + amp * math.sin(2 * math.pi * X / (length * W) + phase) + amp * 0.35 * math.sin(2 * math.pi * X / (0.43 * W))
+
+
+def navy_wave(s, n, base=1060, crest=ORANGE):
+    """Navy block whose top edge is one wave running through every slide, with an orange crest line."""
+    off = (n - 1) * W
+    pts = [(x, wave_y(off + x, base)) for x in range(-6, W + 7, 4)]
+    s.d.polygon([(k(x), k(y)) for x, y in pts] + [(k(W + 6), k(H + 6)), (k(-6), k(H + 6))], fill=NAVY)
+    s.d.line([(k(x), k(y - 1)) for x, y in pts], fill=crest, width=k(5), joint="curve")
+
+
+def seam_nodes(s, n, total, base=1060, r=30):
+    """Arrow badges centred exactly on the seams: half shows on each slide and joins up when you swipe."""
+    for sx in ([0] if n > 1 else []) + ([W] if n < total else []):
+        cy = wave_y((n - 1) * W + sx, base)
+        s.d.ellipse([k(sx - r - 6), k(cy - r - 6), k(sx + r + 6), k(cy + r + 6)], fill=PAPER)
+        s.d.ellipse([k(sx - r), k(cy - r), k(sx + r), k(cy + r)], fill=ORANGE)
+        s.d.line([k(sx - 11), k(cy), k(sx + 10), k(cy)], fill=(255, 255, 255), width=k(3.4))
+        s.d.line([k(sx + 1), k(cy - 9), k(sx + 10), k(cy), k(sx + 1), k(cy + 9)], fill=(255, 255, 255), width=k(3.4), joint="curve")
