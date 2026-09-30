@@ -29,7 +29,7 @@ LESSONS = [
 s = Slide()
 paper(s)
 smallcaps(s, M, 96, "A field guide · 9 lessons", 17, ORANGE)
-smallcaps(s, W - M, 96, "depriver.tech", 17, NAVY, anchor="right")
+s.text(W - M, 96, "depriver.tech", f(SEMI, 20), NAVY, anchor="rs")   # domain stays lowercase
 hairline(s, M, W - M, 118, RULE)
 
 outline_text(s, W + 30, 520, "9", f(BOLD, 560), stroke=3, color=RULE, anchor="rs")
@@ -70,7 +70,7 @@ s.text(M, blk + 212, "Link in bio", f(SEMI, 22), ORANGE)
 aw = M + s.width("Link in bio", f(SEMI, 22)) + 26
 s.d.line([k(aw - 16), k(blk + 204), k(aw + 8), k(blk + 204)], fill=ORANGE, width=k(3))
 s.d.line([k(aw - 2), k(blk + 196), k(aw + 8), k(blk + 204), k(aw - 2), k(blk + 212)], fill=ORANGE, width=k(3), joint="curve")
-smallcaps(s, W - M, blk + 212, "@_depriver", 17, WHITE_T, anchor="right")
+s.text(W - M, blk + 212, "@_depriver", f(SEMI, 20), WHITE_T, anchor="rs")
 
 finish(s)
 s.im.save(f"{OUT}tech-advice-poster.jpg", quality=95)

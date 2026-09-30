@@ -52,11 +52,11 @@ POST_URL = "depriver.tech/blog/tech-advice-i-learnt-the-hard-way"
 BASE = 1060                                          # the navy horizon (one wave across all slides)
 
 
-def page(n, label_left, label_right="DEPRIVER.TECH"):
+def page(n, label_left, label_right="depriver.tech"):
     s = Slide()
     panorama_paper(s, n, TOTAL)                      # contour lines continue from slide to slide
     smallcaps(s, M, 96, label_left, 17, ORANGE)
-    smallcaps(s, W - M, 96, label_right, 17, NAVY, anchor="right")
+    s.text(W - M, 96, label_right, f(SEMI, 20), NAVY, anchor="rs")   # domain stays lowercase
     hairline(s, M, W - M, 118, RULE)
     return s
 
@@ -143,7 +143,7 @@ s.text(M, BASE + 132, POST_URL, f(BOLD, fit(s, POST_URL, BOLD, 40, W - 2 * M)), 
 hairline(s, M, W - M, BASE + 162, (38, 60, 100))
 s.text(M, BASE + 224, "Questions? Ask my AI assistant", f(REG, 24), SOFT)
 s.text(M + s.width("Questions? Ask my AI assistant", f(REG, 24)) + 18, BASE + 228, "viora", f(SIG, 52), ORANGE)
-smallcaps(s, W - M, BASE + 224, "@_depriver", 18, WHITE_T, anchor="right")
+s.text(W - M, BASE + 224, "@_depriver", f(SEMI, 21), WHITE_T, anchor="rs")
 finish(s)
 s.save(TOTAL)
 print("ok")
