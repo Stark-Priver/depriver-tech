@@ -1,12 +1,23 @@
+# depriver.tech engagement API: views, likes, comments, contact form and "Ask AI".
+# Runs entirely on Cloudflare's free tier (Workers, D1, Workers AI, Turnstile).
 name = "depriver-engage"
 main = "src/index.js"
 compatibility_date = "2026-09-01"
+workers_dev = true
 
 [vars]
+SITE_URL = "https://depriver.tech"
 ALLOWED_ORIGINS = "https://depriver.tech,https://www.depriver.tech,http://localhost:4321"
+AI_MODEL = "@cf/meta/llama-3.1-8b-instruct-fast"
 
-# Create with: npx wrangler d1 create depriver-engage   (then paste the id below)
+[ai]
+binding = "AI"
+
+# Created with: npx wrangler d1 create depriver-engage
 [[d1_databases]]
 binding = "DB"
 database_name = "depriver-engage"
 database_id = "REPLACE_WITH_D1_ID"
+
+[observability]
+enabled = true

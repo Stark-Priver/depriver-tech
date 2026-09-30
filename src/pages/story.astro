@@ -2,6 +2,7 @@
 import { livePosts } from "../lib/posts";
 import Base from "../layouts/Base.astro";
 import Title from "../components/Title.astro";
+import ContactForm from "../components/ContactForm.astro";
 import PostCard from "../components/PostCard.astro";
 import hero from "../data/hero-lines.json";
 import { chapters, lessons, services, outside, dreams, gratitude, contact } from "../data/story";
@@ -11,7 +12,7 @@ const age = new Date().getFullYear() - 2006 - (new Date() < new Date(new Date().
 const pad = (n: number) => String(n).padStart(2, "0");
 const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary", "MUST", "Mbeya", "Software Engineer", "Digital Innovator"];
 ---
-<Base title="My story · Privatus Cosmas" image="/og/story.jpg" imageAlt="From Kitwe Village to Writing Code: the story of Privatus Cosmas" description="From Kitwe village in Kagera to writing software in Mbeya: the story, the setbacks and the dreams of Privatus Cosmas.">
+<Base jsonLd={{ "@context": "https://schema.org", "@type": "ProfilePage", url: "https://depriver.tech/story/", name: "My story · Privatus Cosmas", mainEntity: { "@id": "https://depriver.tech/#person" } }} title="My story · Privatus Cosmas" image="/og/story.jpg" imageAlt="From Kitwe Village to Writing Code: the story of Privatus Cosmas" description="From Kitwe village in Kagera to writing software in Mbeya: the story, the setbacks and the dreams of Privatus Cosmas.">
   <!-- ── HERO ─────────────────────────────────────────── -->
   <section class="hero" data-hero>
     <svg class="contours" viewBox={`0 0 ${hero.w} ${hero.h}`} preserveAspectRatio="xMidYMid slice" aria-hidden="true">
@@ -295,6 +296,7 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
         <a class="btn" href={contact.whatsappHref} target="_blank" rel="noopener">Chat on WhatsApp
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
+        <ContactForm />
       </div>
       <dl>
         <div><dt>Phone</dt><dd><a href={contact.phoneHref}>{contact.phone}</a></dd></div>

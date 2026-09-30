@@ -1,0 +1,68 @@
+---
+// Contact form stored in Cloudflare D1 (optional Telegram alert). Protected by Turnstile, honeypot and rate limits.
+import { site } from "../data/site";
+---
+{site.engageApi && (
+  <form class="cf" data-contact data-api={site.engageApi} data-sitekey={site.turnstileSiteKey} novalidate>
+    <p class="cf-title">Send a message</p>
+    <div class="cf-row">
+      <label><span>Name</span><input name="name" type="text" maxlength="80" autocomplete="name" required /></label>
+      <label><span>Phone, WhatsApp or email</span><input name="contact" type="text" maxlength="120" autocomplete="email" required /></label>
+    </div>
+    <label><span>How can I help?</span><textarea name="body" rows="4" maxlength="4000" required placeholder="Tell me about your project or idea…"></textarea></label>
+    <label class="cf-hp" aria-hidden="true">Website <input name="website" type="text" tabindex="-1" autocomplete="off" /></label>
+    <div data-cf-ts></div>
+    <div class="cf-actions">
+      <span class="cf-status" data-cf-status role="status" aria-live="polite"></span>
+      <button type="submit">Send message</button>
+    </div>
+  </form>
+)}
+
+<script>
+  import { turnstile } from "../lib/turnstile";
+  const form = document.querySelector<HTMLFormElement>("[data-contact]");
+  if (form) {
+    const { api, sitekey } = form.dataset as Record<string, string>;
+    const status = form.querySelector<HTMLElement>("[data-cf-status]")!;
+    const btn = form.querySelector<HTMLButtonElement>("button")!;
+    let ts: { getToken: () => string; reset: () => void } | null = null;
+    form.addEventListener("focusin", async () => {
+      if (!ts) ts = await turnstile(form.querySelector<HTMLElement>("[data-cf-ts]")!, sitekey).catch(() => ({ getToken: () => "", reset: () => {} }));
+    });
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const d = Object.fromEntries(new FormData(form)) as Record<string, string>;
+      btn.disabled = true;
+      status.className = "cf-status"; status.textContent = "Sending…";
+      try {
+        const r = await fetch(`${api}/contact`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...d, token: ts?.getToken() || "" }) });
+        const out = await r.json();
+        if (!r.ok) throw new Error(out.error || "Could not send your message.");
+        form.reset();
+        status.className = "cf-status ok"; status.textContent = "Thank you! Your message was sent. I'll get back to you soon.";
+      } catch (err) {
+        status.className = "cf-status err"; status.textContent = (err as Error).message;
+      } finally { btn.disabled = false; ts?.reset(); }
+    });
+  }
+</script>
+
+<style>
+  .cf { display: grid; gap: 14px; margin-top: 28px; padding: 22px; border-radius: 24px; background: color-mix(in srgb, var(--on-deep) 6%, transparent); }
+  .cf-title { margin: 0; font-weight: 700; color: var(--on-deep); font-size: 1.1rem; }
+  .cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .cf label { display: grid; gap: 6px; }
+  .cf label span { font-size: 0.8rem; font-weight: 600; color: var(--deep-text); }
+  .cf input, .cf textarea { font: inherit; color: var(--on-deep); border: 0; border-radius: 12px; padding: 11px 14px; outline: none; resize: vertical;
+    background: color-mix(in srgb, var(--on-deep) 9%, transparent); }
+  .cf input:focus, .cf textarea:focus { box-shadow: 0 0 0 2px var(--accent); }
+  .cf-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .cf-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+  .cf-status { color: var(--deep-text); font-size: 0.92rem; }
+  .cf-status.ok { color: var(--on-deep); font-weight: 500; }
+  .cf-status.err { color: var(--accent); font-weight: 500; }
+  .cf button { margin-left: auto; font: inherit; font-weight: 600; padding: 12px 22px; border: 0; border-radius: 14px; cursor: pointer; background: var(--accent); color: var(--on-accent); }
+  .cf button:disabled { opacity: 0.6; }
+  @media (max-width: 640px) { .cf-row { grid-template-columns: 1fr; } }
+</style>

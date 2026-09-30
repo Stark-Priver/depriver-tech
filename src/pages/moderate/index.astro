@@ -1,0 +1,140 @@
+---
+// Owner-only moderation for comments and contact messages. The admin key stays in this browser only.
+import Base from "../../layouts/Base.astro";
+import { site } from "../../data/site";
+---
+<Base title="Moderation · Privatus Cosmas" description="Owner tools." noindex>
+  <section class="wrap mod" data-mod data-api={site.engageApi}>
+    <span class="label">Owner only</span>
+    <h1 class="display">Moderation</h1>
+
+    {!site.engageApi && <p class="note">Connect the Cloudflare Worker first (set <code>engageApi</code> in <code>src/data/site.ts</code>).</p>}
+
+    <form class="key" data-key-form hidden>
+      <label>Admin key <input type="password" name="key" autocomplete="current-password" required /></label>
+      <button type="submit">Unlock</button>
+    </form>
+
+    <div data-panel hidden>
+      <div class="bar">
+        <div class="tabs" role="tablist">
+          <button role="tab" data-tab="pending" aria-selected="true">Pending</button>
+          <button role="tab" data-tab="published">Published</button>
+          <button role="tab" data-tab="hidden">Hidden</button>
+          <button role="tab" data-tab="messages">Messages</button>
+        </div>
+        <button class="lock" type="button" data-lock>Lock</button>
+      </div>
+      <p class="note" data-note></p>
+      <ul class="items" data-items></ul>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-mod]")!;
+  const api = root.dataset.api;
+  const keyForm = root.querySelector<HTMLFormElement>("[data-key-form]")!;
+  const panel = root.querySelector<HTMLElement>("[data-panel]")!;
+  const items = root.querySelector<HTMLUListElement>("[data-items]")!;
+  const note = root.querySelector<HTMLElement>("[data-note]")!;
+  let key = "";
+  let tab = "pending";
+  try { key = localStorage.getItem("mod-key") || ""; } catch {}
+
+  const esc = (s: string) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+  const call = async (path: string, init: RequestInit = {}) => {
+    const r = await fetch(`${api}${path}`, { ...init, headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json", ...(init.headers || {}) } });
+    if (r.status === 401) { lock(); throw new Error("Wrong key"); }
+    return r.json();
+  };
+
+  function lock() {
+    key = "";
+    try { localStorage.removeItem("mod-key"); } catch {}
+    panel.hidden = true; keyForm.hidden = false;
+  }
+
+  async function load() {
+    items.innerHTML = ""; note.textContent = "Loading…";
+    if (tab === "messages") {
+      const { messages } = await call("/admin/messages");
+      note.textContent = `${messages.length} message(s)`;
+      items.innerHTML = messages.map((m: any) => `
+        <li class="${m.is_read ? "" : "unread"}">
+          <p class="meta"><b>${esc(m.name)}</b> · ${esc(m.contact)} · ${esc(m.created_at)} UTC</p>
+          <p class="body">${esc(m.body).replace(/\n/g, "<br>")}</p>
+          <div class="act">${m.is_read ? "" : `<button data-read="${m.id}">Mark read</button>`}</div>
+        </li>`).join("");
+      return;
+    }
+    const { comments } = await call(`/admin/comments?status=${tab}`);
+    note.textContent = `${comments.length} comment(s)`;
+    items.innerHTML = comments.map((c: any) => `
+      <li>
+        <p class="meta"><b>${esc(c.name)}</b>${c.is_owner ? " (you)" : ""} on <a href="/blog/${esc(c.slug)}/#comment-${c.id}" target="_blank">/blog/${esc(c.slug)}/</a> · ${esc(c.created_at)} UTC</p>
+        <p class="body">${esc(c.body).replace(/\n/g, "<br>")}</p>
+        <div class="act">
+          ${c.status !== "published" ? `<button data-publish="${c.id}">Publish</button>` : ""}
+          ${c.status !== "hidden" ? `<button data-hide="${c.id}">Hide</button>` : ""}
+          <button data-reply="${c.id}" data-slug="${esc(c.slug)}" data-parent="${c.parent_id || c.id}">Reply</button>
+          <button class="danger" data-del="${c.id}">Delete</button>
+        </div>
+      </li>`).join("");
+  }
+
+  keyForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    key = String(new FormData(keyForm).get("key") || "");
+    try { await call("/admin/comments?status=pending"); localStorage.setItem("mod-key", key); keyForm.hidden = true; panel.hidden = false; load(); }
+    catch { note.textContent = ""; alert("That key didn't work."); }
+  });
+  root.querySelector("[data-lock]")!.addEventListener("click", lock);
+  root.querySelectorAll<HTMLButtonElement>("[data-tab]").forEach((b) => b.addEventListener("click", () => {
+    tab = b.dataset.tab!;
+    root.querySelectorAll("[data-tab]").forEach((x) => x.setAttribute("aria-selected", String(x === b)));
+    load();
+  }));
+  items.addEventListener("click", async (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLButtonElement>("button");
+    if (!b) return;
+    const d = b.dataset;
+    if (d.publish) await call(`/admin/comments/${d.publish}/publish`, { method: "POST" });
+    else if (d.hide) await call(`/admin/comments/${d.hide}/hide`, { method: "POST" });
+    else if (d.del) { if (!confirm("Delete this comment and its replies?")) return; await call(`/admin/comments/${d.del}`, { method: "DELETE" }); }
+    else if (d.read) await call(`/admin/messages/${d.read}/read`, { method: "POST" });
+    else if (d.reply) {
+      const text = prompt("Your reply (posted as Privatus Cosmas, Author):");
+      if (!text) return;
+      await call(`/admin/comments/${d.slug}/reply`, { method: "POST", body: JSON.stringify({ body: text, parent: Number(d.parent) }) });
+    }
+    load();
+  });
+
+  if (api) {
+    if (key) call("/admin/comments?status=pending").then(() => { panel.hidden = false; load(); }).catch(() => (keyForm.hidden = false));
+    else keyForm.hidden = false;
+  }
+</script>
+
+<style>
+  .mod { padding: 150px 0 120px; max-width: 900px; }
+  .mod h1 { font-size: clamp(2.4rem, 6vw, 4rem); margin: 18px 0 30px; }
+  .note { color: var(--muted); }
+  .key { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
+  .key label { display: grid; gap: 6px; font-weight: 600; color: var(--heading); }
+  input { font: inherit; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--text); min-width: 280px; }
+  button { font: inherit; font-weight: 600; padding: 9px 16px; border-radius: 12px; border: 0; cursor: pointer; background: var(--surface-2); color: var(--heading); }
+  .key button, .tabs [aria-selected="true"] { background: var(--accent); color: var(--on-accent); }
+  .bar { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .items { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+  .items :global(li) { padding: 18px 20px; border-radius: 18px; background: var(--surface); box-shadow: 0 1px 0 var(--line); }
+  .items :global(li.unread) { box-shadow: inset 4px 0 0 var(--accent), 0 1px 0 var(--line); }
+  .items :global(.meta) { margin: 0 0 6px; color: var(--muted); font-size: 0.9rem; }
+  .items :global(.meta b) { color: var(--heading); }
+  .items :global(.meta a) { color: var(--accent); }
+  .items :global(.body) { margin: 0 0 12px; color: var(--text); }
+  .items :global(.act) { display: flex; gap: 8px; flex-wrap: wrap; }
+  .items :global(.danger) { color: #c0392b; }
+</style>

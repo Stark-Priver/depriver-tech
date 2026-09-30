@@ -3,6 +3,9 @@ import "../styles/global.css";
 import "../styles/themes.css";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
+import AskAI from "../components/AskAI.astro";
+import { site } from "../data/site";
+import { personJsonLd, websiteJsonLd } from "../lib/schema";
 
 interface Props {
   title?: string;
@@ -13,6 +16,8 @@ interface Props {
   published?: Date;
   modified?: Date;
   tags?: string[];
+  noindex?: boolean;
+  jsonLd?: object;
 }
 const {
   title = "Privatus Cosmas · Software Engineer & Digital Innovator",
@@ -23,6 +28,8 @@ const {
   published,
   modified,
   tags = [],
+  noindex = false,
+  jsonLd,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const imageUrl = new URL(image, Astro.site);
@@ -35,8 +42,13 @@ const imageUrl = new URL(image, Astro.site);
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="/favicon-16.png" type="image/png" sizes="16x16" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <link rel="alternate" type="application/rss+xml" title="Privatus Cosmas · Blog" href="/rss.xml" />
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
     <link rel="preload" href="/fonts/Poppins-Bold.ttf" as="font" type="font/ttf" crossorigin />
     <meta name="theme-color" content="#0b1e3f" />
     <meta name="author" content="Privatus Cosmas" />
@@ -61,6 +73,12 @@ const imageUrl = new URL(image, Astro.site);
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={imageUrl} />
     <meta name="twitter:image:alt" content={imageAlt} />
+    <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1"} />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+    <link rel="alternate" type="text/plain" title="About Privatus Cosmas for AI assistants" href="/llms.txt" />
+    <link rel="me" href="https://github.com/Stark-Priver" />
+    <link rel="me" href="https://instagram.com/_depriver" />
+    <script type="application/ld+json" set:html={JSON.stringify([personJsonLd, websiteJsonLd])} />
     <script is:inline>
       document.documentElement.classList.add("js");
       try { const t = localStorage.getItem("depriver-theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch {}
@@ -71,6 +89,10 @@ const imageUrl = new URL(image, Astro.site);
     <Nav />
     <main id="top"><slot /></main>
     <Footer />
+    <AskAI />
+    {site.cfAnalyticsToken && (
+      <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: site.cfAnalyticsToken })}></script>
+    )}
     <script>
       import "../scripts/motion.ts";
     </script>

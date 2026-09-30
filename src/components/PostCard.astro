@@ -31,6 +31,7 @@ const slides = slidesFor(post.data.carousel).length;
         <span class="stats" aria-label="Views and likes">
           <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg><b data-card-views>–</b></span>
           <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg><b data-card-likes>–</b></span>
+          <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1.1-4.3A8 8 0 1 1 21 12Z"/></svg><b data-card-cmts>–</b></span>
         </span>
       )}
     </div>
@@ -84,12 +85,13 @@ const slides = slidesFor(post.data.carousel).length;
     const slugs = [...new Set(cards.map((c) => c.dataset.cardSlug!))];
     fetch(`${site.engageApi}/stats?slugs=${slugs.map(encodeURIComponent).join(",")}`)
       .then((r) => (r.ok ? r.json() : {}))
-      .then((all: Record<string, { views: number; likes: number }>) => {
+      .then((all: Record<string, { views: number; likes: number; comments: number }>) => {
         cards.forEach((c) => {
           const d = all[c.dataset.cardSlug!];
           if (!d) return;
           c.querySelector("[data-card-views]")!.textContent = String(d.views);
           c.querySelector("[data-card-likes]")!.textContent = String(d.likes);
+          c.querySelector("[data-card-cmts]")!.textContent = String(d.comments ?? 0);
         });
       })
       .catch(() => {});
