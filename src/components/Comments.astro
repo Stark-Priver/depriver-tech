@@ -184,10 +184,11 @@ const { slug } = Astro.props;
     box-shadow: -8px -8px 20px var(--neu-hi), 10px 10px 24px var(--neu-lo); margin-bottom: 34px; }
   .cm-field { display: grid; gap: 6px; }
   .cm-field span { font-size: 0.82rem; font-weight: 600; color: var(--heading); }
-  .cm-field input, .cm-field textarea { font: inherit; color: var(--text); border: 0; border-radius: 14px; padding: 12px 16px; resize: vertical; outline: none;
+  .cm-field input, .cm-field textarea { width: 100%; min-width: 0; font: inherit; color: var(--text); border: 0; border-radius: 14px; padding: 12px 16px; resize: vertical; outline: none;
     background: var(--bg); box-shadow: inset 4px 4px 9px var(--neu-lo), inset -4px -4px 9px var(--neu-hi); transition: box-shadow 0.25s; }
   .cm-field input:focus, .cm-field textarea:focus { box-shadow: inset 4px 4px 9px var(--neu-lo), inset -4px -4px 9px var(--neu-hi), 0 0 0 2px var(--accent); }
-  .cm-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .cm-hp { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .cm-form { position: relative; min-width: 0; }
   .cm-replying { margin: 0; font-size: 0.9rem; color: var(--muted); }
   .cm-replying button { font: inherit; font-weight: 600; color: var(--accent); background: none; border: 0; cursor: pointer; padding: 0 0 0 6px; }
   .cm-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }

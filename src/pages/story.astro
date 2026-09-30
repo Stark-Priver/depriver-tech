@@ -477,7 +477,7 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
     box-shadow: 0 0 0 14px color-mix(in srgb, var(--accent) 12%, transparent); transition: transform 0.9s var(--ease); }
   .person:hover .ring { transform: scale(1.12) rotate(20deg); }
   .person.in-memory .ring { border-style: dashed; }
-  .badge { position: absolute; left: 18px; top: 18px; z-index: 2; padding: 5px 12px; border-radius: 999px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em;
+  .badge { position: absolute; left: 18px; top: 18px; z-index: 2; padding: 6px 13px; border-radius: 999px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em;
     background: color-mix(in srgb, var(--bg) 88%, transparent); color: var(--heading); backdrop-filter: blur(6px); }
   .reveal { position: absolute; inset: auto 8px 8px; height: 46%; border-radius: 0 0 16px 16px; display: flex; align-items: flex-end; padding: 16px 18px;
     background: linear-gradient(to top, color-mix(in srgb, var(--accent) 92%, transparent), transparent);
@@ -512,12 +512,13 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
 
   /* CONTACT */
   .contact { padding: 40px 0 120px; }
-  .contact-card { display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px; align-items: center; background: var(--deep); color: var(--deep-text); border-radius: 40px; padding: clamp(32px, 6vw, 72px); }
+  .contact-card { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 40px; align-items: center; background: var(--deep); color: var(--deep-text); border-radius: 40px; padding: clamp(32px, 6vw, 72px); }
   .contact-card h2 { font-size: clamp(2.2rem, 5vw, 3.8rem); margin: 22px 0 14px; color: var(--on-deep); }
   .contact-card p { margin: 0 0 28px; font-size: 1.1rem; }
   .contact-card dl { margin: 0; display: grid; gap: 20px; }
   .contact-card dt { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-2); }
-  .contact-card dd { margin: 2px 0 0; color: var(--on-deep); font-size: 1.35rem; font-weight: 600; }
+  .contact-card dd { margin: 2px 0 0; color: var(--on-deep); font-size: clamp(1.05rem, 2.4vw, 1.35rem); font-weight: 600; overflow-wrap: anywhere; }
+  .contact-card dd a { display: inline-block; padding: 6px 0; }
   .contact-card dd a { text-decoration: none; }
   .contact-card dd a:hover { color: var(--accent); }
 
@@ -526,7 +527,7 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
     .story { grid-template-columns: 1fr; gap: 0; }
     .rail { display: none; }
     .ch-year-inline { display: inline; }
-    .ch-body.split, .contact-card { grid-template-columns: 1fr; }
+    .ch-body.split, .contact-card { grid-template-columns: minmax(0, 1fr); }
     .rank { position: static; }
     .svc-grid, .lesson-grid, .post-grid, .people, .groups { grid-template-columns: 1fr 1fr; }
     .asante { grid-template-columns: 1fr; }

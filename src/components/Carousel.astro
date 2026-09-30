@@ -125,10 +125,16 @@ const { slides, captions = [], title } = Astro.props;
   .cv-stage:fullscreen .cv-track { width: min(100vw, calc(100vh * 0.8)); }
   .cv-bar { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 20px; }
   .cv-dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-  .cv-dots button { width: 9px; height: 9px; padding: 0; border: 0; border-radius: 999px; cursor: pointer; background: var(--line); transition: width 0.4s var(--ease), background 0.3s; }
-  .cv-dots button[aria-selected="true"] { width: 28px; background: var(--accent); }
+  .cv-dots { gap: 0; }
+  /* each dot has a 30px tap area; the visible pill is drawn with ::before */
+  .cv-dots button { position: relative; width: 26px; height: 32px; padding: 0; border: 0; cursor: pointer; background: none; transition: width 0.4s var(--ease); }
+  .cv-dots button::before { content: ""; position: absolute; left: 50%; top: 50%; width: 9px; height: 9px; translate: -50% -50%; border-radius: 999px; background: var(--line); transition: width 0.4s var(--ease), background 0.3s; }
+  .cv-dots button[aria-selected="true"] { width: 40px; }
+  .cv-dots button[aria-selected="true"]::before { width: 28px; background: var(--accent); }
   .cv-progress { width: min(240px, 60%); height: 3px; border-radius: 3px; background: var(--line); overflow: hidden; }
   .cv-progress span { display: block; height: 100%; background: var(--heading); transform-origin: left; transition: transform 0.5s var(--ease); }
   .cv-caption { margin: 16px auto 0; max-width: 34em; text-align: center; color: var(--muted); font-size: 1rem; min-height: 3.2em; }
-  @media (hover: none) { .cv-nav { width: 40px; height: 40px; } }
+  @media (hover: none) { .cv-nav { width: 44px; height: 44px; } }
+  /* small phones: swipe, arrows, the "3 / 11" counter and the progress bar handle navigation */
+  @media (max-width: 420px) { .cv-dots { display: none; } .cv-bar { margin-top: 14px; } }
 </style>
