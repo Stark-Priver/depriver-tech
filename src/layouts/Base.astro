@@ -1,0 +1,51 @@
+---
+import "../styles/global.css";
+import "../styles/themes.css";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+
+interface Props { title?: string; description?: string; image?: string }
+const {
+  title = "Privatus Cosmas · Software Engineer & Digital Innovator",
+  description = "From Kitwe village in Kagera to writing software in Mbeya. The story, the setbacks and the work of Privatus Cosmas.",
+  image = "/img/og.jpg",
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title="Privatus Cosmas · Blog" href="/rss.xml" />
+    <link rel="preload" href="/fonts/Poppins-Bold.ttf" as="font" type="font/ttf" crossorigin />
+    <meta name="theme-color" content="#0b1e3f" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image, Astro.site)} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script is:inline>
+      document.documentElement.classList.add("js");
+      try { const t = localStorage.getItem("depriver-theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch {}
+    </script>
+  </head>
+  <body>
+    <div class="progress" aria-hidden="true"><span></span></div>
+    <Nav />
+    <main id="top"><slot /></main>
+    <Footer />
+    <script>
+      import "../scripts/motion.ts";
+    </script>
+  </body>
+</html>
+
+<style>
+  .progress { position: fixed; inset: 0 0 auto; height: 4px; z-index: 60; pointer-events: none; }
+  .progress span { display: block; height: 100%; background: var(--accent); transform-origin: 0 50%; transform: scaleX(0); }
+</style>

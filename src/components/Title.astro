@@ -1,0 +1,13 @@
+---
+// Two-line display title (navy + orange) whose lines slide up out of a mask.
+interface Props { title: string; accent?: string; tag?: "h1" | "h2" | "h3"; size?: string; light?: boolean }
+const { title, accent, tag: Tag = "h2", size = "clamp(2.4rem, 6vw, 4.6rem)", light = false } = Astro.props;
+---
+<Tag class:list={["display", { light }]} style={`font-size:${size}`}>
+  <span class="line-mask"><span>{title}</span></span>
+  {accent && <span class="line-mask accent"><span>{accent}</span></span>}
+</Tag>
+
+<style>
+  .light { color: var(--on-deep); }
+</style>

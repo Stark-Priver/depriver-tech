@@ -1,0 +1,302 @@
+[
+  {
+    "id": "light",
+    "name": "Depriver Light",
+    "mode": "light",
+    "group": "Depriver",
+    "swatch": [
+      "#fafaf9",
+      "#0b1e3f",
+      "#e8603a",
+      "#a9c4f5"
+    ]
+  },
+  {
+    "id": "dark",
+    "name": "Depriver Dark",
+    "mode": "dark",
+    "group": "Depriver",
+    "swatch": [
+      "#071329",
+      "#0f2a5c",
+      "#f07a57",
+      "#a9c4f5"
+    ]
+  },
+  {
+    "id": "omarchy-priver",
+    "name": "Priver (my Omarchy)",
+    "mode": "dark",
+    "group": "Omarchy · Dark",
+    "swatch": [
+      "#161821",
+      "#0a0a10",
+      "#9ece6a",
+      "#82aaff"
+    ]
+  },
+  {
+    "id": "omarchy-catppuccin",
+    "name": "Catppuccin",
+    "mode": "dark",
+    "group": "Omarchy · Dark",
+    "swatch": [
+      "#1e1e2e",
+      "#101019",
+      "#89b4fa",
+      "#94e2d5"
+    ]
+  },
+  {
+    "id": "omarchy-catppuccin-latte",
+    "name": "Catppuccin Latte",
+    "mode": "light",
+    "group": "Omarchy · Light",
+    "swatch": [
+      "#eff1f5",
+      "#4c4f69",
+      "#1e66f5",
+      "#179299"
+    ]
+  },
+  {
+    "id": "omarchy-ethereal",
+    "name": "Ethereal",
+    "mode": "dark",
+    "group": "Omarchy · Dark",
+    "swatch": [
+      "#060B1E",
+      "#030610",
+      "#7d82d9",
+      "#a3bfd1"
+    ]
+  },
+  {
+    "id": "omarchy-everforest",
+    "name": "Everforest",
+    "mode": "dark",
+    "group": "Omarchy · Dark",
+    "swatch": [
+      "#2d353b",
+      "#181d20",
+      "#7fbbb3",
+      "#83c092"
+    ]
+  },
+  {
+    "id": "omarchy-flexoki-light",
+    "name": "Flexoki Light",
+    "mode": "light",
+    "group": "Omarchy · Light",
+    "swatch": [
+      "#FFFCF0",
+      "#100F0F",
+      "#205EA6",
+      "#3AA99F"
+    ]
+  },
+  {
+    "id": "omarchy-gruvbox",
+    "name": "Gruvbox",
+    "mode": "dark",
+    "group": "Omarchy · Dark",
+    "swatch": [
+      "#282828",
+      "#161616",
+      "#7daea3",
+      "#89b482"
+    ]
+  },
+  {
+    "id": "omarchy-hackerman",
+    "name": "Hackerman",
+    "mode": "dark",
+    "group": "Omarchy · Dark",
+    "swatch": [
+      "#0B0C16",
+      "#06060c",
+      "#82FB9C",
+      "#829dd4"
+    ]
+  },
+  {
+    "id": "omarchy-kanagawa",
+    "name": "Kanagawa",
+    "mode": "dark",
+    "group": "Omarchy · Dark",
+    "swatch": [
+      "#1f1f28",
+      "#111116",
+      "#dcd7ba",
+      "#7e9cd8"
+    ]
+  },
+  {
+    "id": "omarchy-last-horizon",
+    "name": "Last Horizon",
+    "mode": "dark",
+    "group": "Omarchy · Dark",
+    "swatch": [
+      "#0c0b0c",
+      "#060606",
+      "#b59790",
+      "#a5a0b6"
+    ]
+  },
+  {
+    "id": "omarchy-lumon",
+    "name": "Lumon",
+    "mode": "dark",
+    "group": "Omarchy · Dark",
+    "swatch": [
+      "#16242d",
+      "#0b1216",
+      "#8bc9eb",
+      "#6fb8e3"
+    ]
+  },
+  {
+    "id": "omarchy-lupine",
+    "name": "Lupine",
+    "mode": "light",
+    "group": "Omarchy · Light",
+    "swatch": [
+      "#fafafa",
+      "#212121",
+      "#3264eb",
+      "#0c67de"
+    ]
+  },
+  {
+    "id": "omarchy-matte-black",
+    "name": "Matte Black",
+    "mode": "dark",
+    "group": "Omarchy · Dark",
+    "swatch": [
+      "#121212",
+      "#090909",
+      "#e68e0d",
+      "#bebebe"
+    ]
+  },
+  {
+    "id": "omarchy-miasma",
+    "name": "Miasma",
+    "mode": "dark",
+    "group": "Omarchy · Dark",
+    "swatch": [
+      "#222222",
+      "#121212",
+      "#78824b",
+      "#c9a554"
+    ]
+  },
+  {
+    "id": "omarchy-nord",
+    "name": "Nord",
+    "mode": "dark",
+    "group": "Omarchy · Dark",
+    "swatch": [
+      "#2e3440",
+      "#191c23",
+      "#81a1c1",
+      "#88c0d0"
+    ]
+  },
+  {
+    "id": "omarchy-osaka-jade",
+    "name": "Osaka Jade",
+    "mode": "dark",
+    "group": "Omarchy · Dark",
+    "swatch": [
+      "#111c18",
+      "#090f0d",
+      "#509475",
+      "#2DD5B7"
+    ]
+  },
+  {
+    "id": "omarchy-retro-82",
+    "name": "Retro 82",
+    "mode": "dark",
+    "group": "Omarchy · Dark",
+    "swatch": [
+      "#05182e",
+      "#020c17",
+      "#faa968",
+      "#3f8f8a"
+    ]
+  },
+  {
+    "id": "omarchy-ristretto",
+    "name": "Ristretto",
+    "mode": "dark",
+    "group": "Omarchy · Dark",
+    "swatch": [
+      "#2c2525",
+      "#181414",
+      "#f38d70",
+      "#85dacc"
+    ]
+  },
+  {
+    "id": "omarchy-rose-pine",
+    "name": "Rose Pine",
+    "mode": "light",
+    "group": "Omarchy · Light",
+    "swatch": [
+      "#faf4ed",
+      "#575279",
+      "#56949f",
+      "#d7827e"
+    ]
+  },
+  {
+    "id": "omarchy-solitude",
+    "name": "Solitude",
+    "mode": "dark",
+    "group": "Omarchy · Dark",
+    "swatch": [
+      "#101315",
+      "#080a0b",
+      "#798186",
+      "#707070"
+    ]
+  },
+  {
+    "id": "omarchy-tokyo-night",
+    "name": "Tokyo Night",
+    "mode": "dark",
+    "group": "Omarchy · Dark",
+    "swatch": [
+      "#1a1b26",
+      "#0e0e14",
+      "#7aa2f7",
+      "#449dab"
+    ]
+  },
+  {
+    "id": "omarchy-vantablack",
+    "name": "Vantablack",
+    "mode": "dark",
+    "group": "Omarchy · Dark",
+    "swatch": [
+      "#000000",
+      "#070707",
+      "#8d8d8d",
+      "#b0b0b0"
+    ]
+  },
+  {
+    "id": "omarchy-white",
+    "name": "White",
+    "mode": "light",
+    "group": "Omarchy · Light",
+    "swatch": [
+      "#ffffff",
+      "#000000",
+      "#6e6e6e",
+      "#1a1a1a"
+    ]
+  }
+]

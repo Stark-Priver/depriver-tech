@@ -1,0 +1,43 @@
+---
+import type { CollectionEntry } from "astro:content";
+interface Props { post: CollectionEntry<"blog">; featured?: boolean }
+const { post, featured = false } = Astro.props;
+const date = post.data.date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+---
+<a href={`/blog/${post.id}/`} class:list={["post", { featured }]} data-reveal>
+  <div class="cover">
+    {post.data.cover
+      ? <img src={post.data.cover} alt="" loading="lazy" />
+      : <span class="cover-fallback deep" aria-hidden="true"><span class="script">{post.data.title.split(" ")[0]}</span></span>}
+  </div>
+  <div class="meta">
+    <p class="date">{date}{post.data.tags.length > 0 && <span> · {post.data.tags[0]}</span>}</p>
+    <h3>{post.data.title}</h3>
+    <p class="desc">{post.data.description}</p>
+    <span class="more">Read post
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </span>
+  </div>
+</a>
+
+<style>
+  .post { display: flex; flex-direction: column; background: var(--surface); border-radius: var(--radius); overflow: hidden; text-decoration: none; color: inherit;
+    box-shadow: 0 1px 0 var(--line), 0 30px 60px -40px color-mix(in srgb, var(--shadow) 35%, transparent); transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease); }
+  .post:hover { transform: translateY(-6px); box-shadow: 0 1px 0 var(--line), 0 40px 70px -36px color-mix(in srgb, var(--shadow) 45%, transparent); }
+  .cover { aspect-ratio: 16 / 10; overflow: hidden; background: var(--deep); }
+  .cover img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s var(--ease); }
+  .post:hover .cover img { transform: scale(1.05); }
+  .cover-fallback { display: grid; place-items: center; width: 100%; height: 100%; background: var(--deep); }
+  .cover-fallback .script { color: var(--on-deep); font-size: 3.6rem; }
+  .meta { padding: 24px 26px 28px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .date { margin: 0; font-size: 0.85rem; font-weight: 500; color: var(--accent); text-transform: capitalize; }
+  h3 { margin: 0; color: var(--heading); font-size: 1.3rem; line-height: 1.3; }
+  .desc { margin: 0; color: var(--muted); flex: 1; }
+  .more { display: inline-flex; gap: 8px; align-items: center; font-weight: 600; color: var(--heading); margin-top: 8px; }
+  .post:hover .more { color: var(--accent); }
+  .featured { display: grid; grid-template-columns: 1.1fr 1fr; }
+  .featured .cover { aspect-ratio: auto; min-height: 320px; }
+  .featured h3 { font-size: clamp(1.6rem, 3vw, 2.3rem); }
+  .featured .meta { padding: 40px; justify-content: center; }
+  @media (max-width: 760px) { .featured { grid-template-columns: 1fr; } .featured .cover { min-height: 220px; } .featured .meta { padding: 26px; } }
+</style>

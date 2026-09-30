@@ -1,0 +1,27 @@
+---
+import { contact } from "../data/story";
+const year = new Date().getFullYear();
+---
+<footer class="foot deep">
+  <div class="wrap foot-in">
+    <p class="script sig">Privatus Cosmas</p>
+    <p class="small">Software Engineer & Digital Innovator · Kagera → Mbeya, Tanzania</p>
+    <ul>
+      <li><a href={contact.instagramHref} target="_blank" rel="noopener">Instagram</a></li>
+      <li><a href={contact.githubHref} target="_blank" rel="noopener">GitHub</a></li>
+      <li><a href={contact.whatsappHref} target="_blank" rel="noopener">WhatsApp</a></li>
+      <li><a href="/rss.xml">RSS</a></li>
+    </ul>
+    <p class="small">© {year} depriver.tech</p>
+  </div>
+</footer>
+
+<style>
+  .foot { background: var(--deep); color: var(--deep-text); padding: 72px 0 48px; position: relative; overflow: hidden; }
+  .foot-in { position: relative; display: grid; gap: 14px; justify-items: center; text-align: center; }
+  .sig { font-size: clamp(2.8rem, 7vw, 4.5rem); color: var(--on-deep); margin: 0; line-height: 1; }
+  .small { margin: 0; font-size: 0.9rem; }
+  ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; list-style: none; padding: 0; margin: 12px 0; }
+  a { color: var(--on-deep); text-decoration: none; font-weight: 500; }
+  a:hover { color: var(--accent); }
+</style>

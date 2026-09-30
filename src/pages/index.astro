@@ -1,0 +1,81 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import Title from "../components/Title.astro";
+import PostCard from "../components/PostCard.astro";
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+const [first, ...rest] = posts;
+const tags = [...new Set(posts.flatMap((p) => p.data.tags))];
+---
+<Base title="Privatus Cosmas · Blog" description="Notes on software, learning, tech life and the journey, by Privatus Cosmas, Software Engineer & Digital Innovator in Mbeya, Tanzania.">
+  <section class="head wrap">
+    <span class="label" data-reveal>Privatus Cosmas · Blog</span>
+    <Title tag="h1" title="Notes from" accent="the journey" size="clamp(2.8rem, 8vw, 6.4rem)" />
+    <p class="intro" data-reveal>Software, learning, tech life and everything I pick up along the way. Written from Mbeya.</p>
+    <a class="author" href="/story/" data-reveal>
+      <img src="/img/me-cut.webp" alt="" width="64" height="64" />
+      <span><strong>Privatus Cosmas</strong><em>Software Engineer & Digital Innovator</em></span>
+      <span class="author-cta">From Kitwe village to writing code: read my story
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </span>
+    </a>
+    {tags.length > 0 && (
+      <ul class="tags" data-reveal>
+        <li><button class="on" data-tag="all">All</button></li>
+        {tags.map((t) => <li><button data-tag={t}>{t}</button></li>)}
+      </ul>
+    )}
+  </section>
+
+  <section class="wrap list">
+    {first ? (
+      <>
+        <div data-post-tags={first.data.tags.join(",")}><PostCard post={first} featured /></div>
+        <div class="grid">
+          {rest.map((p) => <div data-post-tags={p.data.tags.join(",")}><PostCard post={p} /></div>)}
+        </div>
+      </>
+    ) : (
+      <p class="empty">The first post is coming soon.</p>
+    )}
+  </section>
+</Base>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>("[data-tag]");
+  buttons.forEach((b) =>
+    b.addEventListener("click", () => {
+      buttons.forEach((x) => x.classList.toggle("on", x === b));
+      const tag = b.dataset.tag!;
+      document.querySelectorAll<HTMLElement>("[data-post-tags]").forEach((el) => {
+        el.hidden = tag !== "all" && !el.dataset.postTags!.split(",").includes(tag);
+      });
+    }),
+  );
+</script>
+
+<style>
+  .head { padding: 170px 0 50px; }
+  .head :global(.display) { margin-top: 22px; }
+  .intro { font-size: 1.2rem; color: var(--muted); max-width: 34em; margin: 24px 0 30px; }
+  .author { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 18px; padding: 12px 22px 12px 12px; margin: 0 0 34px; border-radius: 22px;
+    background: var(--surface); text-decoration: none; color: inherit; width: fit-content; max-width: 100%;
+    box-shadow: 0 1px 0 var(--line), 0 24px 50px -36px color-mix(in srgb, var(--shadow) 40%, transparent); transition: transform 0.4s var(--ease); }
+  .author:hover { transform: translateY(-3px); }
+  .author img { width: 64px; height: 64px; border-radius: 16px; object-fit: cover; object-position: top; background: var(--deep); filter: var(--photo-filter); }
+  .author strong { display: block; color: var(--heading); }
+  .author em { font-style: normal; color: var(--muted); font-size: 0.9rem; }
+  .author-cta { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: var(--accent); }
+  .tags { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; padding: 0; margin: 0; }
+  .tags button { font: inherit; font-weight: 500; padding: 8px 18px; border-radius: 999px; border: 1.5px solid var(--heading); background: transparent; color: var(--heading); cursor: pointer; text-transform: capitalize; }
+  .tags button.on, .tags button:hover { background: var(--deep); color: var(--on-deep); }
+  .list { padding-bottom: 120px; display: grid; gap: 18px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .grid > div, .list > div { display: grid; }
+  .empty { color: var(--muted); font-size: 1.2rem; }
+  @media (max-width: 960px) { .grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+</style>

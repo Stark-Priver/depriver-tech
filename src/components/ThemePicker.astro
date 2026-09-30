@@ -1,0 +1,353 @@
+---
+// Theme menu, modelled on Omarchy's theme picker.
+// T opens it · type to filter · ↑↓ to browse (live preview card) · Enter applies · Esc closes · Shift+T = next theme.
+import themes from "../data/themes.json";
+
+const groups = [...new Set(themes.map((t) => t.group))].map((g) => ({ name: g, items: themes.filter((t) => t.group === g) }));
+---
+<button class="tp-btn" type="button" data-tp-open aria-haspopup="dialog" aria-label="Appearance and themes (T)" title="Themes (T)">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.8-.9 1.8-1.9 0-.5-.2-.9-.5-1.3-.3-.3-.5-.8-.5-1.3 0-1 .8-1.8 1.8-1.8H17a4 4 0 0 0 4-4C21 6.4 17 3 12 3Z"/>
+    <circle cx="7.5" cy="11" r="1.2" fill="currentColor"/><circle cx="10.5" cy="7.5" r="1.2" fill="currentColor"/><circle cx="15" cy="7.5" r="1.2" fill="currentColor"/>
+  </svg>
+</button>
+
+<dialog class="tp" data-tp aria-labelledby="tp-title">
+  <div class="tp-shell">
+    <header class="tp-head">
+      <div>
+        <h2 id="tp-title">Appearance</h2>
+        <p>Pick a look for the site. Your choice is saved on this device.</p>
+      </div>
+      <button class="tp-x" type="button" data-tp-close aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </header>
+
+    <div class="tp-modes" role="radiogroup" aria-label="Mode">
+      <button type="button" role="radio" data-mode="auto">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>
+        Auto
+      </button>
+      <button type="button" role="radio" data-mode="light">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        Light
+      </button>
+      <button type="button" role="radio" data-mode="dark">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/></svg>
+        Dark
+      </button>
+    </div>
+
+    <div class="tp-main">
+      <div class="tp-left">
+        <label class="tp-search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="text" placeholder={`Search ${themes.length} themes…`} autocomplete="off" spellcheck="false"
+            role="combobox" aria-expanded="true" aria-controls="tp-list" aria-autocomplete="list" aria-label="Search themes" />
+        </label>
+        <div class="tp-list" id="tp-list" role="listbox" aria-label="Themes">
+          {groups.map((g) => (
+            <div class="tp-group" role="group" aria-label={g.name}>
+              <p class="tp-gname" aria-hidden="true">{g.name} <span>{g.items.length}</span></p>
+              {g.items.map((t) => (
+                <div class="tp-opt" role="option" id={`tp-${t.id}`} data-id={t.id} data-name={t.name} data-group={g.name} data-mode={t.mode}
+                  data-search={`${t.name} ${g.name} ${t.mode}`.toLowerCase()} data-swatch={t.swatch.join(",")} aria-selected="false">
+                  <span class="sw" aria-hidden="true">{t.swatch.map((c) => <i style={`background:${c}`}></i>)}</span>
+                  <span class="nm">{t.name}</span>
+                  <span class="cur" aria-hidden="true">Current</span>
+                </div>
+              ))}
+            </div>
+          ))}
+          <p class="tp-empty" hidden>No theme matches that search.</p>
+        </div>
+      </div>
+
+      <aside class="tp-right" aria-label="Preview">
+        <div class="pv" data-pv data-theme="light" aria-hidden="true">
+          <div class="pv-nav"><span class="pv-logo">Privatus</span><span class="pv-links"><i></i><i></i><i></i></span><span class="pv-cta"></span></div>
+          <div class="pv-body">
+            <div>
+              <p class="pv-k">Hi, I'm Privatus.</p>
+              <p class="pv-h">From Kitwe<br /><span>Village to</span><br />Writing Code</p>
+              <p class="pv-t"></p><p class="pv-t short"></p>
+              <span class="pv-btn">Read my story</span>
+            </div>
+            <div class="pv-card deep"><span class="pv-ch">2024</span><span class="pv-l"></span><span class="pv-l short"></span></div>
+          </div>
+        </div>
+        <div class="pv-meta">
+          <p class="pv-name" data-pv-name>Depriver Light</p>
+          <p class="pv-sub" data-pv-sub>Depriver · Light</p>
+          <ul class="pv-chips" data-pv-chips></ul>
+          <button type="button" class="pv-apply" data-pv-apply>Apply theme</button>
+        </div>
+      </aside>
+    </div>
+
+    <footer class="tp-foot" aria-hidden="true">
+      <span><kbd>↑</kbd><kbd>↓</kbd> browse</span>
+      <span><kbd>↵</kbd> apply</span>
+      <span><kbd>esc</kbd> close</span>
+      <span class="sep"><kbd>T</kbd> open</span>
+      <span><kbd>⇧</kbd><kbd>T</kbd> next theme</span>
+    </footer>
+  </div>
+</dialog>
+
+<div class="tp-toast" role="status" aria-live="polite" data-tp-toast></div>
+
+<script>
+  const KEY = "depriver-theme";
+  const root = document.documentElement;
+  const dlg = document.querySelector<HTMLDialogElement>("[data-tp]")!;
+  const openBtn = document.querySelector<HTMLButtonElement>("[data-tp-open]")!;
+  const input = dlg.querySelector<HTMLInputElement>("input")!;
+  const opts = [...dlg.querySelectorAll<HTMLElement>(".tp-opt")];
+  const groups = [...dlg.querySelectorAll<HTMLElement>(".tp-group")];
+  const empty = dlg.querySelector<HTMLElement>(".tp-empty")!;
+  const modes = [...dlg.querySelectorAll<HTMLButtonElement>("[data-mode]")];
+  const pv = dlg.querySelector<HTMLElement>("[data-pv]")!;
+  const toast = document.querySelector<HTMLElement>("[data-tp-toast]")!;
+  document.body.append(toast); // keep the toast out of the (transformed) nav so fixed positioning works
+  let active: HTMLElement | null = null;
+  let toastTimer = 0;
+
+  const saved = () => {
+    try { return localStorage.getItem(KEY) || "auto"; } catch { return "auto"; }
+  };
+  const systemDark = () => matchMedia("(prefers-color-scheme: dark)").matches;
+  const effective = () => (saved() === "auto" ? (systemDark() ? "dark" : "light") : saved());
+  const visible = () => opts.filter((o) => !o.hidden);
+  const byId = (id: string) => opts.find((o) => o.dataset.id === id);
+
+  function sync() {
+    const s = saved(), eff = effective();
+    opts.forEach((o) => {
+      o.classList.toggle("is-current", o.dataset.id === eff);
+      o.setAttribute("aria-selected", String(o === active));
+    });
+    modes.forEach((m) => m.setAttribute("aria-checked", String(m.dataset.mode === s)));
+  }
+
+  function preview(o: HTMLElement) {
+    pv.dataset.theme = o.dataset.id!;
+    dlg.querySelector("[data-pv-name]")!.textContent = o.dataset.name!;
+    const g = o.dataset.group!;
+    dlg.querySelector("[data-pv-sub]")!.textContent = g.startsWith("Omarchy") ? `${g} theme` : `${g} · ${o.dataset.mode === "light" ? "Light" : "Dark"}`;
+    const labels = ["Page", "Panel", "Accent", "Second"];
+    dlg.querySelector("[data-pv-chips]")!.innerHTML = o.dataset.swatch!.split(",")
+      .map((c, i) => `<li><i style="background:${c}"></i><span>${labels[i]}</span><code>${c.toUpperCase()}</code></li>`).join("");
+    const apply = dlg.querySelector<HTMLButtonElement>("[data-pv-apply]")!;
+    apply.textContent = o.dataset.id === effective() && saved() !== "auto" ? "Current theme" : "Apply theme";
+  }
+
+  function highlight(o: HTMLElement | undefined, scroll = true) {
+    if (!o) return;
+    active?.classList.remove("on");
+    active = o;
+    o.classList.add("on");
+    input.setAttribute("aria-activedescendant", o.id);
+    if (scroll) o.scrollIntoView({ block: "nearest" });
+    preview(o);
+    sync();
+  }
+
+  function setTheme(id: string) {
+    if (id === "auto") root.removeAttribute("data-theme");
+    else root.setAttribute("data-theme", id);
+    try { id === "auto" ? localStorage.removeItem(KEY) : localStorage.setItem(KEY, id); } catch {}
+    requestAnimationFrame(() =>
+      document.querySelector('meta[name="theme-color"]')?.setAttribute("content", getComputedStyle(root).getPropertyValue("--deep").trim()));
+    sync();
+  }
+
+  function announce(id: string) {
+    const name = id === "auto" ? `Auto (${systemDark() ? "dark" : "light"})` : byId(id)?.dataset.name ?? id;
+    toast.innerHTML = `<span>Theme</span>${name}`;
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(() => toast.classList.remove("show"), 1800);
+  }
+
+  // circle wipe from the palette button (View Transitions), plain swap otherwise
+  function apply(id: string) {
+    const doc = document as Document & { startViewTransition?: (cb: () => void) => { ready: Promise<void> } };
+    const done = () => announce(id);
+    if (!doc.startViewTransition || matchMedia("(prefers-reduced-motion: reduce)").matches) { setTheme(id); return done(); }
+    const r = openBtn.getBoundingClientRect();
+    const x = r.left + r.width / 2, y = r.top + r.height / 2;
+    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    doc.startViewTransition(() => setTheme(id)).ready.then(() => {
+      root.animate(
+        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+        { duration: 750, easing: "cubic-bezier(0.22, 1, 0.36, 1)", pseudoElement: "::view-transition-new(root)" },
+      );
+      done();
+    });
+  }
+
+  function commit(id: string) {
+    dlg.close();
+    requestAnimationFrame(() => apply(id));
+  }
+
+  function open() {
+    if (dlg.open) return;
+    input.value = "";
+    filter();
+    dlg.showModal();
+    highlight(byId(effective()));
+    input.focus();
+  }
+
+  function filter() {
+    const q = input.value.trim().toLowerCase();
+    opts.forEach((o) => (o.hidden = !!q && !o.dataset.search!.includes(q)));
+    groups.forEach((g) => (g.hidden = !g.querySelector(".tp-opt:not([hidden])")));
+    empty.hidden = visible().length > 0;
+    if (active?.hidden || q) highlight(visible()[0]);
+  }
+
+  openBtn.addEventListener("click", open);
+  dlg.querySelector("[data-tp-close]")!.addEventListener("click", () => dlg.close());
+  dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); }); // backdrop
+  dlg.addEventListener("close", () => openBtn.focus({ preventScroll: true }));
+  dlg.querySelector("[data-pv-apply]")!.addEventListener("click", () => active && commit(active.dataset.id!));
+  modes.forEach((m) => m.addEventListener("click", () => commit(m.dataset.mode!)));
+  input.addEventListener("input", filter);
+  opts.forEach((o) => {
+    o.addEventListener("mouseenter", () => highlight(o, false));
+    o.addEventListener("click", () => commit(o.dataset.id!));
+  });
+  dlg.addEventListener("keydown", (e) => {
+    const vis = visible();
+    const i = active ? vis.indexOf(active) : -1;
+    if (e.key === "ArrowDown") { e.preventDefault(); highlight(vis[(i + 1) % vis.length]); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); highlight(vis[(i - 1 + vis.length) % vis.length]); }
+    else if (e.key === "Home" && e.target !== input) { e.preventDefault(); highlight(vis[0]); }
+    else if (e.key === "End" && e.target !== input) { e.preventDefault(); highlight(vis[vis.length - 1]); }
+    else if (e.key === "Enter" && active && !(e.target as HTMLElement).closest("button")) { e.preventDefault(); commit(active.dataset.id!); }
+  });
+
+  // global shortcuts: T opens, Shift+T cycles to the next theme (like omarchy-theme-next)
+  document.addEventListener("keydown", (e) => {
+    const t = e.target as HTMLElement;
+    if (e.ctrlKey || e.metaKey || e.altKey || e.key.toLowerCase() !== "t" || dlg.open) return;
+    if (t.closest("input, textarea, select, [contenteditable]")) return;
+    e.preventDefault();
+    if (!e.shiftKey) return open();
+    const i = opts.findIndex((o) => o.dataset.id === effective());
+    apply(opts[(i + 1) % opts.length].dataset.id!);
+  });
+
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", sync);
+  sync();
+</script>
+
+<style>
+  .tp-btn { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; border: 0; cursor: pointer;
+    background: var(--surface-2); color: var(--heading); transition: background 0.3s, color 0.3s, transform 0.4s var(--ease); }
+  .tp-btn:hover { background: var(--accent); color: var(--on-accent); transform: rotate(-14deg); }
+
+  /* dialog */
+  .tp { position: fixed; inset: 0; margin: auto; height: fit-content; padding: 0; border: 0; background: transparent; max-width: none; max-height: none; width: min(880px, calc(100vw - 32px)); color: var(--on-deep); overflow: visible; }
+  .tp::backdrop { background: color-mix(in srgb, var(--shadow) 45%, transparent); backdrop-filter: blur(6px); }
+  .tp[open] { animation: tp-in 0.45s var(--ease); }
+  .tp[open]::backdrop { animation: tp-fade 0.35s ease; }
+  @keyframes tp-in { from { opacity: 0; transform: translateY(14px) scale(0.98); } }
+  @keyframes tp-fade { from { opacity: 0; } }
+  .tp-shell { background: var(--deep); border-radius: 28px; padding: 26px; display: flex; flex-direction: column; gap: 18px; max-height: min(720px, calc(100svh - 48px));
+    box-shadow: 0 50px 100px -30px color-mix(in srgb, var(--shadow) 70%, transparent), 0 0 0 1px color-mix(in srgb, var(--on-deep) 10%, transparent); }
+  .tp-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+  .tp-head h2 { margin: 0; font-size: 1.6rem; line-height: 1.2; color: var(--on-deep); }
+  .tp-head p { margin: 4px 0 0; color: var(--deep-text); font-size: 0.92rem; }
+  .tp-x { flex: none; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; border: 0; cursor: pointer;
+    background: color-mix(in srgb, var(--on-deep) 9%, transparent); color: var(--on-deep); }
+  .tp-x:hover { background: var(--accent-deep); color: var(--on-accent); }
+
+  .tp-modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 5px; border-radius: 16px; background: color-mix(in srgb, var(--on-deep) 7%, transparent); }
+  .tp-modes button { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border: 0; border-radius: 12px; cursor: pointer;
+    font: inherit; font-weight: 600; font-size: 0.92rem; background: transparent; color: var(--deep-text); transition: background 0.25s, color 0.25s; }
+  .tp-modes button:hover { color: var(--on-deep); }
+  .tp-modes button[aria-checked="true"] { background: var(--accent-deep); color: var(--on-accent); }
+
+  .tp-main { display: grid; grid-template-columns: 1fr 1.05fr; gap: 20px; min-height: 0; flex: 1; }
+  .tp-left { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+  .tp-search { display: flex; align-items: center; gap: 10px; padding: 0 14px; border-radius: 14px; color: var(--deep-text);
+    background: color-mix(in srgb, var(--on-deep) 8%, transparent); box-shadow: inset 0 0 0 1px transparent; transition: box-shadow 0.2s; }
+  .tp-search:focus-within { box-shadow: inset 0 0 0 2px var(--accent-deep); }
+  .tp-search input { flex: 1; min-width: 0; font: inherit; font-size: 0.95rem; padding: 12px 0; border: 0; outline: 0; background: transparent; color: var(--on-deep); }
+  .tp-search input::placeholder { color: var(--deep-text); opacity: 0.75; }
+  .tp-list { overflow-y: auto; overscroll-behavior: contain; max-height: 400px; padding-right: 4px; scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--on-deep) 25%, transparent) transparent; }
+  .tp-gname { position: sticky; top: 0; z-index: 1; margin: 0; padding: 12px 10px 6px; background: var(--deep); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-deep); }
+  .tp-gname span { color: var(--deep-text); opacity: 0.7; margin-left: 4px; }
+  .tp-group:first-child .tp-gname { padding-top: 2px; }
+  .tp-opt { display: flex; align-items: center; gap: 12px; padding: 9px 10px; border-radius: 12px; cursor: pointer; transition: background 0.15s; }
+  .tp-opt.on { background: color-mix(in srgb, var(--on-deep) 11%, transparent); }
+  .tp-opt .nm { flex: 1; font-weight: 500; font-size: 0.95rem; color: var(--on-deep); }
+  .tp-opt .cur { display: none; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; background: var(--accent-deep); color: var(--on-accent); }
+  .tp-opt.is-current .cur { display: inline-block; }
+  .sw { display: flex; flex: none; border-radius: 8px; overflow: hidden; box-shadow: 0 0 0 1px color-mix(in srgb, var(--on-deep) 18%, transparent); }
+  .sw i { width: 10px; height: 26px; }
+  .tp-empty { color: var(--deep-text); padding: 20px 10px; margin: 0; }
+
+  /* live preview card, rendered in the highlighted theme */
+  .tp-right { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .pv { position: relative; isolation: isolate; overflow: hidden; border-radius: 20px; background: var(--bg); color: var(--text); padding: 16px 18px 20px;
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--on-deep) 14%, transparent); transition: background 0.3s; }
+  .pv::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--terrain); opacity: 0.9;
+    -webkit-mask: url("/terrain-light.svg") center / 260% no-repeat; mask: url("/terrain-light.svg") center / 260% no-repeat; }
+  .pv-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+  .pv-logo { font-family: "Mr Dafoe", cursive; font-size: 1.25rem; color: var(--heading); line-height: 1; }
+  .pv-links { display: flex; gap: 6px; margin-left: auto; }
+  .pv-links i { width: 22px; height: 5px; border-radius: 3px; background: var(--muted); opacity: 0.6; }
+  .pv-cta { width: 34px; height: 14px; border-radius: 5px; background: var(--accent); }
+  .pv-body { display: grid; grid-template-columns: 1.3fr 1fr; gap: 14px; align-items: end; }
+  .pv-k { margin: 0 0 4px; font-size: 0.62rem; font-weight: 500; color: var(--heading); }
+  .pv-h { margin: 0 0 10px; font-weight: 700; font-size: 1.25rem; line-height: 1.05; letter-spacing: -0.02em; color: var(--heading); }
+  .pv-h span { color: var(--accent); }
+  .pv-t { height: 5px; border-radius: 3px; background: var(--muted); opacity: 0.5; margin: 0 0 5px; width: 90%; }
+  .pv-t.short { width: 60%; margin-bottom: 12px; }
+  .pv-btn { display: inline-block; padding: 6px 10px; border-radius: 7px; background: var(--accent); color: var(--on-accent); font-size: 0.6rem; font-weight: 600; }
+  .pv-card { border-radius: 14px; padding: 12px; min-height: 110px; display: flex; flex-direction: column; gap: 6px; justify-content: flex-end; }
+  .pv-ch { font-weight: 700; font-size: 1.3rem; color: var(--accent); line-height: 1; }
+  .pv-l { height: 5px; border-radius: 3px; background: var(--deep-text); opacity: 0.7; }
+  .pv-l.short { width: 60%; }
+  .pv-meta { display: grid; gap: 4px; }
+  .pv-name { margin: 0; font-weight: 700; font-size: 1.3rem; color: var(--on-deep); }
+  .pv-sub { margin: 0 0 8px; color: var(--deep-text); font-size: 0.88rem; }
+  .pv-chips { list-style: none; margin: 0 0 12px; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; }
+  .pv-chips :global(li) { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--deep-text); }
+  .pv-chips :global(i) { width: 14px; height: 14px; border-radius: 5px; box-shadow: 0 0 0 1px color-mix(in srgb, var(--on-deep) 20%, transparent); }
+  .pv-chips :global(code) { margin-left: auto; font-size: 0.75rem; color: var(--on-deep); opacity: 0.8; }
+  .pv-apply { justify-self: start; font: inherit; font-weight: 600; padding: 12px 22px; border-radius: 14px; border: 0; cursor: pointer; background: var(--accent-deep); color: var(--on-accent); transition: transform 0.3s var(--ease); }
+  .pv-apply:hover { transform: translateY(-2px); }
+
+  .tp-foot { display: flex; flex-wrap: wrap; gap: 8px 18px; padding-top: 14px; border-top: 1px solid color-mix(in srgb, var(--on-deep) 10%, transparent); font-size: 0.8rem; color: var(--deep-text); }
+  .tp-foot .sep { margin-left: auto; }
+  kbd { display: inline-block; min-width: 22px; text-align: center; font: inherit; font-size: 0.72rem; font-weight: 600; padding: 2px 6px; margin-right: 3px; border-radius: 6px;
+    background: color-mix(in srgb, var(--on-deep) 12%, transparent); color: var(--on-deep); box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--shadow) 30%, transparent); }
+
+  /* toast */
+  .tp-toast { position: fixed; left: 50%; bottom: 28px; z-index: 90; transform: translate(-50%, 20px); opacity: 0; pointer-events: none;
+    display: flex; align-items: center; gap: 12px; padding: 12px 20px 12px 14px; border-radius: 16px; background: var(--deep); color: var(--on-deep); font-weight: 600;
+    box-shadow: 0 20px 50px -20px color-mix(in srgb, var(--shadow) 70%, transparent); transition: opacity 0.35s, transform 0.5s var(--ease); }
+  .tp-toast.show { opacity: 1; transform: translate(-50%, 0); }
+  .tp-toast :global(span) { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; padding: 3px 8px; border-radius: 8px; background: var(--accent-deep); color: var(--on-accent); }
+
+  @media (max-width: 760px) {
+    .tp { width: 100vw; margin: auto 0 0; inset: auto 0 0 0; }
+    .tp[open] { animation: tp-up 0.45s var(--ease); }
+    @keyframes tp-up { from { transform: translateY(40px); opacity: 0; } }
+    .tp-shell { border-radius: 26px 26px 0 0; padding: 20px 16px calc(16px + env(safe-area-inset-bottom)); max-height: 88svh; }
+    .tp-main { grid-template-columns: 1fr; }
+    .tp-right { display: none; }
+    .tp-main { min-height: 0; overflow: hidden; }
+    .tp-left { min-height: 0; overflow: hidden; }
+    .tp-list { max-height: none; flex: 1; min-height: 0; }
+    .tp-foot { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .tp[open], .tp[open]::backdrop { animation: none; } }
+</style>
