@@ -3,7 +3,7 @@ import "../styles/global.css";
 import "../styles/themes.css";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
-import AskAI from "../components/AskAI.astro";
+import Viora from "../components/Viora.astro";
 import { site } from "../data/site";
 import { personJsonLd, websiteJsonLd } from "../lib/schema";
 
@@ -89,7 +89,7 @@ const imageUrl = new URL(image, Astro.site);
     <Nav />
     <main id="top"><slot /></main>
     <Footer />
-    <AskAI />
+    <Viora />
     {site.cfAnalyticsToken && (
       <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: site.cfAnalyticsToken })}></script>
     )}

@@ -1,0 +1,22 @@
+---
+// viora: Privatus's AI assistant, hosted on viora cloud (by INCPRITECH). It answers from this site's /llms-full.txt,
+// by chat and voice, in English and Swahili. The widget follows the theme the visitor picked.
+import { site } from "../data/site";
+import themes from "../data/themes.json";
+const modes = Object.fromEntries(themes.map((t) => [t.id, t.mode]));
+---
+{site.viora && (
+  <script is:inline define:vars={{ api: site.viora.api, id: site.viora.site, modes }}>
+    (() => {
+      let theme = null;
+      try { theme = localStorage.getItem("depriver-theme"); } catch {}
+      const s = document.createElement("script");
+      s.src = api + "/widget.js";
+      s.async = true;
+      s.dataset.api = api;
+      s.dataset.site = id;
+      s.dataset.theme = (theme && modes[theme]) || "auto";
+      document.body.appendChild(s);
+    })();
+  </script>
+)}

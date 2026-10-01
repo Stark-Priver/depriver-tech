@@ -38,3 +38,17 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v5
+
+  # viora (the site's AI assistant on viora cloud) re-reads /llms-full.txt so new posts and story changes reach it
+  viora:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Refresh viora's knowledge
+        env:
+          VIORA_KEY: ${{ secrets.VIORA_KEY }}
+        run: |
+          if [ -z "$VIORA_KEY" ]; then echo "VIORA_KEY is not set; skipping"; exit 0; fi
+          sleep 45
+          curl -fsS -X POST "https://viora-cloud.depriver-tech.workers.dev/v1/admin/sites/depriver/reindex" \
+            -H "Authorization: Bearer $VIORA_KEY" -H "User-Agent: depriver-deploy"

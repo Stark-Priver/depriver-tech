@@ -1,8 +1,11 @@
 // llms-full.txt: the complete public profile, story and posts as plain text.
-// Also the knowledge base for the on-site "Ask about me" assistant (Workers AI).
+// Also the knowledge base for viora, the on-site assistant (viora cloud reads this file when it re-indexes).
 import type { APIRoute } from "astro";
 import { livePosts } from "../lib/posts";
 import { chapters, services, outside, dreams, lessons, contact } from "../data/story";
+
+// a post's own headings sit under the post title (### …), so each section stays with its post for AI readers
+const nest = (md: string) => md.replace(/^(#{1,4}) /gm, (_, h: string) => "#".repeat(h.length + 2) + " ");
 
 export const GET: APIRoute = async () => {
   const posts = await livePosts();
@@ -37,7 +40,7 @@ ${lessons.map((l) => `- ${l.title}: ${l.body}`).join("\n")}
 ${dreams.map((d) => `- ${d.group}: ${d.items.join("; ")}`).join("\n")}
 
 ## Blog posts
-${posts.map((p) => `### ${p.data.title}\nhttps://depriver.tech/blog/${p.id}/ · ${p.data.date.toISOString().slice(0, 10)}\n${p.data.description}\n${p.data.slides.length ? "Slides:\n" + p.data.slides.map((s, i) => `${i + 1}. ${s}`).join("\n") + "\n" : ""}${(p.body ?? "").trim()}`).join("\n\n")}
+${posts.map((p) => `### ${p.data.title}\nhttps://depriver.tech/blog/${p.id}/ · ${p.data.date.toISOString().slice(0, 10)}\n${p.data.description}\n${p.data.slides.length ? "Slides:\n" + p.data.slides.map((s, i) => `${i + 1}. ${s}`).join("\n") + "\n" : ""}${nest((p.body ?? "").trim())}`).join("\n\n")}
 `;
   return new Response(text, { headers: { "Content-Type": "text/plain; charset=utf-8" } });
 };
