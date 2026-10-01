@@ -53,7 +53,6 @@ ART.update({
       <rect x="90" y="70" width="300" height="300" rx="18" fill="#fff" {ST}/>
       <rect x="90" y="70" width="300" height="56" rx="18" fill="#a9c4f5" {ST}/>
       <path d="M120 170 h120 M120 220 h180 M120 270 h150 M120 320 h90" stroke="#c9d4ea" stroke-width="12" stroke-linecap="round"/>
-      <text x="270" y="178" font-family="Poppins" font-weight="700" font-size="26" fill="#e8603a">#48213</text>
       <g transform="translate(400 230)"><circle r="92" fill="#fff" fill-opacity=".55" {ST} stroke-width="10"/>
         <text x="0" y="12" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="40" fill="#e8603a">#48213</text>
         <path d="M-70 4 h140" stroke="#0b1e3f" stroke-width="6" opacity=".8"/>
@@ -231,9 +230,10 @@ s.save(8)
 # ── 9 · closing ──────────────────────────────────────────────────────────────────────────────────
 s = page(TOTAL, "The end · Mwisho")
 s.text(M - 6, 290, "Your turn.", f(BOLD, 112), NAVY)
-s.para(M, 380, "What did your Techtember teach you?", f(BOLD, 52), 520, 64, ORANGE)
-s.text(M, 560, "Niambie kwenye comments", f(SIG, 52), ORANGE)
-swash(s, M + 6, M + 440, 586, ORANGE, 5, seed=9)
+s.text(M, 380, "What did your", f(BOLD, 50), ORANGE)
+s.text(M, 444, "Techtember teach you?", f(BOLD, 50), ORANGE)
+s.text(M, 540, "Niambie kwenye comments", f(SIG, 52), ORANGE)
+swash(s, M + 6, M + 440, 566, ORANGE, 5, seed=9)
 rows = [("Save", "for October"), ("Share", "with your dev friend"), ("Comment", "your lesson")]
 y = 680
 for j, (a, b) in enumerate(rows):
