@@ -10,8 +10,8 @@ slides:
   - "Step 01 · Two roads, same destination: a diploma after Form Four or a degree after Form Six. Njia zote zinafika."
   - "Step 02 · Which course fits you? Computer Science, Software Engineering, Information Technology, Data Science & AI."
   - "Step 02 · More courses: Cyber Security, Computer Engineering, Networks & Telecom, Business IT."
-  - "Step 03 · Universities to know: UDSM, UDOM, MUST, DIT, ATC, Ardhi, SUA. Visit their websites to learn more."
-  - "Step 03 · More places to study: Mzumbe, SUZA, IFM, NIT, IAA, EASTC, St. Joseph."
+  - "Step 03 · Universities to know: UDSM, UDOM, MUST, DIT, ATC. Visit their websites to learn more."
+  - "Step 03 · More places to study: Ardhi, Mzumbe, IFM, NIT, IAA."
   - "Step 04 · Maths opens most doors. Match your A-Level combination with the TCU guidebook. Hesabu ni ufunguo."
   - "Step 05 · Research the place before you apply. Chunguza kabla ya kuchagua."
   - "Step 06 · My story: Division I in Form Four, and I chose a Computer Science diploma at MUST. Uamuzi ni wako, si wa watu."
@@ -52,17 +52,13 @@ From the [TCU Bachelor's Degree Admission Guidebook 2026/2027](https://www.tcu.g
 - **MUST**, Mbeya University of Science and Technology (Mbeya): Computer Science, Software Engineering, Data Science Engineering. Website: [must.ac.tz](https://must.ac.tz)
 - **DIT**, Dar es Salaam Institute of Technology (Dar es Salaam): Computer Engineering, Electronics & Telecommunication Engineering. Website: [dit.ac.tz](https://dit.ac.tz)
 - **ATC**, Arusha Technical College (Arusha): Computer Science, Information Technology. Website: [atc.ac.tz](https://atc.ac.tz)
-- **ARU**, Ardhi University (Dar es Salaam): Data Science & AI, Computer Systems & Networks. Website: [aru.ac.tz](https://aru.ac.tz)
-- **SUA**, Sokoine University of Agriculture (Morogoro): Information Technology, Cybersecurity & Digital Forensics. Website: [sua.ac.tz](https://sua.ac.tz)
 
 **More places to study**
+- **ARU**, Ardhi University (Dar es Salaam): Data Science & AI, Computer Systems & Networks. Website: [aru.ac.tz](https://aru.ac.tz)
 - **MU**, Mzumbe University (Morogoro): IT & Systems, Applied Statistics. Website: [mzumbe.ac.tz](https://mzumbe.ac.tz)
-- **SUZA**, State University of Zanzibar (Zanzibar): Computer Science, Data Science & AI. Website: [suza.ac.tz](https://suza.ac.tz)
 - **IFM**, Institute of Finance Management (Dar es Salaam): Computer Science, Cyber Security, IT. Website: [ifm.ac.tz](https://ifm.ac.tz)
 - **NIT**, National Institute of Transport (Dar es Salaam): Computer Science, Information Technology. Website: [nit.ac.tz](https://nit.ac.tz)
 - **IAA**, Institute of Accountancy Arusha (Arusha): Computer Science, IT, Cyber Security. Website: [iaa.ac.tz](https://iaa.ac.tz)
-- **EASTC**, Eastern Africa Statistical Training Centre (Dar es Salaam): Data Science, Statistics. Website: [eastc.ac.tz](https://eastc.ac.tz)
-- **SJCET**, St. Joseph University College of Engineering and Technology (Dar es Salaam): AI & Machine Learning, Computer Science. Website: [sjuit.ac.tz](https://sjuit.ac.tz)
 
 Many of these also run diplomas for Form Four leavers. For the full lists, see [tcu.go.tz](https://www.tcu.go.tz) for degrees and [nactvet.go.tz](https://www.nactvet.go.tz) for diplomas. *Tembelea tovuti zao.*
 
@@ -73,7 +69,7 @@ You need two principal passes at A-Level, but *which* subjects depends on the pr
 - **UDSM, Computer Science:** Advanced Mathematics and Physics or Computer Science
 - **UDOM, Software Engineering:** Mathematics and either Physics or Computer Science
 - **MUST, Computer Science:** Advanced Mathematics and Physics or Chemistry, plus at least a D in Basic Mathematics and English at O-Level
-- **EASTC, Data Science:** many subjects are accepted, but without Advanced Mathematics you need a subsidiary pass in Basic Applied Mathematics or at least a D in O-Level Mathematics
+- **ARU, Data Science & AI:** Mathematics and one of Physics, Geography, Chemistry, Computer Science, Economics, Business Studies or Accountancy
 
 Maths opens most doors. *Hesabu ni ufunguo.* Download the guidebook and match it against your own combination.
 

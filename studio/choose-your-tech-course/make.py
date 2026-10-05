@@ -87,16 +87,12 @@ UNIS = [
      ("UDOM", "University of Dodoma", "Dodoma", "Computer Science · Software Eng. · Cyber Security · AI Eng.", "udom.ac.tz"),
      ("MUST", "Mbeya University of Science and Technology", "Mbeya", "Computer Science · Software Eng. · Data Science Eng.", "must.ac.tz"),
      ("DIT", "Dar es Salaam Institute of Technology", "Dar es Salaam", "Computer Eng. · Electronics & Telecom Eng.", "dit.ac.tz"),
-     ("ATC", "Arusha Technical College", "Arusha", "Computer Science · Information Technology", "atc.ac.tz"),
-     ("ARU", "Ardhi University", "Dar es Salaam", "Data Science & AI · Computer Systems & Networks", "aru.ac.tz"),
-     ("SUA", "Sokoine University of Agriculture", "Morogoro", "Information Technology · Cybersecurity & Forensics", "sua.ac.tz")],
-    [("MU", "Mzumbe University", "Morogoro", "IT & Systems · Applied Statistics", "mzumbe.ac.tz"),
-     ("SUZA", "State University of Zanzibar", "Zanzibar", "Computer Science · Data Science & AI", "suza.ac.tz"),
+     ("ATC", "Arusha Technical College", "Arusha", "Computer Science · Information Technology", "atc.ac.tz")],
+    [("ARU", "Ardhi University", "Dar es Salaam", "Data Science & AI · Computer Systems & Networks", "aru.ac.tz"),
+     ("MU", "Mzumbe University", "Morogoro", "IT & Systems · Applied Statistics", "mzumbe.ac.tz"),
      ("IFM", "Institute of Finance Management", "Dar es Salaam", "Computer Science · Cyber Security · IT", "ifm.ac.tz"),
      ("NIT", "National Institute of Transport", "Dar es Salaam", "Computer Science · Information Technology", "nit.ac.tz"),
-     ("IAA", "Institute of Accountancy Arusha", "Arusha", "Computer Science · IT · Cyber Security", "iaa.ac.tz"),
-     ("EASTC", "Eastern Africa Statistical Training Centre", "Dar es Salaam", "Data Science · Statistics", "eastc.ac.tz"),
-     ("SJCET", "St. Joseph College of Engineering & Tech.", "Dar es Salaam", "AI & Machine Learning · Computer Science", "sjuit.ac.tz")],
+     ("IAA", "Institute of Accountancy Arusha", "Arusha", "Computer Science · IT · Cyber Security", "iaa.ac.tz")],
 ]
 
 
@@ -202,7 +198,7 @@ for p, group in enumerate(UNIS):
     ts = min(72, fit(s, t1 + " " + t2, BOLD, 72, W - 2 * M))
     s.text(M - 4, 210, t1, f(BOLD, ts), NAVY)
     s.text(M - 4 + s.width(t1, f(BOLD, ts)) + 20, 210, t2, f(BOLD, ts), ORANGE)
-    y = 300
+    y = 330
     for j, (abbr, name, city, courses, site) in enumerate(group):
         s.text(M, y + 4, abbr, f(BOLD, fit(s, abbr, BOLD, 34, 150)), ORANGE if j % 2 == 0 else NAVY)
         cw_ = smallcaps(s, W - M, y - 6, city, 14, GREY, anchor="right")
@@ -211,8 +207,8 @@ for p, group in enumerate(UNIS):
         sw_ = s.width(site, f(SEMI, 19))
         s.text(M + 180, y + 32, courses, f(REG, fit(s, courses, REG, 21, W - 2 * M - 180 - sw_ - 24)), GREY)
         if j < len(group) - 1:
-            hairline(s, M, W - M, y + 58, RULE)
-        y += 104
+            hairline(s, M, W - M, y + 74, RULE)
+        y += 136
     horizon(s, n)
     if p == 0:
         navy_note(s, "Want to know more?", "Visit each website for courses, fees and how to apply.", "Tembelea tovuti zao", seed=n)
@@ -229,7 +225,7 @@ s.para(M, 400, "Two principal passes at A-Level, but which subjects? Real exampl
 reqs = [("UDSM", "Computer Science", "Advanced Maths + Physics or Computer Science"),
         ("UDOM", "Software Engineering", "Maths + Physics or Computer Science"),
         ("MUST", "Computer Science", "Adv. Maths + Physics or Chemistry, plus D in O-Level Maths & English"),
-        ("EASTC", "Data Science", "Many subjects allowed; without Adv. Maths you need BAM or D in O-Level Maths")]
+        ("ARU", "Data Science & AI", "Maths + one of Physics, Geography, Chemistry, Computer Science, Economics...")]
 y = 500
 for abbr, course, rule in reqs:
     card(s, (M, y, W - M - 8, y + 110), r=14)
