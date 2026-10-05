@@ -10,8 +10,8 @@ slides:
   - "Step 01 · Two roads, same destination: a diploma after Form Four or a degree after Form Six. Njia zote zinafika."
   - "Step 02 · Which course fits you? Computer Science, Software Engineering, Information Technology, Data Science & AI."
   - "Step 02 · More courses: Cyber Security, Computer Engineering, Networks & Telecom, Business IT."
-  - "Step 03 · Universities to know: UDSM, UDOM, MUST, Ardhi, SUA, Mzumbe, SUZA."
-  - "Step 03 · Institutes and colleges: IFM, DIT, NIT, IAA, EASTC, St. Joseph, Arusha Technical College."
+  - "Step 03 · Universities to know: UDSM, UDOM, MUST, DIT, ATC, Ardhi, SUA. Visit their websites to learn more."
+  - "Step 03 · More places to study: Mzumbe, SUZA, IFM, NIT, IAA, EASTC, St. Joseph."
   - "Step 04 · Maths opens most doors. Match your A-Level combination with the TCU guidebook. Hesabu ni ufunguo."
   - "Step 05 · Research the place before you apply. Chunguza kabla ya kuchagua."
   - "Step 06 · My story: Division I in Form Four, and I chose a Computer Science diploma at MUST. Uamuzi ni wako, si wa watu."
@@ -44,27 +44,27 @@ Don't judge a course by its name: read the modules. Not sure yet? Computer Scien
 
 ## Step 3: Know where to study
 
-From the [TCU Bachelor's Degree Admission Guidebook 2026/2027](https://tcu.go.tz) (a selection, not the full list):
+From the [TCU Bachelor's Degree Admission Guidebook 2026/2027](https://www.tcu.go.tz) (a selection, not the full list). Click a website to see courses, fees and how to apply.
 
-**Universities**
-- **UDSM**, University of Dar es Salaam (Dar es Salaam): Computer Science, Computer Engineering & IT, Telecommunications Engineering
-- **UDOM**, University of Dodoma (Dodoma): Computer Science, Software Engineering, Cyber Security & Digital Forensics, AI Engineering
-- **MUST**, Mbeya University of Science and Technology (Mbeya): Computer Science, Software Engineering, Data Science Engineering
-- **ARU**, Ardhi University (Dar es Salaam): Data Science & AI, Computer Systems & Networks
-- **SUA**, Sokoine University of Agriculture (Morogoro): Information Technology, Cybersecurity & Digital Forensics
-- **MU**, Mzumbe University (Morogoro): IT & Systems, Applied Statistics
-- **SUZA**, State University of Zanzibar (Zanzibar): Computer Science, Data Science & AI
+**Universities to know**
+- **UDSM**, University of Dar es Salaam (Dar es Salaam): Computer Science, Computer Engineering & IT, Telecommunications Engineering. Website: [udsm.ac.tz](https://udsm.ac.tz)
+- **UDOM**, University of Dodoma (Dodoma): Computer Science, Software Engineering, Cyber Security & Digital Forensics, AI Engineering. Website: [udom.ac.tz](https://udom.ac.tz)
+- **MUST**, Mbeya University of Science and Technology (Mbeya): Computer Science, Software Engineering, Data Science Engineering. Website: [must.ac.tz](https://must.ac.tz)
+- **DIT**, Dar es Salaam Institute of Technology (Dar es Salaam): Computer Engineering, Electronics & Telecommunication Engineering. Website: [dit.ac.tz](https://dit.ac.tz)
+- **ATC**, Arusha Technical College (Arusha): Computer Science, Information Technology. Website: [atc.ac.tz](https://atc.ac.tz)
+- **ARU**, Ardhi University (Dar es Salaam): Data Science & AI, Computer Systems & Networks. Website: [aru.ac.tz](https://aru.ac.tz)
+- **SUA**, Sokoine University of Agriculture (Morogoro): Information Technology, Cybersecurity & Digital Forensics. Website: [sua.ac.tz](https://sua.ac.tz)
 
-**Institutes and colleges**
-- **IFM**, Institute of Finance Management (Dar es Salaam): Computer Science, Cyber Security, IT
-- **DIT**, Dar es Salaam Institute of Technology (Dar es Salaam): Computer Engineering, Electronics & Telecommunication Engineering
-- **NIT**, National Institute of Transport (Dar es Salaam): Computer Science, Information Technology
-- **IAA**, Institute of Accountancy Arusha (Arusha): Computer Science, IT, Cyber Security
-- **EASTC**, Eastern Africa Statistical Training Centre (Dar es Salaam): Data Science, Statistics
-- **SJCET**, St. Joseph University College of Engineering and Technology (Dar es Salaam): AI & Machine Learning, Computer Science
-- **ATC**, Arusha Technical College (Arusha): Computer Science, Information Technology
+**More places to study**
+- **MU**, Mzumbe University (Morogoro): IT & Systems, Applied Statistics. Website: [mzumbe.ac.tz](https://mzumbe.ac.tz)
+- **SUZA**, State University of Zanzibar (Zanzibar): Computer Science, Data Science & AI. Website: [suza.ac.tz](https://suza.ac.tz)
+- **IFM**, Institute of Finance Management (Dar es Salaam): Computer Science, Cyber Security, IT. Website: [ifm.ac.tz](https://ifm.ac.tz)
+- **NIT**, National Institute of Transport (Dar es Salaam): Computer Science, Information Technology. Website: [nit.ac.tz](https://nit.ac.tz)
+- **IAA**, Institute of Accountancy Arusha (Arusha): Computer Science, IT, Cyber Security. Website: [iaa.ac.tz](https://iaa.ac.tz)
+- **EASTC**, Eastern Africa Statistical Training Centre (Dar es Salaam): Data Science, Statistics. Website: [eastc.ac.tz](https://eastc.ac.tz)
+- **SJCET**, St. Joseph University College of Engineering and Technology (Dar es Salaam): AI & Machine Learning, Computer Science. Website: [sjuit.ac.tz](https://sjuit.ac.tz)
 
-Many of these also run diplomas for Form Four leavers. Check NACTVET.
+Many of these also run diplomas for Form Four leavers. For the full lists, see [tcu.go.tz](https://www.tcu.go.tz) for degrees and [nactvet.go.tz](https://www.nactvet.go.tz) for diplomas. *Tembelea tovuti zao.*
 
 ## Step 4: Check the entry rules
 

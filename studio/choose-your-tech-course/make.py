@@ -83,20 +83,20 @@ COURSES = [
 ]
 
 UNIS = [
-    [("UDSM", "University of Dar es Salaam", "Dar es Salaam", "Computer Science · Computer Eng. & IT · Telecom Eng."),
-     ("UDOM", "University of Dodoma", "Dodoma", "Computer Science · Software Eng. · Cyber Security · AI Eng."),
-     ("MUST", "Mbeya University of Science and Technology", "Mbeya", "Computer Science · Software Eng. · Data Science Eng."),
-     ("ARU", "Ardhi University", "Dar es Salaam", "Data Science & AI · Computer Systems & Networks"),
-     ("SUA", "Sokoine University of Agriculture", "Morogoro", "Information Technology · Cybersecurity & Forensics"),
-     ("MU", "Mzumbe University", "Morogoro", "IT & Systems · Applied Statistics"),
-     ("SUZA", "State University of Zanzibar", "Zanzibar", "Computer Science · Data Science & AI")],
-    [("IFM", "Institute of Finance Management", "Dar es Salaam", "Computer Science · Cyber Security · IT"),
-     ("DIT", "Dar es Salaam Institute of Technology", "Dar es Salaam", "Computer Eng. · Electronics & Telecom Eng."),
-     ("NIT", "National Institute of Transport", "Dar es Salaam", "Computer Science · Information Technology"),
-     ("IAA", "Institute of Accountancy Arusha", "Arusha", "Computer Science · IT · Cyber Security"),
-     ("EASTC", "Eastern Africa Statistical Training Centre", "Dar es Salaam", "Data Science · Statistics"),
-     ("SJCET", "St. Joseph College of Engineering & Tech.", "Dar es Salaam", "AI & Machine Learning · Computer Science"),
-     ("ATC", "Arusha Technical College", "Arusha", "Computer Science · Information Technology")],
+    [("UDSM", "University of Dar es Salaam", "Dar es Salaam", "Computer Science · Computer Eng. & IT · Telecom Eng.", "udsm.ac.tz"),
+     ("UDOM", "University of Dodoma", "Dodoma", "Computer Science · Software Eng. · Cyber Security · AI Eng.", "udom.ac.tz"),
+     ("MUST", "Mbeya University of Science and Technology", "Mbeya", "Computer Science · Software Eng. · Data Science Eng.", "must.ac.tz"),
+     ("DIT", "Dar es Salaam Institute of Technology", "Dar es Salaam", "Computer Eng. · Electronics & Telecom Eng.", "dit.ac.tz"),
+     ("ATC", "Arusha Technical College", "Arusha", "Computer Science · Information Technology", "atc.ac.tz"),
+     ("ARU", "Ardhi University", "Dar es Salaam", "Data Science & AI · Computer Systems & Networks", "aru.ac.tz"),
+     ("SUA", "Sokoine University of Agriculture", "Morogoro", "Information Technology · Cybersecurity & Forensics", "sua.ac.tz")],
+    [("MU", "Mzumbe University", "Morogoro", "IT & Systems · Applied Statistics", "mzumbe.ac.tz"),
+     ("SUZA", "State University of Zanzibar", "Zanzibar", "Computer Science · Data Science & AI", "suza.ac.tz"),
+     ("IFM", "Institute of Finance Management", "Dar es Salaam", "Computer Science · Cyber Security · IT", "ifm.ac.tz"),
+     ("NIT", "National Institute of Transport", "Dar es Salaam", "Computer Science · Information Technology", "nit.ac.tz"),
+     ("IAA", "Institute of Accountancy Arusha", "Arusha", "Computer Science · IT · Cyber Security", "iaa.ac.tz"),
+     ("EASTC", "Eastern Africa Statistical Training Centre", "Dar es Salaam", "Data Science · Statistics", "eastc.ac.tz"),
+     ("SJCET", "St. Joseph College of Engineering & Tech.", "Dar es Salaam", "AI & Machine Learning · Computer Science", "sjuit.ac.tz")],
 ]
 
 
@@ -198,23 +198,26 @@ for p, group in enumerate(COURSES):
 for p, group in enumerate(UNIS):
     n = p + 5
     s = page(n, f"Step 03 · Where to study ({p + 1}/2)", "TCU guidebook 2026/27")
-    s.text(M - 4, 210, "Universities" if p == 0 else "Institutes &", f(BOLD, 72), NAVY)
-    s.text(M - 4 + s.width("Universities" if p == 0 else "Institutes &", f(BOLD, 72)) + 20, 210,
-           "to know." if p == 0 else "colleges.", f(BOLD, 72), ORANGE)
+    t1, t2 = ("Universities", "to know.") if p == 0 else ("More places", "to study.")
+    ts = min(72, fit(s, t1 + " " + t2, BOLD, 72, W - 2 * M))
+    s.text(M - 4, 210, t1, f(BOLD, ts), NAVY)
+    s.text(M - 4 + s.width(t1, f(BOLD, ts)) + 20, 210, t2, f(BOLD, ts), ORANGE)
     y = 300
-    for j, (abbr, name, city, courses) in enumerate(group):
+    for j, (abbr, name, city, courses, site) in enumerate(group):
         s.text(M, y + 4, abbr, f(BOLD, fit(s, abbr, BOLD, 34, 150)), ORANGE if j % 2 == 0 else NAVY)
         cw_ = smallcaps(s, W - M, y - 6, city, 14, GREY, anchor="right")
         s.text(M + 180, y - 4, name, f(SEMI, fit(s, name, SEMI, 25, W - 2 * M - 180 - cw_ - 20)), NAVY)
-        s.text(M + 180, y + 32, courses, f(REG, fit(s, courses, REG, 21, W - 2 * M - 180)), GREY)
+        s.text(W - M, y + 32, site, f(SEMI, 19), ORANGE, anchor="rs")
+        sw_ = s.width(site, f(SEMI, 19))
+        s.text(M + 180, y + 32, courses, f(REG, fit(s, courses, REG, 21, W - 2 * M - 180 - sw_ - 24)), GREY)
         if j < len(group) - 1:
             hairline(s, M, W - M, y + 58, RULE)
         y += 104
     horizon(s, n)
     if p == 0:
-        navy_note(s, "Not the full list", "Many more offer tech degrees. See tcu.go.tz", "Orodha kamili iko TCU", seed=n)
+        navy_note(s, "Want to know more?", "Visit each website for courses, fees and how to apply.", "Tembelea tovuti zao", seed=n)
     else:
-        navy_note(s, "Form Four leaver?", "Many colleges also run diplomas. Check NACTVET.", "Diploma pia ni njia", seed=n)
+        navy_note(s, "Not the full list", "Full list: tcu.go.tz (degrees) · nactvet.go.tz (diplomas)", "Orodha kamili iko TCU na NACTVET", seed=n)
     finish(s)
     s.save(n)
 
