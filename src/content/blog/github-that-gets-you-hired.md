@@ -1,7 +1,7 @@
 ---
 title: "Your GitHub is your CV: 6 steps to a profile that gets you hired"
 description: "Recruiters and senior developers scan your GitHub in about 30 seconds. Fix your profile, write a README, pin real projects, document them, commit like a pro and avoid the mistakes that get you rejected."
-date: 2026-10-06
+date: 2026-10-24T19:00:00+03:00
 status: live
 tags: ["students", "career", "github", "kiswahili"]
 carousel: github-that-gets-you-hired

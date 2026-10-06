@@ -1,7 +1,7 @@
 ---
 title: "Your bundle ended. Your learning shouldn't: coding on a data budget"
 description: "How tech students in Tanzania can keep learning on small data bundles: what eats your MBs, learning offline, downloading smart, developer tricks like offline Git, and stopping silent data leaks."
-date: 2026-10-06
+date: 2026-11-05T19:00:00+03:00
 status: live
 tags: ["students", "learning", "tips", "kiswahili"]
 carousel: coding-on-a-data-budget

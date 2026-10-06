@@ -1,7 +1,7 @@
 ---
 title: "Stop building another library system: 10 final year project ideas that solve Tanzanian problems"
 description: "VICOBA records, crop prices by USSD, dispensary queues, daladala routes, hostels without brokers and more: final year project ideas rooted in real Tanzanian problems, with stack and difficulty."
-date: 2026-10-06
+date: 2026-10-15T19:00:00+03:00
 status: live
 tags: ["students", "projects", "university", "kiswahili"]
 carousel: final-year-project-ideas

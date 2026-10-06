@@ -1,7 +1,7 @@
 ---
 title: "Recruiters are searching. Can they find you? LinkedIn for students"
 description: "A student's guide to LinkedIn: photo, headline formula, a human About section, FPT as experience, featured projects, recommendations, and a 20-minute weekly routine."
-date: 2026-10-06
+date: 2026-10-29T19:00:00+03:00
 status: live
 tags: ["students", "career", "linkedin", "kiswahili"]
 carousel: linkedin-for-students

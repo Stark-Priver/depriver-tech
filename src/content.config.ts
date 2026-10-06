@@ -5,6 +5,8 @@ import { z } from "astro/zod";
 // Every post is a Markdown file in src/content/blog, tracked in git.
 // status: live  -> published on the next push
 // status: draft -> hidden (page and listing are removed on the next push)
+// date in the future -> scheduled: hidden until that time, then published by the daily 19:05 EAT deploy
+//   (write it with a time, e.g. date: 2026-10-10T19:00:00+03:00)
 const blog = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/blog" }),
   schema: z.object({

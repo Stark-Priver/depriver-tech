@@ -1,7 +1,7 @@
 ---
 title: "Kamusi ya Tech, toleo 01: maneno 8 ambayo lecturer hakueleza"
 description: "API, bug, Git, deploy, server, cloud, database and framework, explained in plain Swahili with daily-life examples. The first episode of Kamusi ya Tech."
-date: 2026-10-06
+date: 2026-10-13T19:00:00+03:00
 status: live
 tags: ["students", "kiswahili", "kamusi", "basics"]
 carousel: kamusi-ya-tech

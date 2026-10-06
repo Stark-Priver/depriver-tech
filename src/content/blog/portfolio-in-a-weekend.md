@@ -1,7 +1,7 @@
 ---
 title: "Your portfolio site, live by Sunday night: a one-weekend plan"
 description: "A Friday-to-Sunday timetable to build and deploy your developer portfolio for free: what to prepare, what to build each hour, the five sections you need, free hosting options and the mistakes to avoid."
-date: 2026-10-06
+date: 2026-11-07T19:00:00+03:00
 status: live
 tags: ["students", "portfolio", "career", "kiswahili"]
 carousel: portfolio-in-a-weekend

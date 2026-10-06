@@ -1,7 +1,7 @@
 ---
 title: "One person does everything? Not anymore: the group project survival guide"
 description: "How to run a university group project like a real tech team: split roles on day one, use a task board and Git branches, hold weekly check-ins, handle members who don't contribute, and present together."
-date: 2026-10-06
+date: 2026-11-10T19:00:00+03:00
 status: live
 tags: ["students", "teamwork", "git", "kiswahili"]
 carousel: group-project-survival

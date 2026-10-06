@@ -1,7 +1,7 @@
 ---
 title: "Your student ID is worth millions: free tools every tech student should claim"
 description: "GitHub Student Pack, JetBrains, Azure credits, Figma, Cisco and Huawei courses: free pro tools and certificates for students, how to claim them, and why you should do it before you graduate."
-date: 2026-10-06
+date: 2026-10-10T19:00:00+03:00
 status: live
 tags: ["students", "tools", "career", "kiswahili"]
 carousel: free-tools-for-students

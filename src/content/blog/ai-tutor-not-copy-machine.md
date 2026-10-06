@@ -1,7 +1,7 @@
 ---
 title: "Use AI like a tutor, not a copy machine: 5 prompts that make you learn faster"
 description: "Copy-paste from AI works until the exam, the interview or the 2 a.m. bug. Five ways tech students can use AI to actually learn, with prompts to steal, plus five house rules."
-date: 2026-10-06
+date: 2026-11-03T19:00:00+03:00
 status: live
 tags: ["students", "ai", "learning", "kiswahili"]
 carousel: ai-tutor-not-copy-machine

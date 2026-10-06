@@ -4,9 +4,11 @@ import { join } from "node:path";
 
 export type Post = CollectionEntry<"blog">;
 
-/** Live posts, newest first. Drafts never reach the built site. */
+/** Live posts whose date has arrived, newest first. Drafts and scheduled (future-dated) posts never reach the
+ * built site; the daily scheduled deploy in .github/workflows/deploy.yml publishes each one on its date. */
 export async function livePosts(): Promise<Post[]> {
-  const posts = await getCollection("blog", ({ data }) => data.status === "live");
+  const now = Date.now();
+  const posts = await getCollection("blog", ({ data }) => data.status === "live" && data.date.valueOf() <= now);
   return posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 }
 

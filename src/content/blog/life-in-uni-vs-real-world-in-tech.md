@@ -1,7 +1,7 @@
 ---
 title: "I went back to MUST: Life in Uni vs Real World in Tech (talk recap)"
 description: "My first FPT was at MUST in 2024. On 7 October 2026 I came back to talk to students finishing theirs: six differences between uni and real-world tech, habits to start now, and money talk."
-date: 2026-10-07
+date: 2026-10-08T19:00:00+03:00
 status: draft
 tags: ["students", "career", "fpt", "talks", "kiswahili"]
 carousel: life-in-uni-vs-real-world-in-tech

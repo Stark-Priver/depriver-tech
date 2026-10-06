@@ -1,7 +1,7 @@
 ---
 title: "Your skills can pay your rent: tech gigs for students (with Tanzania prices)"
 description: "Five tech gigs you can start as a student in Tanzania: fixing laptops, networks and IT support, websites, design and social media, teaching and typing. Rough prices, who pays, and how to win your first clients."
-date: 2026-10-06
+date: 2026-10-17T19:00:00+03:00
 status: live
 tags: ["students", "money", "freelancing", "kiswahili"]
 carousel: tech-gigs-for-students

@@ -1,7 +1,7 @@
 ---
 title: "Your first tech interview: the 5 questions they always ask (and how to answer)"
 description: "How to prepare for your first tech interview, answer 'tell me about yourself', walk through a project, say 'sijui' the right way, ask good questions and follow up afterwards."
-date: 2026-10-06
+date: 2026-10-31T19:00:00+03:00
 status: live
 tags: ["students", "career", "interviews", "kiswahili"]
 carousel: first-tech-interview

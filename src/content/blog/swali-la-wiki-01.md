@@ -1,7 +1,7 @@
 ---
 title: "Swali la Wiki #01: Naweza kujifunza coding kwa simu tu?"
 description: "Can you learn to code with only a phone? Yes, but plan for a computer. Free tools, the limits, and a 7-day task. The first episode of Swali la Wiki."
-date: 2026-10-06
+date: 2026-10-11T19:00:00+03:00
 status: live
 tags: ["students", "swali-la-wiki", "kiswahili", "beginners"]
 carousel: swali-la-wiki-01

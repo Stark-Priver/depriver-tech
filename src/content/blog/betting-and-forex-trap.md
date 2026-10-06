@@ -1,7 +1,7 @@
 ---
 title: "Betting is not a side hustle (and neither is that forex mentor)"
 description: "Four myths students believe about betting and forex, what's really going on, the signs it's becoming a problem, and a way out. No judgement, just honesty."
-date: 2026-10-06
+date: 2026-11-12T19:00:00+03:00
 status: live
 tags: ["students", "money", "kiswahili"]
 carousel: betting-and-forex-trap

@@ -1,7 +1,7 @@
 ---
 title: "Your CV is one page. Make it count: the first tech CV guide"
 description: "What a lecturer's red pen would mark on a student CV, the seven sections in the right order, how to write projects with impact, why FPT counts as experience, and the checks before you hit send."
-date: 2026-10-06
+date: 2026-10-27T19:00:00+03:00
 status: live
 tags: ["students", "career", "cv", "kiswahili"]
 carousel: first-tech-cv

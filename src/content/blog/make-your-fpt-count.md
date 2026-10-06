@@ -1,7 +1,7 @@
 ---
 title: "FPT is not a holiday: 8 ways to make your field practical training count"
 description: "Field practical training can end with a reference, real experience and even a job offer. A week-by-week guide for tech students in Tanzania: logbook, real work, tools, people, proof and the recommendation letter."
-date: 2026-10-06
+date: 2026-10-06T19:00:00+03:00
 status: live
 tags: ["students", "career", "fpt", "kiswahili"]
 carousel: make-your-fpt-count

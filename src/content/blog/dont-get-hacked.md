@@ -1,7 +1,7 @@
 ---
 title: "Umeshinda milioni 5? Hapana. 5 scams every student in Tanzania gets"
 description: "“Nimekosea kutuma pesa”, WhatsApp code theft, fake jobs, free-bundle links and SIM swap: how to spot them, protect your accounts and report scams to TCRA on 15040."
-date: 2026-10-06
+date: 2026-10-20T19:00:00+03:00
 status: live
 tags: ["students", "security", "kiswahili"]
 carousel: dont-get-hacked

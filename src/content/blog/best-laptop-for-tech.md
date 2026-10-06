@@ -1,7 +1,7 @@
 ---
 title: "The right laptop for tech: specs and brands from budget to serious (Tanzania price guide)"
 description: "Which laptop specs actually matter for coding, the best brands at each budget, rough Tanzanian prices, the MacBook question, what to buy for your track, and a checklist for buying used at Kariakoo."
-date: 2026-10-06
+date: 2026-10-22T19:00:00+03:00
 status: live
 tags: ["students", "laptops", "gadgets", "kiswahili"]
 carousel: best-laptop-for-tech
