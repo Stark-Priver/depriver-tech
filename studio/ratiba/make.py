@@ -1,4 +1,4 @@
-"""Ratiba ya posts: the posting timetable as one designed calendar (1080x1350 and a 1080x1920 phone version,
+"""Ratiba ya posts: the posting timetable as designed calendars, six weeks per page (four pages, Oct 2026 – Mar 2027) (1080x1350 and a 1080x1920 phone version,
 exported at 2x). Six weeks, Monday to Sunday; carousels on Tue/Thu/Sat at 19:00, Swali la Wiki on Sundays.
 Planning image for me, not a carousel (no blog post). Copied into ~/Pictures/Priver/Ratiba by hand or post-kit."""
 import os
@@ -23,13 +23,85 @@ PLAN = {  # date: (short label, kind)
     "2026-10-31": ("Interview", "post"), "2026-11-01": ("Swali #04", "todo"), "2026-11-03": ("AI tutor", "post"),
     "2026-11-05": ("Data", "post"), "2026-11-07": ("Portfolio", "post"), "2026-11-08": ("Swali #05", "todo"),
     "2026-11-10": ("Group work", "post"), "2026-11-12": ("Betting", "post"),
+    # post bank, 14 Nov 2026 → 13 Mar 2027 (studio/BANK.md)
+    "2026-11-14": ("Myths", "post"),
+    "2026-11-17": ("Exams", "post"),
+    "2026-11-19": ("USSD", "post"),
+    "2026-11-21": ("Code #01", "post"),
+    "2026-11-24": ("Hackathon", "post"),
+    "2026-11-26": ("Backend", "post"),
+    "2026-11-28": ("M-money", "post"),
+    "2026-12-01": ("Payments", "post"),
+    "2026-12-03": ("Errors", "post"),
+    "2026-12-05": ("Hiki #01", "post"),
+    "2026-12-08": ("Frontend", "post"),
+    "2026-12-10": ("Pricing", "post"),
+    "2026-12-12": ("Holiday", "post"),
+    "2026-12-15": ("URL", "post"),
+    "2026-12-17": ("Light apps", "post"),
+    "2026-12-19": ("Code #02", "post"),
+    "2026-12-22": ("Data", "post"),
+    "2026-12-24": ("Quiz", "post"),
+    "2026-12-26": ("SIM swap", "post"),
+    "2026-12-29": ("2027 plan", "post"),
+    "2026-12-31": ("Kamusi 02", "post"),
+    "2027-01-02": ("Terminal", "post"),
+    "2027-01-05": ("Security", "post"),
+    "2027-01-07": ("Offline", "post"),
+    "2027-01-09": ("Code #03", "post"),
+    "2027-01-12": ("Emails", "post"),
+    "2027-01-14": ("WhatsApp", "post"),
+    "2027-01-16": ("UI/UX", "post"),
+    "2027-01-19": ("SMS", "post"),
+    "2027-01-21": ("Docs", "post"),
+    "2027-01-23": ("Hiki #02", "post"),
+    "2027-01-26": ("Mobile", "post"),
+    "2027-01-28": ("How AI", "post"),
+    "2027-01-30": ("Estimates", "post"),
+    "2027-02-02": ("DevOps", "post"),
+    "2027-02-04": ("IT support", "post"),
+    "2027-02-06": ("Product", "post"),
+    "2027-02-09": ("Path quiz", "post"),
+    "2027-02-11": ("2FA", "post"),
+    "2027-02-13": ("Code #04", "post"),
+    "2027-02-16": ("Git", "post"),
+    "2027-02-18": ("Kiswahili", "post"),
+    "2027-02-20": ("Hiki #03", "post"),
+    "2027-02-23": ("Hashing", "post"),
+    "2027-02-25": ("Prompts", "post"),
+    "2027-02-27": ("Kamusi 03", "post"),
+    "2027-03-02": ("Semester", "post"),
+    "2027-03-04": ("Open src", "post"),
+    "2027-03-06": ("Code #05", "post"),
+    "2027-03-09": ("SQL", "post"),
+    "2027-03-11": ("FPT early", "post"),
+    "2027-03-13": ("Job scams", "post"),
+    "2026-11-15": ("Swali", "todo"),
+    "2026-11-22": ("Swali", "todo"),
+    "2026-11-29": ("Swali", "todo"),
+    "2026-12-06": ("Swali", "todo"),
+    "2026-12-13": ("Swali", "todo"),
+    "2026-12-20": ("Swali", "todo"),
+    "2026-12-27": ("Swali", "todo"),
+    "2027-01-03": ("Swali", "todo"),
+    "2027-01-10": ("Swali", "todo"),
+    "2027-01-17": ("Swali", "todo"),
+    "2027-01-24": ("Swali", "todo"),
+    "2027-01-31": ("Swali", "todo"),
+    "2027-02-07": ("Swali", "todo"),
+    "2027-02-14": ("Swali", "todo"),
+    "2027-02-21": ("Swali", "todo"),
+    "2027-02-28": ("Swali", "todo"),
+    "2027-03-07": ("Swali", "todo"),
+    "2027-03-14": ("Swali", "todo"),
 }
-START = dt.date(2026, 10, 5)   # Monday
 WEEKS = 6
+PAGES = [(dt.date(2026, 10, 5), "Oct – Nov 2026", ""), (dt.date(2026, 11, 16), "Nov – Dec 2026", "-2"),
+         (dt.date(2026, 12, 28), "Dec 2026 – Feb 2027", "-3"), (dt.date(2027, 2, 8), "Feb – Mar 2027", "-4")]
 
 
-def render(name, height, top, ty, gy, cell_h, ly, blk, ts=140):
-    s = poster_start(height, top, "Content calendar · Oct – Nov 2026")
+def render(name, height, top, ty, gy, cell_h, ly, blk, ts=140, START=None, span=""):
+    s = poster_start(height, top, "Content calendar · " + span)
     s.text(M - 6, ty, "Ratiba", f(BOLD, ts), NAVY)
     s.text(M - 6, ty + ts * 0.83, "ya posts.", f(BOLD, ts * 0.79), ORANGE)
     s.text(M, ty + ts * 1.42, "Post moja kwa wakati wake", f(SIG, 50), NAVY)
@@ -62,6 +134,7 @@ def render(name, height, top, ty, gy, cell_h, ly, blk, ts=140):
     poster_end(s, blk, "Tue · Thu · Sat carousels · Sunday Swali la Wiki", name)
 
 
-render("ratiba-ya-posts", 1350, top=96, ty=215, gy=440, cell_h=90, ly=1028, blk=1065, ts=112)
-render("ratiba-ya-posts-phone", 1920, top=210, ty=430, gy=700, cell_h=118, ly=1440, blk=1500)
+for start, span, suf in PAGES:
+    render("ratiba-ya-posts" + suf, 1350, top=96, ty=215, gy=440, cell_h=90, ly=1028, blk=1065, ts=112, START=start, span=span)
+    render("ratiba-ya-posts-phone" + suf, 1920, top=210, ty=430, gy=700, cell_h=118, ly=1440, blk=1500, START=start, span=span)
 print("ok")
