@@ -53,5 +53,9 @@ jobs:
         run: |
           if [ -z "$VIORA_KEY" ]; then echo "VIORA_KEY is not set; skipping"; exit 0; fi
           sleep 45
-          curl -fsS -X POST "https://viora-cloud.depriver-tech.workers.dev/v1/admin/sites/depriver/reindex" \
-            -H "Authorization: Bearer $VIORA_KEY" -H "User-Agent: depriver-deploy"
+          code=$(curl -sS -o reindex.json -w "%{http_code}" -X POST "https://viora-cloud.depriver-tech.workers.dev/v1/admin/sites/depriver/reindex" \
+            -H "Authorization: Bearer $VIORA_KEY" -H "User-Agent: depriver-deploy")
+          cat reindex.json; echo
+          # 429 = viora's daily re-index cap (20/day) was reached by earlier deploys; the next deploy refreshes it
+          if [ "$code" = "429" ]; then echo "::warning::viora re-index limit reached today; skipped"; exit 0; fi
+          [ "$code" -lt 400 ]
