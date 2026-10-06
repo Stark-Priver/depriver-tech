@@ -101,6 +101,18 @@ def closing_footer(s):
     s.text(W - M, BASE + 224, "@_depriver", f(SEMI, 21), WHITE_T, anchor="rs")
 
 
+def wrap_lines(s, text, font, maxw):
+    """Number of lines s.para() would use for text."""
+    n, line = 0, ""
+    for word in text.split():
+        trial = (line + " " + word).strip()
+        if s.width(trial, font) > maxw and line:
+            n, line = n + 1, word
+        else:
+            line = trial
+    return n + (1 if line else 0)
+
+
 def chat(s, x, y, w, text, who, mine=True, size=24, lh=34, tag=None, tag_ok=True):
     """Chat bubble (mine = navy on the right look, else white). Returns bottom y."""
     fnt = f(MED if mine else REG, size)
