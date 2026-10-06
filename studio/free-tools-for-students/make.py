@@ -227,7 +227,7 @@ GROUPS = [
          "jetbrains.com/student"),
         ("Figma Education", "Pro design tools for UI and prototypes", "Verify your student status in Figma",
          "figma.com/education"),
-        ("Notion for students", "The Plus plan for notes and projects", "Sign up with your uni email",
+        ("Notion for students", "Free Education Plan: unlimited pages & uploads", "Sign up with your uni email, verify yearly",
          "notion.com/students")],
      ("Do this", "Build your next project with the same tools pros use.", "Zana za kitaalamu, bure", NAVY)),
     ("Coupon 03 · Cloud & office", ("Your own", "cloud, free."), [
@@ -312,7 +312,7 @@ def dash(y):
 
 dash(172)
 items = [("GitHub Student Pack", "FREE"), ("Copilot Pro", "FREE"), ("JetBrains IDEs", "FREE"), ("Figma Education", "FREE"),
-         ("Notion Plus", "FREE"), ("Azure $100 credit", "FREE"), ("Microsoft 365", "FREE"), ("AWS Educate", "FREE"),
+         ("Notion Education", "FREE"), ("Azure $100 credit", "FREE"), ("Microsoft 365", "FREE"), ("AWS Educate", "FREE"),
          ("Cisco NetAcad", "FREE"), ("Huawei ICT Academy", "FREE"), ("Microsoft Learn", "FREE")]
 y = 210
 for name, price in items:

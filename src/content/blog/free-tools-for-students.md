@@ -39,7 +39,7 @@ Claim it at [education.github.com/pack](https://education.github.com/pack).
 
 - **JetBrains IDEs** (IntelliJ IDEA, PyCharm, WebStorm and the rest): a free licence with your uni email, renewed every year. [jetbrains.com/student](https://www.jetbrains.com/community/education/#students)
 - **Figma Education**: pro design tools for UI and prototypes. [figma.com/education](https://www.figma.com/education/)
-- **Notion**: the Plus plan for notes and projects when you sign up with your uni email.
+- **Notion**: the free Education Plan (unlimited pages and file uploads) when you sign up with your uni email. Verify once a year. [notion.com/students](https://www.notion.com/product/notion-for-education)
 
 ## Coupon 03: Cloud & office
 
