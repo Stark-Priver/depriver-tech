@@ -161,3 +161,26 @@ def poster_end(s, blk, kicker, name):
     s.text(W - M, blk + 236, "@_depriver", f(SEMI, 22), WHITE_T, anchor="rs")
     finish(s)
     s.im.save(f"{OUT}{name}.jpg", quality=95)
+
+
+def poster_from_cover(export_dir, slug, kicker, label):
+    """Feed poster + status built from the carousel cover (slide-1.jpg at 2x): the cover's art and title above the
+    poster footer. Feed keeps the cover's own header; status gets its own header in the safe zone."""
+    cover = Image.open(os.path.join(export_dir, "slide-1.jpg")).convert("RGB")
+    global H, _TERRAIN
+    # feed 1080x1350: cover top to just above its wave
+    H, _TERRAIN = 1350, None
+    s = Slide()
+    s.im.paste(cover.crop((0, 0, k(W), k(1005))), (0, 0))
+    s.d = ImageDraw.Draw(s.im)
+    poster_end(s, 1005, kicker, slug + "-poster")
+    # status 1080x1920: own header, the cover body as a framed panel, then a call to action
+    s = poster_start(1920, 210, label)
+    s.im.paste(cover.crop((0, k(130), k(W), k(1005))), (0, k(270)))
+    s.d = ImageDraw.Draw(s.im)
+    hairline(s, M, W - M, 268, RULE)
+    hairline(s, M, W - M, 1145, RULE)
+    smallcaps(s, M, 1240, "New on the blog", 17, ORANGE)
+    s.text(M, 1340, "Soma yote kwenye blog", f(SIG, 72), NAVY)
+    swash(s, M + 8, M + 560, 1370, ORANGE, 6)
+    poster_end(s, 1500, kicker, slug + "-status")
