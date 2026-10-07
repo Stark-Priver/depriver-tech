@@ -1,0 +1,17 @@
+---
+// Short link for the room: depriver.tech/talk -> the latest talk.
+import { talks, talkBase } from "../../data/talks";
+const latest = [...talks].sort((a, b) => b.date.localeCompare(a.date))[0];
+const to = talkBase(latest.slug);
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <meta http-equiv="refresh" content={`0; url=${to}`} />
+    <link rel="canonical" href={`https://depriver.tech${to}`} />
+    <title>{latest.title}</title>
+  </head>
+  <body><a href={to}>{latest.title}</a></body>
+</html>

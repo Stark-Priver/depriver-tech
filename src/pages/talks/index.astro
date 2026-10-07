@@ -1,0 +1,31 @@
+---
+import Base from "../../layouts/Base.astro";
+import { talks, talkBase } from "../../data/talks";
+const sorted = [...talks].sort((a, b) => b.date.localeCompare(a.date));
+---
+<Base title="Talks · Privatus Cosmas" description="Slides from my talks, ready to present in the browser or download as PowerPoint and PDF.">
+  <section class="talks wrap">
+    <span class="label">Talks</span>
+    <h1 class="display">Talks &amp; <span class="accent">slides.</span></h1>
+    <ul>
+      {sorted.map((t) => (
+        <li>
+          <a href={talkBase(t.slug)}>
+            <img src={`${talkBase(t.slug)}thumbs/01.webp`} alt="" width="640" height="360" loading="lazy" />
+            <span class="t">{t.title}</span>
+            <span class="m">{new Date(t.date + "T12:00:00+03:00").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })} · {t.place}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Base>
+<style>
+  .talks { padding: 140px 0 90px; }
+  .talks h1 { margin: 18px 0 36px; font-size: clamp(2.4rem, 5vw, 4rem); }
+  ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+  a { display: grid; gap: 8px; text-decoration: none; }
+  img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 16px; border: 2px solid var(--heading); }
+  .t { font-weight: 700; color: var(--heading); font-size: 1.15rem; }
+  .m { color: var(--muted); font-size: 0.9rem; }
+</style>

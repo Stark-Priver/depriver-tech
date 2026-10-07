@@ -1,0 +1,100 @@
+---
+// Talk page: cover, present / PDF / download actions, every slide as a thumbnail (opens the presenter there), credits.
+import Base from "../../../layouts/Base.astro";
+import { talks, talkBase } from "../../../data/talks";
+
+export function getStaticPaths() {
+  return talks.map((t) => ({ params: { slug: t.slug }, props: { talk: t } }));
+}
+const { talk } = Astro.props;
+const base = talkBase(talk.slug);
+const when = new Date(talk.date + "T12:00:00+03:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+const pad = (n: number) => String(n).padStart(2, "0");
+---
+<Base title={`${talk.title} · Talk by Privatus Cosmas`} description={talk.description} image={`${base}cover.jpg`} imageAlt={talk.title}
+  jsonLd={{ "@context": "https://schema.org", "@type": "PresentationDigitalDocument", name: talk.title, description: talk.description,
+    url: `https://depriver.tech${base}`, author: { "@id": "https://depriver.tech/#person" }, dateCreated: talk.date }}>
+  <section class="talk wrap">
+    <div class="head" data-reveal>
+      <span class="label">Talk · {talk.event}</span>
+      <h1 class="display">{talk.title}<span class="accent">{talk.subtitle}.</span></h1>
+      <p class="meta">{when} · {talk.place} · {talk.slides} slides</p>
+      <p class="desc">{talk.description}</p>
+      <div class="actions">
+        <a class="btn" href={`${base}present/`}>
+          Present full screen
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a class="btn ghost" href={`${base}pdf/`}>View PDF</a>
+      </div>
+      <ul class="files">
+        <li><a href={`${base}${talk.slug}.pptx`} download>Download PowerPoint (.pptx, {talk.pptxMB} MB)</a></li>
+        <li><a href={`${base}${talk.slug}.pdf`} download>Download PDF ({talk.pdfMB} MB)</a></li>
+      </ul>
+    </div>
+
+    <a class="cover" href={`${base}present/`} aria-label="Present the deck" data-reveal>
+      <img src={`${base}thumbs/01.webp`} alt={`First slide: ${talk.title}`} width="1280" height="720" />
+      <span class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span>
+    </a>
+
+    <div class="keys" data-reveal>
+      <span><kbd>→</kbd> <kbd>Space</kbd> next</span>
+      <span><kbd>←</kbd> back</span>
+      <span><kbd>F</kbd> full screen</span>
+      <span>Swipe on phones</span>
+    </div>
+
+    <h2 class="grid-title" data-reveal>All {talk.slides} slides</h2>
+    <ol class="slides">
+      {Array.from({ length: talk.slides }, (_, i) => (
+        <li data-reveal>
+          <a href={`${base}present/#${i + 1}`}>
+            <img src={`${base}thumbs/${pad(i + 1)}.webp`} alt={`Slide ${i + 1}`} width="960" height="540" loading="lazy" decoding="async" />
+            <span>{pad(i + 1)}</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+
+    {talk.credits && (
+      <div class="credits">
+        <h2>Credits</h2>
+        {talk.credits.map((c) => <p>{c}</p>)}
+      </div>
+    )}
+  </section>
+</Base>
+
+<style>
+  .talk { padding: 140px 0 90px; }
+  .head { max-width: 860px; }
+  .head h1 { font-size: clamp(2.4rem, 5.4vw, 4.6rem); margin: 18px 0 0; }
+  .meta { margin: 22px 0 0; font-weight: 600; color: var(--heading); }
+  .desc { margin: 10px 0 0; color: var(--muted); font-size: 1.08rem; max-width: 46rem; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+  .files { list-style: none; padding: 0; margin: 18px 0 0; display: flex; flex-wrap: wrap; gap: 8px 22px; }
+  .files a { color: var(--heading); font-weight: 600; font-size: 0.95rem; text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 4px; }
+  .cover { position: relative; display: block; margin-top: 48px; border-radius: 22px; overflow: hidden; border: 3px solid var(--heading);
+    box-shadow: 10px 12px 0 var(--neu-lo); aspect-ratio: 16 / 9; background: var(--surface-2); }
+  .cover img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s var(--ease); }
+  .cover:hover img { transform: scale(1.02); }
+  .play { position: absolute; left: 50%; top: 50%; width: 96px; height: 96px; margin: -48px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--accent); color: #fff; box-shadow: 0 18px 40px -10px rgba(11, 30, 63, 0.6); transition: transform 0.3s var(--ease); }
+  .play svg { width: 40px; height: 40px; margin-left: 5px; }
+  .cover:hover .play { transform: scale(1.08); }
+  .keys { display: flex; flex-wrap: wrap; gap: 10px 24px; margin-top: 20px; color: var(--muted); font-size: 0.92rem; }
+  kbd { font: 600 0.8rem "Poppins", sans-serif; padding: 3px 8px; border-radius: 6px; border: 1.5px solid var(--line); background: var(--surface); color: var(--heading); }
+  .grid-title { margin: 70px 0 18px; font-size: 1.5rem; color: var(--heading); }
+  .slides { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+  .slides a { position: relative; display: block; border-radius: 12px; overflow: hidden; border: 2px solid var(--line); aspect-ratio: 16 / 9;
+    background: var(--surface-2); transition: border-color 0.2s, transform 0.3s var(--ease); }
+  .slides a:hover, .slides a:focus-visible { border-color: var(--accent); transform: translateY(-3px); }
+  .slides img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .slides span { position: absolute; left: 8px; bottom: 8px; padding: 2px 8px; border-radius: 6px; background: rgba(11, 30, 63, 0.82); color: #fff;
+    font-size: 0.75rem; font-weight: 600; }
+  .credits { margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--line); max-width: 60rem; }
+  .credits h2 { font-size: 1rem; color: var(--heading); margin: 0 0 8px; }
+  .credits p { font-size: 0.85rem; color: var(--muted); margin: 0 0 6px; }
+  @media (max-width: 640px) { .talk { padding-top: 110px; } .play { width: 72px; height: 72px; margin: -36px; } }
+</style>
