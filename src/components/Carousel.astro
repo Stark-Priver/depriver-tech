@@ -60,6 +60,7 @@ const { slides, captions = [], title } = Astro.props;
       prev.disabled = i === 0;
       next.disabled = i === slides.length - 1;
       if (caption && captions[i]) caption.textContent = captions[i];
+      cv.dispatchEvent(new CustomEvent("cv:slide", { detail: i }));
     };
 
     const io = new IntersectionObserver(

@@ -55,7 +55,8 @@ const jsonLd = {
         <div class="v-scroll">
           {ser && <a class="v-series" href="/#series">{ser.name}</a>}
           <h1 class="v-title">{post.data.title}</h1>
-          <p class="v-desc">{post.data.description}</p>
+          <p class="v-desc" data-desc>{post.data.description}</p>
+          <p class="v-step" data-step hidden><span data-step-n></span><button type="button" data-follow-toggle>Read everything</button></p>
           <div class="prose v-prose" data-clamp><Content /></div>
           <button class="v-more" type="button" data-more-text hidden>more</button>
           <p class="v-tags">{post.data.tags.map((t) => <span>#{t.replace(/\s+/g, "")}</span>)}</p>
@@ -101,7 +102,103 @@ const jsonLd = {
   // phones: long captions fold behind "more", like Instagram, so the comments stay close to the slides
   const text = document.querySelector<HTMLElement>("[data-clamp]");
   const moreBtn = document.querySelector<HTMLButtonElement>("[data-more-text]");
-  if (text && moreBtn && matchMedia("(max-width: 900px)").matches && text.scrollHeight > 260) {
+
+  // the text beside the slides follows them: each slide shows only the section written about it
+  const cv = document.querySelector<HTMLElement>("[data-cv]");
+  let following = false;
+  if (text && cv) {
+    // split at h2 headings, and at h3 too when that gets closer to one section per slide
+    const captions: string[] = JSON.parse(cv.querySelector("[data-captions]")?.textContent || "[]");
+    // numbered lists of bold-led points ("1. **Lesson.** ...") become one section per point
+    text.querySelectorAll<HTMLOListElement>(":scope > ol").forEach((ol) => {
+      const items = [...ol.children];
+      if (items.length < 3 || !items.every((li) => li.firstElementChild?.tagName === "STRONG")) return;
+      ol.replaceWith(...items.map((li, n) => {
+        const one = document.createElement("ol");
+        one.start = ol.start + n;
+        one.dataset.item = n ? "next" : "first";
+        one.append(li);
+        return one;
+      }));
+    });
+    const split = (sel: string) => {
+      const out: HTMLElement[][] = [[]];
+      [...text.children].forEach((el) => {
+        if ((el.matches(sel) || (el as HTMLElement).dataset.item === "next") && out[out.length - 1].length) out.push([]);
+        out[out.length - 1].push(el as HTMLElement);
+      });
+      return out;
+    };
+    const byH2 = split("h2"), byH3 = split("h2, h3");
+    const parts = byH2.length < captions.length - 1 && byH3.length > byH2.length ? byH3 : byH2;
+    if (parts.length > 2) {
+      following = true;
+      const stop = new Set(["the", "and", "for", "you", "your", "this", "that", "what", "how", "with", "are", "its", "they", "who", "why", "when", "from", "into", "not", "but", "can", "all", "one", "kwa", "really", "actually"]);
+      const words = (s: string) => new Set(s.toLowerCase().replace(/[^a-z0-9 ]+/g, " ").split(/\s+/)
+        .map((w) => (/^\d+$/.test(w) ? String(+w) : w)).filter((w) => (w.length > 2 || /^\d+$/.test(w)) && !stop.has(w)));
+      const heads = parts.map((p) => words(p.map((el) =>
+        el.matches("h2, h3") ? el.textContent : el.matches("ol[data-item]") ? el.querySelector("strong")?.textContent : "").join(" ")));
+      // best in-order alignment of slides to sections: shared heading words, nudged toward the matching position
+      const m = captions.length, k = parts.length;
+      const fit = (i: number, n: number) => {
+        const w = words(captions[i]);
+        return [...w].filter((x) => heads[n].has(x)).length - 0.05 * Math.abs(n - (i * (k - 1)) / Math.max(1, m - 1));
+      };
+      const best: number[][] = [], from: number[][] = [];
+      for (let i = 0; i < m; i++) {
+        best[i] = []; from[i] = [];
+        for (let n = 0; n < k; n++) {
+          // the cover slide always opens on the intro, when the post has one
+          let prev = !i && n > 0 && !parts[0][0].matches("h2, h3") ? -Infinity : 0, at = 0;
+          if (i) { prev = -Infinity; for (let q = 0; q <= n; q++) if (best[i - 1][q] > prev) { prev = best[i - 1][q]; at = q; } }
+          best[i][n] = prev + fit(i, n); from[i][n] = at;
+        }
+      }
+      const map: number[] = [];
+      let n = best[m - 1].indexOf(Math.max(...best[m - 1]));
+      for (let i = m - 1; i >= 0; i--) { map[i] = n; n = from[i][n]; }
+      const boxes = parts.map((p) => {
+        const box = document.createElement("div");
+        box.className = "v-part";
+        p[0]?.before(box);
+        box.append(...p);
+        return box;
+      });
+      const desc = document.querySelector<HTMLElement>("[data-desc]")!;
+      const step = document.querySelector<HTMLElement>("[data-step]")!;
+      const stepN = step.querySelector<HTMLElement>("[data-step-n]")!;
+      const toggle = step.querySelector<HTMLButtonElement>("[data-follow-toggle]")!;
+      const scroller = document.querySelector<HTMLElement>(".v-scroll")!;
+      const wide = matchMedia("(min-width: 901px)");
+      const capLine = cv.querySelector<HTMLElement>("[data-caption]");
+      let on = true, current = 0;
+      step.hidden = false;
+      const show = (i: number) => {
+        current = i;
+        stepN.textContent = `Slide ${i + 1} of ${captions.length}`;
+        if (!on) return;
+        const k = map[i] ?? 0;
+        boxes.forEach((b, n) => {
+          const was = !b.hidden;
+          b.hidden = n !== k;
+          if (!b.hidden && !was) b.animate([{ opacity: 0, transform: "translateY(10px)" }, { opacity: 1, transform: "none" }], { duration: 380, easing: "cubic-bezier(.2,.7,.2,1)" });
+        });
+        desc.hidden = k !== 0;
+        if (capLine) capLine.hidden = true;
+        if (wide.matches) scroller.scrollTo({ top: 0, behavior: "smooth" });
+      };
+      toggle.addEventListener("click", () => {
+        on = !on;
+        toggle.textContent = on ? "Read everything" : "Follow the slides";
+        stepN.style.visibility = on ? "" : "hidden";
+        if (on) show(current);
+        else { boxes.forEach((b) => (b.hidden = false)); desc.hidden = false; if (capLine) capLine.hidden = false; }
+      });
+      cv.addEventListener("cv:slide", (e) => show((e as CustomEvent<number>).detail));
+      show(0);
+    }
+  }
+  if (!following && text && moreBtn && matchMedia("(max-width: 900px)").matches && text.scrollHeight > 260) {
     text.classList.add("clamped");
     moreBtn.hidden = false;
     moreBtn.addEventListener("click", () => { text.classList.remove("clamped"); moreBtn.hidden = true; });
@@ -155,6 +252,12 @@ const jsonLd = {
   .v-series { display: inline-block; margin-bottom: 10px; padding: 4px 12px; border-radius: 999px; background: var(--accent); color: var(--on-accent); font-size: 0.78rem; font-weight: 600; text-decoration: none; }
   .v-title { margin: 0; color: var(--heading); font-size: clamp(1.4rem, 2vw, 1.85rem); line-height: 1.2; letter-spacing: -0.02em; }
   .v-desc { margin: 10px 0 0; color: var(--muted); }
+  .v-step { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 16px 0 0; padding-top: 12px; border-top: 1px solid var(--line); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+  .v-step[hidden] { display: none; }
+  .v-step button { padding: 0; font: inherit; font-size: 0.78rem; letter-spacing: 0; text-transform: none; color: var(--muted); background: none; border: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .v-step button:hover { color: var(--heading); }
+  .v-prose :global(.v-part > h2:first-child) { margin-top: 0.6em; }
+  .v-prose :global(ol[data-item]) { margin: 0.5em 0; }
   .v-prose { max-width: none; padding: 0; font-size: 1rem; line-height: 1.7; }
   .v-prose :global(h2) { font-size: 1.25rem; margin: 1.4em 0 0.4em; }
   .v-prose :global(h3) { font-size: 1.08rem; }
