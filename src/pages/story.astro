@@ -61,9 +61,9 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
       pushed to the edge of dropping out. <em>Every time, I started again.</em>
     </p>
     <div class="stats">
-      <div data-reveal><strong><span data-count={age}>{age}</span></strong><span>Years of story</span></div>
-      <div data-reveal><strong><span data-count="2">2</span>×</strong><span>Division I results</span></div>
-      <div data-reveal><strong><span data-count={chapters.length}>{chapters.length}</span></strong><span>Chapters below</span></div>
+      <a href="#born" data-reveal><strong><span data-count={age}>{age}</span></strong><span class="k">Years of story</span><span class="d">2006 to today, Kitwe to Mbeya</span><i aria-hidden="true">↓</i></a>
+      <a href="#graduation" data-reveal><strong><span data-count="2">2</span><small>×</small></strong><span class="k">Division I results</span><span class="d">Form Two, then Form Four</span><i aria-hidden="true">↓</i></a>
+      <a href="#story" data-reveal><strong><span data-count={chapters.length}>{chapters.length}</span></strong><span class="k">Chapters below</span><span class="d">The falls, and every start again</span><i aria-hidden="true">↓</i></a>
     </div>
   </section>
 
@@ -354,10 +354,20 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
   .prologue { padding: 100px 0 60px; }
   .big { font-size: clamp(1.5rem, 3.3vw, 2.5rem); line-height: 1.35; font-weight: 500; color: var(--heading); max-width: 22em; margin: 28px 0 56px; letter-spacing: -0.01em; }
   .big em { font-style: normal; color: var(--accent); }
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-  .stats div { background: var(--deep); color: var(--deep-text); border-radius: var(--radius); padding: 30px 32px; }
-  .stats strong { display: block; font-size: clamp(2.6rem, 6vw, 4.2rem); color: var(--on-deep); line-height: 1; margin-bottom: 8px; }
-  .stats div:nth-child(2) { background: var(--accent); color: var(--on-accent); }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .stats a { position: relative; display: grid; align-content: start; gap: 4px; padding: 34px 32px 30px; text-decoration: none; color: var(--muted); overflow: hidden; isolation: isolate; }
+  .stats a + a { border-left: 1px solid var(--line); }
+  .stats a::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--surface); transform: scaleY(0); transform-origin: bottom; transition: transform 0.6s var(--ease); }
+  .stats a:hover::before { transform: scaleY(1); }
+  .stats strong { display: flex; align-items: flex-start; font-size: clamp(4.4rem, 9vw, 7.5rem); font-weight: 700; line-height: 0.9; letter-spacing: -0.05em; margin-bottom: 14px;
+    color: transparent; -webkit-text-stroke: 2px var(--accent); transition: color 0.5s var(--ease); }
+  .stats a:hover strong, .stats a:nth-child(2) strong { color: var(--accent); }
+  .stats a:nth-child(2):hover strong { color: transparent; }
+  .stats small { font-size: 0.45em; margin: 0.15em 0 0 0.08em; -webkit-text-stroke: 0; color: var(--heading); }
+  .stats .k { font-size: 1.15rem; font-weight: 700; color: var(--heading); }
+  .stats .d { font-size: 0.92rem; }
+  .stats i { position: absolute; top: 30px; right: 28px; font-style: normal; font-size: 1.3rem; color: var(--accent); opacity: 0; transform: translateY(-8px); transition: opacity 0.4s, transform 0.4s var(--ease); }
+  .stats a:hover i { opacity: 1; transform: none; }
 
   /* STORY */
   .story { display: grid; grid-template-columns: 240px 1fr; gap: 56px; padding: 80px 0; }
@@ -569,6 +579,10 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
     .hero-block { width: 78%; height: 150px; z-index: 2; }
     .hero-name { bottom: 22px; }
     .contours { width: 100%; opacity: 0.35; }
+    .stats a { grid-template-columns: auto 1fr; column-gap: 20px; padding: 22px 6px; }
+    .stats a + a { border-left: 0; border-top: 1px solid var(--line); }
+    .stats strong { grid-row: span 2; margin: 0; min-width: 1.3em; font-size: 4.2rem; }
+    .stats .k { align-self: end; }
     .stats, .svc-grid, .lesson-grid, .post-grid, .groups, .results { grid-template-columns: 1fr; }
     .asante { grid-template-columns: 1fr; }
     .person { grid-template-columns: 52px 1fr; gap: 14px; }
