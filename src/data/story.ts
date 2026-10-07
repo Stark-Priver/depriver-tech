@@ -230,6 +230,10 @@ export const contact = {
   github: "Stark-Priver",
   githubHref: "https://github.com/Stark-Priver",
   whatsappHref: "https://wa.me/255752747681",
+  email: "privercosmas@gmail.com",
+  emailHref: "mailto:privercosmas@gmail.com",
+  linkedin: "in/incpritech",
+  linkedinHref: "https://www.linkedin.com/in/incpritech/",
 };
 
 // Gratitude. Named people come from Privatus; groups are drawn from the story. Add names here as he shares them.
