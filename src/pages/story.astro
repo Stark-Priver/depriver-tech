@@ -225,28 +225,33 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
 
   <!-- ── LESSONS ──────────────────────────────────────── -->
   <section class="lessons wrap">
-    <span class="label" data-reveal>What it taught me</span>
-    <Title title="Three lessons" accent="I carry everywhere" />
+    <header class="sh">
+      <div>
+        <span class="label" data-reveal>What it taught me</span>
+        <Title title="Three lessons" accent="I carry everywhere" size="clamp(2rem, 3.6vw, 3.1rem)" />
+      </div>
+      <p class="sh-lead" data-reveal>Every chapter left me something. These three I use every single day.</p>
+    </header>
     <ol class="lesson-list">
       {lessons.map((l) => { const i = chapters.findIndex((c) => c.id === l.from); return (
         <li class="lesson" data-lesson>
-          <span class="lesson-n" aria-hidden="true">{l.n}</span>
-          <div class="lesson-main">
-            <h3>{l.title}</h3>
-            <p>{l.body}</p>
-            {i >= 0 && <a class="lesson-from" href={`#${l.from}`}>Chapter {pad(i + 1)} · {chapters[i].year}<span aria-hidden="true">↑</span></a>}
+          <div class="lesson-top">
+            <span class="lesson-n" aria-hidden="true">{l.n}</span>
+            {i >= 0 && <a class="lesson-from" href={`#${l.from}`}>Ch. {pad(i + 1)} · {chapters[i].year}<span aria-hidden="true">↑</span></a>}
           </div>
-          <div class="turn" aria-label={`Then: ${l.then}. Now: ${l.now}.`}>
-            <p class="then"><span>Then</span><s>{l.then}</s></p>
-            <svg class="arc" viewBox="0 0 120 40" aria-hidden="true"><path d="M4 30 C 40 2, 80 2, 112 22" /><path d="M100 14 l13 8 -14 5" /></svg>
-            <p class="now"><span>Now</span><strong>{l.now}</strong></p>
+          <h3>{l.title}</h3>
+          <p>{l.body}</p>
+          <div class="diff" aria-label={`Then: ${l.then}. Now: ${l.now}.`}>
+            <p class="diff-cmd"><span>$</span> git diff then..now</p>
+            <p class="del">- {l.then}</p>
+            <p class="add">+ {l.now}</p>
           </div>
         </li>
       ); })}
     </ol>
     <script>
-      // each lesson plays its turn (then crossed out, arrow drawn, now lands) when it scrolls in
-      const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && (e.target.classList.add("in"), io.unobserve(e.target))), { threshold: 0.45 });
+      // each lesson's diff prints when it scrolls in
+      const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && (e.target.classList.add("in"), io.unobserve(e.target))), { threshold: 0.4 });
       document.querySelectorAll("[data-lesson]").forEach((el) => io.observe(el));
     </script>
   </section>
@@ -254,12 +259,16 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
   <!-- ── TODAY ────────────────────────────────────────── -->
   <section id="today" class="today deep">
     <div class="wrap">
-      <span class="label" data-reveal>Chapter {pad(chapters.length + 1)} · Today</span>
-      <Title title="Software Engineer" accent="& Digital Innovator" light size="clamp(2.2rem, 6vw, 4.8rem)" />
-      <p class="today-lead" data-reveal>
-        Today I build software full time in Mbeya: web and mobile apps, business systems and data tools,
-        with real exposure to every part of tech.
-      </p>
+      <header class="sh">
+        <div>
+          <span class="label" data-reveal>Chapter {pad(chapters.length + 1)} · Today</span>
+          <Title title="Software Engineer" accent="& Digital Innovator" light size="clamp(2rem, 3.6vw, 3.1rem)" />
+        </div>
+        <p class="sh-lead today-lead" data-reveal>
+          Today I build software full time in Mbeya: web and mobile apps, business systems and data tools,
+          with real exposure to every part of tech.
+        </p>
+      </header>
       {/* what I do today, as my editor: each service is a file, life beyond code is the terminal */}
       <div class="ide" data-ide data-reveal>
         <div class="ide-bar">
@@ -324,11 +333,13 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
 
   <!-- ── NEXT CHAPTER ─────────────────────────────────── -->
   <section id="next" class="next wrap">
-    <span class="label" data-reveal>Chapter {pad(chapters.length + 2)} · What's next</span>
-    <Title title="The next" accent="chapter" size="clamp(2.4rem, 6vw, 4.6rem)" />
-    <p class="next-lead" data-reveal>
-      Where I'm going from here. These are the goals I wake up for.
-    </p>
+    <header class="sh">
+      <div>
+        <span class="label" data-reveal>Chapter {pad(chapters.length + 2)} · What's next</span>
+        <Title title="The next" accent="chapter" size="clamp(2rem, 3.6vw, 3.1rem)" />
+      </div>
+      <p class="sh-lead" data-reveal>Where I'm going from here. These are the goals I wake up for.</p>
+    </header>
     {/* the road ahead: the story's line keeps going, with a stop for each kind of dream */}
     <div class="road" data-road>
       <div class="road-ends" aria-hidden="true">
@@ -364,94 +375,109 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
 
   <!-- ── THANKS ───────────────────────────────────────── -->
   <section id="gratitude" class="thanks wrap">
-    <span class="label" data-reveal>Gratitude</span>
-    <Title title="The people" accent="who carried me" size="clamp(2.4rem, 6vw, 4.6rem)" />
-    <p class="thanks-lead" data-reveal>
-      No story like this is written alone. Some people held my hand directly. Others helped from a distance,
-      sometimes without knowing it. Every one of them is part of this.
-    </p>
+    <header class="sh">
+      <div>
+        <span class="label" data-reveal>Gratitude</span>
+        <Title title="The people" accent="who carried me" size="clamp(2rem, 3.6vw, 3.1rem)" />
+      </div>
+      <p class="sh-lead" data-reveal>No story like this is written alone. Some held my hand directly, others helped from a distance. Every one of them is part of this.</p>
+    </header>
 
-    {/* everyone in one card, drawn as a tree: the closest people are the branches, I'm the trunk, everyone along the way is the roots */}
+    {/* one card, drawn as a tree: the closest people are the leaves, I'm the trunk, everyone along the way is the roots */}
     <article class="thanks-card" data-reveal>
       <div class="tree" data-tree>
-        <span class="trunk" aria-hidden="true"><span></span></span>
-        <h3 class="thanks-sub crown-label">Closest to my heart</h3>
-        <ul class="branches">
-          {gratitude.people.map((p, i) => {
+        <svg class="limbs" aria-hidden="true" data-limbs></svg>
+        <ul class="crown">
+          {gratitude.people.map((p) => {
             const initials = p.name.split(/\s*&\s*|\s+/).map((w) => w[0]).slice(0, 2).join("");
             return (
-              <li class:list={["branch", i % 2 ? "right" : "left", { "in-memory": p.memory }]} style={`--row:${i + 1}`} data-grow>
-                <span class="twig" aria-hidden="true"></span>
-                <div class="leaf">
-                  <span class="av" aria-hidden="true">
-                    {p.photo ? <img src={p.photo} alt="" loading="lazy" /> : <span class="script">{initials}</span>}
-                  </span>
-                  <div>
-                    <p class="rel">{p.relation}{p.memory && <span class="badge">In loving memory</span>}</p>
-                    <h4 class="p-name">{p.name}</h4>
-                    <p class="p-note">{p.note}</p>
-                  </div>
+              <li class:list={["leaf", { "in-memory": p.memory }]} data-leaf>
+                <span class="av" aria-hidden="true">
+                  {p.photo ? <img src={p.photo} alt="" loading="lazy" /> : <span class="script">{initials}</span>}
+                </span>
+                <div>
+                  <p class="rel">{p.relation}{p.memory && <span class="badge">In loving memory</span>}</p>
+                  <h4 class="p-name">{p.name}</h4>
+                  <p class="p-note">{p.note}</p>
                 </div>
               </li>
             );
           })}
         </ul>
-        <div class="me" data-grow>
-          <img src="/img/me-cut.webp" alt="" width="84" height="84" loading="lazy" />
-          <p class="script">Privatus</p>
-          <span>grew from all of this</span>
+        <div class="me" data-me>
+          <img src="/img/me-cut.webp" alt="" width="64" height="64" loading="lazy" />
+          <div><p class="script">Privatus</p><span>grew from all of this</span></div>
         </div>
-        <svg class="roots" viewBox="0 0 1000 110" preserveAspectRatio="none" aria-hidden="true" data-grow>
-          <path pathLength="1" d="M500 0 C 500 60, 125 40, 125 110" /><path pathLength="1" d="M500 0 C 500 70, 375 50, 375 110" />
-          <path pathLength="1" d="M500 0 C 500 70, 625 50, 625 110" /><path pathLength="1" d="M500 0 C 500 60, 875 40, 875 110" />
-        </svg>
-        <h3 class="thanks-sub roots-label">The roots: everyone along the way</h3>
-        <ul class="soil">
-          {gratitude.groups.map((g, i) => (
-            <li class="root" style={`--d:${i}`} data-grow>
-              <span class="g-n">{String(i + 1).padStart(2, "0")}</span>
-              <p class="g-title">{g.title}</p>
-              <p class="g-note">{g.note}</p>
-            </li>
-          ))}
-        </ul>
       </div>
 
-      <div class="asante deep">
-        <p class="script">Asante sana</p>
-        <div>
-          <p>To everyone who helped me, directly or indirectly, named here or not: thank you. This story is yours too.</p>
-          <p class="you">And to you, reading this right now: thank you for walking through my story. If it helped you, pass it on to someone who needs it.</p>
+      <div class="side">
+        <div class="roots" data-roots>
+          <p class="roots-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>~/roots</p>
+          <div class="roots-body">
+            <p class="roots-cmd"><span>$</span> ls everyone-along-the-way/</p>
+            <ul class="roots-ls" role="tablist" aria-label="Everyone along the way">
+              {gratitude.groups.map((g, i) => (
+                <li><button type="button" role="tab" class:list={{ on: i === 0 }} aria-selected={i === 0 ? "true" : "false"} aria-controls={`root-${i}`} data-root>{g.title.toLowerCase().replace(/['’]/g, "").replace(/\s+/g, "-")}</button></li>
+              ))}
+            </ul>
+            <p class="roots-cmd"><span>$</span> cat <span class="roots-file" data-root-file>{gratitude.groups[0].title.toLowerCase().replace(/['’]/g, "").replace(/\s+/g, "-")}</span></p>
+            <div class="roots-out">
+              {gratitude.groups.map((g, i) => (
+                <p id={`root-${i}`} role="tabpanel" class:list={{ on: i === 0 }} data-root-note><b>{g.title}.</b> {g.note}</p>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div class="asante deep">
+          <p class="script">Asante sana</p>
+          <p>To everyone who helped me, named here or not: this story is yours too. And to you, reading this: if it helped you, pass it on.</p>
           <a class="btn pass" href={`https://wa.me/?text=${encodeURIComponent("A story worth reading: from Kitwe village to writing code. https://depriver.tech/story/")}`} target="_blank" rel="noopener">Pass it on
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M16 6l-4-4-4 4M12 2v13"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M16 6l-4-4-4 4M12 2v13"/></svg>
           </a>
         </div>
       </div>
     </article>
     <script>
-      // the trunk grows as you scroll down the tree; branches, the trunk portrait and roots sprout as they come into view
+      // branches grow from my photo to each person, drawn to fit wherever the cards land
       const tree = document.querySelector<HTMLElement>("[data-tree]");
       if (tree) {
-        const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && (e.target.classList.add("in"), io.unobserve(e.target))), { threshold: 0.3 });
-        tree.querySelectorAll("[data-grow]").forEach((el) => io.observe(el));
-        let raf = 0;
-        const grow = () => {
-          raf = 0;
-          const r = tree.getBoundingClientRect();
-          tree.style.setProperty("--grow", String(Math.min(1, Math.max(0, (innerHeight * 0.75 - r.top) / r.height))));
-        };
-        // the trunk reaches down to my photo on wide screens, and through the roots on phones
-        const me = tree.querySelector<HTMLElement>(".me img")!;
-        const fit = () => {
-          const trunk = tree.querySelector<HTMLElement>(".trunk")!;
-          const top = trunk.getBoundingClientRect().top;
+        const svg = tree.querySelector<SVGSVGElement>("[data-limbs]")!;
+        const me = tree.querySelector<HTMLElement>("[data-me] img")!;
+        const leaves = [...tree.querySelectorAll<HTMLElement>("[data-leaf]")];
+        const draw = () => {
+          const t = tree.getBoundingClientRect();
+          svg.setAttribute("viewBox", `0 0 ${t.width} ${t.height}`);
           const m = me.getBoundingClientRect();
-          const end = matchMedia("(max-width: 760px)").matches ? tree.getBoundingClientRect().bottom : m.top + m.height / 2;
-          tree.style.setProperty("--trunk-h", `${end - top}px`);
+          const mx = m.left + m.width / 2 - t.left, my = m.top - t.top;
+          svg.innerHTML = leaves.map((l, i) => {
+            const r = l.getBoundingClientRect();
+            const x = r.left + r.width / 2 - t.left, y = r.bottom - t.top - 8;
+            return `<path pathLength="1" style="--i:${i}" d="M${mx} ${my} C ${mx} ${my - (my - y) * 0.55}, ${x} ${y + (my - y) * 0.45}, ${x} ${y}" />`;
+          }).join("");
         };
-        new ResizeObserver(fit).observe(tree);
-        addEventListener("scroll", () => (raf ||= requestAnimationFrame(grow)), { passive: true });
-        grow();
+        new ResizeObserver(draw).observe(tree);
+        // the roots terminal: pick a name to cat its file; it walks through them by itself while you read
+        const roots = document.querySelector<HTMLElement>("[data-roots]");
+        if (roots) {
+          const btns = [...roots.querySelectorAll<HTMLButtonElement>("[data-root]")];
+          const notes = [...roots.querySelectorAll<HTMLElement>("[data-root-note]")];
+          const file = roots.querySelector<HTMLElement>("[data-root-file]")!;
+          let cur = 0, timer = 0, held = false, seen = false;
+          const show = (i: number) => {
+            cur = (i + btns.length) % btns.length;
+            btns.forEach((b, n) => { b.classList.toggle("on", n === cur); b.setAttribute("aria-selected", String(n === cur)); });
+            notes.forEach((p, n) => p.classList.toggle("on", n === cur));
+            file.textContent = btns[cur].textContent;
+          };
+          const tick = () => { clearInterval(timer); if (seen && !held && !matchMedia("(prefers-reduced-motion: reduce)").matches) timer = window.setInterval(() => show(cur + 1), 4500); };
+          btns.forEach((b, n) => b.addEventListener("click", () => { show(n); held = true; tick(); }));
+          roots.addEventListener("pointerenter", () => { held = true; tick(); });
+          roots.addEventListener("pointerleave", () => { held = false; tick(); });
+          new IntersectionObserver(([e]) => { seen = e.isIntersecting; tick(); }, { threshold: 0.4 }).observe(roots);
+        }
+        const io = new IntersectionObserver(([e]) => e.isIntersecting && (tree.classList.add("in"), io.disconnect()), { threshold: 0.3 });
+        io.observe(tree);
       }
     </script>
   </section>
@@ -461,7 +487,7 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
     <div class="latest-head">
       <div>
         <span class="label" data-reveal>From the blog</span>
-        <Title title="The story" accent="continues here" size="clamp(2rem, 5vw, 3.6rem)" />
+        <Title title="The story" accent="continues here" size="clamp(2rem, 3.6vw, 3.1rem)" />
       </div>
       <a class="btn ghost" href="/" data-reveal>All posts</a>
     </div>
@@ -510,7 +536,6 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
         <div class="chat-body">
           <p class="bubble">Habari! 👋</p>
           <p class="bubble">Tell me what you're building, what you need help with, or just say hi. I read every message.</p>
-          <p class="typing" aria-hidden="true"><i></i><i></i><i></i></p>
           <ContactForm />
         </div>
       </div>
@@ -587,7 +612,7 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
   @media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; } }
 
   /* PROLOGUE */
-  .prologue { padding: 100px 0 60px; }
+  .prologue { padding: 80px 0 40px; }
   .big { font-size: clamp(1.5rem, 3.3vw, 2.5rem); line-height: 1.35; font-weight: 500; color: var(--heading); max-width: 22em; margin: 28px 0 56px; letter-spacing: -0.01em; }
   .big em { font-style: normal; color: var(--accent); }
   .stats { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
@@ -713,37 +738,9 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
   .memory-name { margin: 0; color: var(--on-deep); font-size: 3.4rem; line-height: 1; }
 
   /* LESSONS */
-  .lessons { padding: 60px 0 110px; }
-  .lessons :global(.display) { margin-top: 22px; }
-  .lesson-list { list-style: none; margin: 48px 0 0; padding: 0; border-top: 1px solid var(--line); }
-  .lesson { position: relative; display: grid; grid-template-columns: clamp(90px, 12vw, 170px) minmax(0, 1.3fr) minmax(0, 1fr); gap: clamp(20px, 4vw, 56px); align-items: center;
-    padding: clamp(28px, 4vw, 44px) clamp(8px, 2vw, 24px); border-bottom: 1px solid var(--line); isolation: isolate; }
-  .lesson::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 28px; background: var(--surface); opacity: 0; transform: scale(0.97); transition: opacity 0.5s, transform 0.6s var(--ease); }
-  .lesson:hover::before { opacity: 1; transform: none; }
-  .lesson-n { font-size: clamp(4.5rem, 10vw, 8.5rem); font-weight: 700; line-height: 0.85; letter-spacing: -0.06em; color: transparent; -webkit-text-stroke: 2px var(--accent); transition: color 0.5s var(--ease); }
-  .lesson:hover .lesson-n { color: var(--accent); }
-  .lesson-main { display: grid; gap: 10px; justify-items: start; }
-  .lesson h3 { margin: 0; font-size: clamp(1.4rem, 2.6vw, 2.1rem); color: var(--heading); line-height: 1.15; letter-spacing: -0.02em; }
-  .lesson p { margin: 0; color: var(--muted); }
-  .lesson-from { display: inline-flex; gap: 8px; align-items: center; margin-top: 4px; padding: 5px 12px; border-radius: 999px; background: var(--surface-2); font-size: 0.8rem; font-weight: 600; color: var(--heading); text-decoration: none; }
-  .lesson-from span { color: var(--accent); transition: transform 0.3s var(--ease); }
-  .lesson-from:hover span { transform: translateY(-3px); }
-  .turn { display: grid; grid-template-columns: 1fr; gap: 2px; }
-  .turn p { margin: 0; display: grid; gap: 2px; }
-  .turn span { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
-  .then s { position: relative; font-size: 1.05rem; color: var(--muted); text-decoration: none; justify-self: start; }
-  .then s::after { content: ""; position: absolute; left: -4px; right: -4px; top: 55%; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 0.6s var(--ease) 0.2s; }
-  .arc { width: 110px; height: 36px; margin: 2px 0 0 18px; fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-  .arc path { stroke-dasharray: 160; stroke-dashoffset: 160; transition: stroke-dashoffset 0.8s var(--ease) 0.7s; }
-  .arc path + path { transition-delay: 1.3s; }
-  .now strong { font-size: clamp(1.6rem, 2.8vw, 2.3rem); line-height: 1.05; letter-spacing: -0.02em; color: var(--accent); opacity: 0; transform: translateY(14px); transition: opacity 0.6s, transform 0.7s var(--ease); transition-delay: 1.4s; }
-  .lesson.in .then s::after { transform: scaleX(1); }
-  .lesson.in .arc path { stroke-dashoffset: 0; }
-  .lesson.in .now strong { opacity: 1; transform: none; }
-  html:not(.js) .now strong { opacity: 1; transform: none; }
 
   /* TODAY */
-  .today { background: var(--deep); color: var(--deep-text); padding: 130px 0; }
+  .today { background: var(--deep); color: var(--deep-text); padding: 88px 0; }
   .today :global(.display) { margin-top: 22px; }
   .today-lead { font-size: 1.25rem; max-width: 38em; margin: 30px 0 56px; }
   .ide { --mono: ui-monospace, "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace; border-radius: 22px; overflow: hidden; background: color-mix(in srgb, #000 30%, var(--deep));
@@ -802,7 +799,7 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
   }
 
   /* NEXT CHAPTER */
-  .next { padding: 130px 0 40px; }
+  .next { padding: 88px 0 40px; }
   .next :global(.display) { margin-top: 22px; }
   .next-lead { font-size: 1.2rem; color: var(--muted); max-width: 34em; margin: 24px 0 48px; }
   .road { position: relative; --stop: 30px; }
@@ -832,7 +829,7 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
   .dream li:hover::before { background: color-mix(in srgb, var(--accent) 25%, transparent); }
   .road.in .dream-count, .road.in .dream h3, .road.in .dream li { opacity: 1; transform: none; }
   html:not(.js) .dream-icon, html:not(.js) .dream-count, html:not(.js) .dream h3, html:not(.js) .dream li { opacity: 1; transform: none; }
-  .tbc { font-size: clamp(2.6rem, 6vw, 4.4rem); color: var(--accent); text-align: right; margin: 40px 0 0; line-height: 1.1; }
+  .tbc { font-size: clamp(2rem, 3.6vw, 2.8rem); color: var(--accent); text-align: right; margin: 18px 0 0; line-height: 1.1; }
   .caret { display: inline-block; width: 3px; height: 0.8em; margin-left: 6px; vertical-align: -0.05em; background: var(--accent); animation: caret 1s steps(1) infinite; }
   @keyframes caret { 50% { opacity: 0; } }
   @media (max-width: 760px) {
@@ -851,76 +848,18 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
   }
 
   /* THANKS */
-  .thanks { padding: 120px 0 60px; }
+  .thanks { padding: 72px 0 32px; }
   .thanks :global(.display) { margin-top: 22px; }
   .thanks-lead { font-size: 1.2rem; color: var(--muted); max-width: 38em; margin: 24px 0 50px; }
   .thanks-sub { margin: 0 0 26px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
 
   /* one card for everyone */
-  .thanks-card { border-radius: 36px; padding: clamp(24px, 4vw, 52px); background: var(--surface); overflow: hidden;
+  .thanks-card { border-radius: 30px; padding: clamp(20px, 3vw, 36px); background: var(--surface); overflow: hidden;
     box-shadow: 0 1px 0 var(--line), 0 40px 80px -50px color-mix(in srgb, var(--shadow) 45%, transparent); }
 
-  /* the tree */
-  .tree { --grow: 0; position: relative; }
-  .thanks-sub { margin: 0 0 22px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
-  .crown-label { text-align: center; margin-bottom: 34px; }
-  .trunk { position: absolute; left: 50%; top: 40px; height: var(--trunk-h, 70%); width: 6px; margin-left: -3px; border-radius: 6px; background: color-mix(in srgb, var(--accent) 16%, transparent); overflow: hidden; }
-  .trunk span { display: block; height: 100%; background: linear-gradient(var(--accent), color-mix(in srgb, var(--accent) 60%, var(--deep))); transform-origin: top; transform: scaleY(var(--grow)); }
-  .branches { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; column-gap: 90px; }
-  .branch { position: relative; grid-row: var(--row) / span 2; padding-bottom: 18px; }
-  .branch.left { grid-column: 1; }
-  .branch.right { grid-column: 2; }
-  .twig { position: absolute; top: 46px; width: 46px; height: 34px; border-top: 3px solid var(--accent); transform: scaleX(0); transition: transform 0.7s var(--ease) 0.15s; }
-  .branch.left .twig { right: -48px; border-top-right-radius: 26px; transform-origin: right; border-right: 3px solid transparent; }
-  .branch.right .twig { left: -48px; border-top-left-radius: 26px; transform-origin: left; }
-  .twig::after { content: ""; position: absolute; top: -9px; width: 15px; height: 15px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 22%, transparent); }
-  .branch.left .twig::after { right: -6px; }
-  .branch.right .twig::after { left: -6px; }
-  .leaf { display: grid; grid-template-columns: 64px 1fr; gap: 16px; align-items: start; padding: 20px 22px; border-radius: 28px 28px 28px 8px; background: var(--surface-2); border: 1px solid var(--line);
-    opacity: 0; transform: scale(0.85) rotate(-3deg); transition: opacity 0.6s 0.3s, transform 0.8s cubic-bezier(.3, 1.5, .5, 1) 0.3s, background 0.3s; }
-  .branch.right .leaf { border-radius: 28px 28px 8px 28px; transform: scale(0.85) rotate(3deg); }
-  .branch.in .twig { transform: none; }
-  .branch.in .leaf { opacity: 1; transform: none; }
-  .leaf:hover { background: var(--deep); }
-  .av { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; background: var(--deep); box-shadow: 0 0 0 3px var(--surface-2), 0 0 0 5px var(--accent); transition: transform 0.5s var(--ease); }
-  .leaf:hover .av { transform: rotate(-8deg) scale(1.06); }
-  .av img { width: 100%; height: 100%; object-fit: cover; }
-  .av .script { color: var(--on-deep); font-size: 1.7rem; line-height: 1; }
-  .in-memory .av { filter: grayscale(1); box-shadow: 0 0 0 3px var(--surface-2), 0 0 0 5px color-mix(in srgb, var(--accent) 45%, transparent); }
-  .rel { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin: 0 0 2px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
-  .badge { padding: 2px 10px; border-radius: 999px; font-size: 0.66rem; letter-spacing: 0.06em; background: var(--surface); color: var(--heading); }
-  .p-name { margin: 0; font-size: 1.2rem; color: var(--heading); line-height: 1.3; }
-  .p-note { margin: 4px 0 0; color: var(--muted); font-size: 0.96rem; }
-
-  .me { position: relative; z-index: 1; display: grid; justify-items: center; gap: 2px; margin: 70px auto 0; text-align: center; opacity: 0; transform: translateY(20px); transition: opacity 0.6s, transform 0.8s var(--ease); }
-  .me.in { opacity: 1; transform: none; }
-  .me img { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; object-position: top; background: var(--deep); box-shadow: 0 0 0 4px var(--surface), 0 0 0 7px var(--accent); filter: var(--photo-filter); }
-  .me .script { margin: 10px 0 0; font-size: 2.4rem; line-height: 1; color: var(--accent); }
-  .me span { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
-  .roots { display: block; width: 100%; height: 90px; margin-top: 18px; fill: none; stroke: color-mix(in srgb, var(--accent) 55%, var(--line)); stroke-width: 3; stroke-linecap: round; vector-effect: non-scaling-stroke; }
-  .roots path { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.4s var(--ease); }
-  .roots.in path { stroke-dashoffset: 0; }
-  .roots-label { margin-top: 14px; text-align: center; }
-  .soil { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-  .root { padding: 18px 18px 20px; border-radius: 8px 8px 22px 22px; background: linear-gradient(180deg, var(--surface-2), color-mix(in srgb, var(--surface-2) 40%, transparent)); border-top: 3px solid color-mix(in srgb, var(--accent) 55%, var(--line));
-    opacity: 0; transform: translateY(-14px); transition: opacity 0.5s, transform 0.6s var(--ease), background 0.3s; transition-delay: calc(var(--d) % 4 * 0.1s + 0.2s); }
-  .root.in { opacity: 1; transform: none; }
-  .root:hover { background: var(--deep); }
-  .g-n { display: block; margin-bottom: 8px; font-weight: 700; font-size: 1.4rem; line-height: 1; color: transparent; -webkit-text-stroke: 1.2px var(--accent); }
-  .g-title { margin: 0 0 4px; font-weight: 700; color: var(--heading); }
-  .g-note { margin: 0; color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
-  html:not(.js) .leaf, html:not(.js) .me, html:not(.js) .root { opacity: 1; transform: none; }
-  html:not(.js) .twig, html:not(.js) .roots path { transform: none; stroke-dashoffset: 0; }
-  @media (prefers-reduced-motion: reduce) { .tree { --grow: 1 !important; } }
-
-  .asante { margin-top: 44px; border-radius: 26px; padding: clamp(24px, 4vw, 44px); display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 12px 44px; }
-  .asante .script { margin: 0; font-size: clamp(2.8rem, 6vw, 4.4rem); line-height: 1; color: var(--on-deep); }
-  .asante p { margin: 0; color: var(--deep-text); font-size: 1.08rem; }
-  .asante .you { margin-top: 12px; color: var(--on-deep); font-weight: 500; }
-  .asante .pass { margin-top: 20px; color: var(--on-accent); }
 
   /* LATEST */
-  .latest { padding: 80px 0; }
+  .latest { padding: 72px 0; }
   .latest-head { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; }
   .latest-head :global(.display) { margin-top: 22px; }
   .post-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 44px; }
@@ -1000,10 +939,6 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
     .contact-card { border-radius: 30px; }
     .rank { position: static; }
     .post-grid { grid-template-columns: 1fr 1fr; }
-    .lesson { grid-template-columns: 130px minmax(0, 1fr); }
-    .turn { grid-column: 2; grid-template-columns: auto auto 1fr; align-items: end; gap: 12px; }
-    .arc { width: 64px; margin: 0 0 6px; }
-    .soil { grid-template-columns: 1fr 1fr; }
     .asante { grid-template-columns: 1fr; }
     .dream-grid { grid-template-columns: 1fr; }
   }
@@ -1019,32 +954,141 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
     .stats a + a { border-left: 0; border-top: 1px solid var(--line); }
     .stats strong { grid-row: span 2; margin: 0; min-width: 1.3em; font-size: 4.2rem; }
     .stats .k { align-self: end; }
-    .lesson { grid-template-columns: 1fr; gap: 14px; padding: 30px 4px; }
-    .lesson-n { font-size: 4rem; }
-    .turn { grid-column: 1; grid-template-columns: 1fr; gap: 2px; padding: 16px 18px; border-radius: 18px; background: var(--surface); }
-    .arc { width: 90px; margin: 2px 0 0 14px; }
     .stats, .post-grid { grid-template-columns: 1fr; }
     .asante { grid-template-columns: 1fr; }
-    /* phones: the trunk runs down the left, every branch grows to the right */
-    .trunk { left: 18px; top: 0; }
-    .crown-label, .roots-label { text-align: left; padding-left: 44px; }
-    .branches { grid-template-columns: 1fr; row-gap: 16px; }
-    .branch, .branch.left, .branch.right { grid-column: 1; grid-row: auto; margin: 0 0 0 44px; padding: 0; }
-    .branch.left .twig, .branch.right .twig { left: -26px; right: auto; width: 24px; border-radius: 0; border-right: 0; transform-origin: left; }
-    .branch .twig::after, .branch.left .twig::after { left: -6px; right: auto; }
-    .branch.left .leaf { border-radius: 8px 24px 24px 24px; transform: scale(0.9); }
-    .branch.right .leaf { border-radius: 8px 24px 24px 24px; transform: scale(0.9); }
-    .branch.in .leaf { transform: none; }
-    .leaf { grid-template-columns: 52px 1fr; gap: 14px; padding: 16px; }
-    .av { width: 52px; height: 52px; }
-    .me { justify-items: start; text-align: left; margin: 40px 0 0 0; padding-left: 0; grid-template-columns: auto 1fr; column-gap: 14px; align-items: center; }
-    .me img { width: 40px; height: 40px; grid-row: span 2; }
-    .me .script { margin: 0; font-size: 2rem; }
-    .roots { display: none; }
-    .roots-label { margin-top: 30px; }
-    .soil { grid-template-columns: 1fr; margin-left: 44px; }
     .facts { grid-template-columns: 1fr 1fr; }
     .chapter { padding: 50px 0 60px; }
     .chapter.dark { margin: 20px calc(-1 * var(--gutter) + 8px); padding: 60px 22px; }
+  }
+
+  /* shared compact section header: title left, lead right */
+  .sh { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 16px 56px; align-items: end; margin-bottom: 40px; }
+  .sh :global(.display) { margin: 16px 0 0; }
+  .sh-lead { margin: 0; max-width: 34em; font-size: 1.08rem; color: var(--muted); }
+  .today .sh-lead { color: var(--deep-text); }
+
+  /* lessons: three compact cards, each with a little git diff */
+  .lessons { padding: 72px 0 88px; }
+  .lesson-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .lesson { display: flex; flex-direction: column; gap: 10px; padding: 24px; border-radius: 24px; border: 1px solid var(--line); transition: border-color 0.4s, background 0.4s, transform 0.5s var(--ease); }
+  .lesson:hover { border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); background: var(--surface); transform: translateY(-4px); }
+  .lesson-top { display: flex; justify-content: space-between; align-items: center; }
+  .lesson-n { font-size: 2.6rem; font-weight: 700; line-height: 1; letter-spacing: -0.05em; color: transparent; -webkit-text-stroke: 1.5px var(--accent); transition: color 0.4s; }
+  .lesson:hover .lesson-n { color: var(--accent); }
+  .lesson-from { display: inline-flex; gap: 6px; padding: 4px 10px; border-radius: 999px; background: var(--surface-2); font-size: 0.75rem; font-weight: 600; color: var(--heading); text-decoration: none; }
+  .lesson-from span { color: var(--accent); }
+  .lesson h3 { margin: 6px 0 0; font-size: 1.25rem; line-height: 1.25; color: var(--heading); }
+  .lesson > p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+  .diff { margin-top: auto; padding: 12px 14px; border-radius: 14px; background: #0b1226; font: 0.82rem/1.65 ui-monospace, "JetBrains Mono", "Fira Code", Menlo, monospace; }
+  .diff p { margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .diff-cmd { color: #8a93b0; }
+  .diff-cmd span { color: #28c840; }
+  .del, .add { opacity: 0; transform: translateX(-8px); transition: opacity 0.4s, transform 0.5s var(--ease); }
+  .del { color: #ff7b72; text-decoration: line-through; text-decoration-color: rgb(255 123 114 / 0.5); transition-delay: 0.4s; }
+  .add { color: #7ee787; font-weight: 700; transition-delay: 0.9s; }
+  .lesson.in .del, .lesson.in .add { opacity: 1; transform: none; }
+  html:not(.js) .del, html:not(.js) .add { opacity: 1; transform: none; }
+
+  /* gratitude: a compact tree */
+  .tree { position: relative; padding-bottom: 6px; }
+  .limbs { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; fill: none; stroke: color-mix(in srgb, var(--accent) 60%, transparent); stroke-width: 2.5; stroke-linecap: round; pointer-events: none; }
+  .limbs :global(path) { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.2s var(--ease); transition-delay: calc(var(--i) * 0.08s); }
+  .tree.in .limbs :global(path) { stroke-dashoffset: 0; }
+  .crown { position: relative; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 16px; }
+  .leaf { display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: start; padding: 14px 16px; border-radius: 20px 20px 20px 6px; background: var(--surface-2); border: 1px solid var(--line);
+    opacity: 0; transform: scale(0.9); transition: opacity 0.5s, transform 0.6s cubic-bezier(.3, 1.4, .5, 1), background 0.3s; }
+  .crown .leaf:nth-child(2) { transition-delay: 0.08s; } .crown .leaf:nth-child(3) { transition-delay: 0.16s; } .crown .leaf:nth-child(4) { transition-delay: 0.24s; }
+  .crown .leaf:nth-child(5) { transition-delay: 0.32s; } .crown .leaf:nth-child(6) { transition-delay: 0.4s; }
+  .tree.in .leaf { opacity: 1; transform: none; }
+  .leaf:hover { background: var(--deep); }
+  .av { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; overflow: hidden; background: var(--deep); box-shadow: 0 0 0 2px var(--surface-2), 0 0 0 4px var(--accent); }
+  .av img { width: 100%; height: 100%; object-fit: cover; }
+  .av .script { color: var(--on-deep); font-size: 1.25rem; line-height: 1; }
+  .in-memory .av { filter: grayscale(1); box-shadow: 0 0 0 2px var(--surface-2), 0 0 0 4px color-mix(in srgb, var(--accent) 45%, transparent); }
+  .rel { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; margin: 0; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+  .badge { padding: 1px 8px; border-radius: 999px; font-size: 0.6rem; letter-spacing: 0.04em; background: var(--surface); color: var(--heading); }
+  .p-name { margin: 1px 0 0; font-size: 1rem; color: var(--heading); line-height: 1.3; }
+  .p-note { margin: 2px 0 0; color: var(--muted); font-size: 0.86rem; line-height: 1.45; }
+  .me { position: relative; display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 56px; }
+  .me img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; object-position: top; background: var(--deep); box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--accent); filter: var(--photo-filter); }
+  .me .script { margin: 0; font-size: 2rem; line-height: 1; color: var(--accent); }
+  .me span { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+
+  /* everyone along the way, printed like a file in a terminal */
+  .thanks-card { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+  .side { display: grid; gap: 14px; }
+  .crown { grid-template-columns: 1fr 1fr !important; }
+  .roots { margin-top: 0; border-radius: 18px; overflow: hidden; background: #0b1226; color: #c8d3f5; border: 1px solid rgb(255 255 255 / 0.07); font: 0.8rem/1.55 ui-monospace, "JetBrains Mono", "Fira Code", Menlo, monospace; }
+  .roots-bar { display: flex; align-items: center; gap: 12px; margin: 0; padding: 9px 14px; color: #8a93b0; background: rgb(255 255 255 / 0.04); border-bottom: 1px solid rgb(255 255 255 / 0.07); }
+  .roots .dots i { width: 9px; height: 9px; }
+  .roots-body { padding: 12px 16px 14px; }
+  .roots-cmd { margin: 0 0 8px; }
+  .roots-cmd span { color: #28c840; }
+  .roots-ls { list-style: none; margin: 0 0 10px; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+  .roots-ls button { padding: 1px 6px; margin-left: -6px; border: 0; border-radius: 5px; background: none; font: inherit; color: #82aaff; cursor: pointer; text-align: left; }
+  .roots-ls button::after { content: "/"; color: #8a93b0; }
+  .roots-ls button:hover { color: #fff; }
+  .roots-ls button.on { color: #0b1226; background: #ffcb6b; }
+  .roots-ls button.on::after { color: #0b1226; }
+  .roots-file { color: #ffcb6b; }
+  .roots-out { display: grid; min-height: 4.8em; }
+  .roots-out p { grid-area: 1 / 1; margin: 2px 0 0; color: #c8d3f5; opacity: 0; transition: opacity 0.35s; }
+  .roots-out p.on { opacity: 1; }
+  .roots-out b { color: #fff; }
+
+  .asante { margin: 0; border-radius: 18px; padding: 20px 22px; display: grid; justify-items: start; gap: 8px; }
+  .asante .script { margin: 0; font-size: clamp(2rem, 3.6vw, 2.6rem); line-height: 1; color: var(--on-deep); white-space: nowrap; }
+  .asante p { margin: 0; color: var(--deep-text); font-size: 0.95rem; }
+  .asante .pass { color: var(--on-accent); }
+
+  @media (max-width: 960px) {
+    .sh { grid-template-columns: 1fr; margin-bottom: 30px; }
+    .lesson-list { grid-template-columns: 1fr; }
+    .thanks-card { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .crown { grid-template-columns: 1fr !important; }
+    .limbs { display: none; }
+    .me { justify-content: flex-start; margin-top: 18px; }
+    .roots-ls { grid-template-columns: 1fr; }
+  }
+
+  /* tighter today, next, latest and contact so each fits one screen */
+  .ide-body { min-height: 250px; }
+  .code { padding: 14px 20px 18px 0; font-size: 0.9rem; line-height: 1.7; }
+  .explorer { padding: 12px 10px; }
+  .file { padding: 7px 10px; font-size: 0.85rem; }
+  .term { padding: 10px 20px 12px; font-size: 0.85rem; }
+  .term-head { display: none; }
+  .ls { margin: 0 0 2px; }
+  .road-ends { margin-bottom: 10px; }
+  .road { --stop: 24px; }
+  .dream-icon svg { width: 20px; height: 20px; }
+  .dream-count { margin: 14px 0 2px; }
+  .dream h3 { margin: 0 0 10px; font-size: clamp(1.25rem, 2vw, 1.55rem); }
+  .dream li { padding: 6px 0 6px 30px; font-size: 0.95rem; }
+  .dream li::before { top: 9px; width: 16px; height: 16px; border-radius: 5px; }
+  .dream { padding-bottom: 0; }
+  .latest-head { margin-bottom: 0; }
+  .latest .sh, .latest-head :global(.display) { margin-top: 16px; }
+  .post-grid { margin-top: 30px; }
+  .post-grid :global(.cover) { aspect-ratio: 16 / 8; }
+  .post-grid :global(.desc) { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .contact { padding: 24px 0 88px; }
+  .contact-card { padding: clamp(24px, 4vw, 48px); border-radius: 32px; }
+  .contact-card h2 { font-size: clamp(2rem, 3.6vw, 3.1rem); margin: 16px 0 10px; }
+  .c-lead { font-size: 1rem; margin-bottom: 14px; }
+  .clock { margin-bottom: 18px; }
+  .ch a { padding: 10px 14px; border-radius: 16px; }
+  .ch-ico { width: 36px; height: 36px; border-radius: 11px; }
+  .ch-ico svg { width: 19px; height: 19px; }
+  .ch.in a, .ch.ig a, .ch.gh a { flex-direction: row; align-items: center; gap: 10px; }
+  .ch.in .ch-txt em, .ch.ig .ch-txt em, .ch.gh .ch-txt em { display: none; }
+  .ch.in .ch-txt strong, .ch.ig .ch-txt strong, .ch.gh .ch-txt strong { font-size: 0.85rem; }
+  .chat-body { padding: 14px 16px; }
+  .chat :global(textarea) { height: 84px; min-height: 84px; }
+  .chat :global(.cf) { gap: 10px; }
+  @media (max-width: 960px) {
+    .ch.in a, .ch.ig a, .ch.gh a { flex-direction: column; align-items: flex-start; }
   }
 </style>
