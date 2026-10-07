@@ -206,20 +206,66 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
         Today I build software full time in Mbeya: web and mobile apps, business systems and data tools,
         with real exposure to every part of tech.
       </p>
-      <div class="svc-grid">
-        {services.map((s, i) => (
-          <div class="svc" data-reveal>
-            <span>{pad(i + 1)}</span>
-            <h3>{s.title}</h3>
-            <p>{s.body}</p>
+      {/* what I do today, as my editor: each service is a file, life beyond code is the terminal */}
+      <div class="ide" data-ide data-reveal>
+        <div class="ide-bar">
+          <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="ide-path">~/privatus/today</span>
+          <span class="ide-live"><i></i>Building in Mbeya</span>
+        </div>
+        <div class="ide-body">
+          <div class="explorer" role="tablist" aria-label="What I do">
+            <p class="ex-head">Explorer</p>
+            {services.map((s, i) => (
+              <button type="button" role="tab" class:list={["file", { on: i === 0 }]} aria-selected={i === 0 ? "true" : "false"} aria-controls={`svc-${i}`} data-file>
+                <span class:list={["ext", s.file.split(".").pop()]}>{s.file.split(".").pop()}</span>{s.file}
+              </button>
+            ))}
           </div>
-        ))}
-      </div>
-      <div class="outside" data-reveal>
-        <p>Life beyond code</p>
-        <ul>{outside.map((o) => <li>{o}</li>)}</ul>
+          <div class="editor">
+            {services.map((s, i) => (
+              <div class:list={["pane", { on: i === 0 }]} id={`svc-${i}`} role="tabpanel" data-pane>
+                <p class="pane-tab">{s.file}<span aria-hidden="true">×</span></p>
+                <ol class="code">
+                  <li><span class="t-c">{s.file.endsWith(".sql") ? "--" : s.file.endsWith(".md") || s.file.endsWith(".json") ? "" : "//"} {pad(i + 1)} · {s.title}</span></li>
+                  <li><span class="t-c">{s.file.endsWith(".sql") ? "--" : s.file.endsWith(".md") || s.file.endsWith(".json") ? "" : "//"} {s.body}</span></li>
+                  <li></li>
+                  {s.code.map((line) => <li set:html={line.replace(/<(\/?)(k|f|s|p|n|c)>/g, (_, end, t) => (end ? "</span>" : `<span class="t-${t}">`))} />)}
+                </ol>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div class="term">
+          <p class="term-head">Terminal</p>
+          <p class="cmd"><span class="prompt">privatus@mbeya:~$</span> ls life-beyond-code/</p>
+          <ul class="ls">{outside.map((o) => <li>{o.toLowerCase().replace(/ & /g, "-and-").replace(/\s+/g, "-")}/</li>)}</ul>
+          <p class="cmd"><span class="prompt">privatus@mbeya:~$</span> <span class="caret-t" aria-hidden="true"></span></p>
+        </div>
       </div>
     </div>
+    <script>
+      // pick a file to open it; while you're not touching it, the editor walks through the files by itself
+      const ide = document.querySelector<HTMLElement>("[data-ide]");
+      if (ide) {
+        const files = [...ide.querySelectorAll<HTMLButtonElement>("[data-file]")];
+        const panes = [...ide.querySelectorAll<HTMLElement>("[data-pane]")];
+        let cur = 0, timer = 0, held = false, seen = false;
+        const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const open = (i: number) => {
+          cur = (i + files.length) % files.length;
+          files.forEach((f, n) => { f.classList.toggle("on", n === cur); f.setAttribute("aria-selected", String(n === cur)); });
+          panes.forEach((p, n) => p.classList.toggle("on", n === cur));
+          const bar = files[cur].parentElement!;
+          if (bar.scrollWidth > bar.clientWidth) bar.scrollTo({ left: files[cur].offsetLeft - 10, behavior: "smooth" });
+        };
+        const tick = () => { clearInterval(timer); if (!calm && seen && !held) timer = window.setInterval(() => open(cur + 1), 5000); };
+        files.forEach((f, n) => f.addEventListener("click", () => { open(n); held = true; tick(); }));
+        ide.addEventListener("pointerenter", () => { held = true; tick(); });
+        ide.addEventListener("pointerleave", () => { held = false; tick(); });
+        new IntersectionObserver(([e]) => { seen = e.isIntersecting; tick(); }, { threshold: 0.4 }).observe(ide);
+      }
+    </script>
   </section>
 
   <!-- ── NEXT CHAPTER ─────────────────────────────────── -->
@@ -552,18 +598,60 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
   .today { background: var(--deep); color: var(--deep-text); padding: 130px 0; }
   .today :global(.display) { margin-top: 22px; }
   .today-lead { font-size: 1.25rem; max-width: 38em; margin: 30px 0 56px; }
-  .svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .svc { border-radius: var(--radius); padding: 30px; background: color-mix(in srgb, var(--accent-2) 7%, transparent); border: 1px solid color-mix(in srgb, var(--accent-2) 16%, transparent); transition: background 0.4s, transform 0.5s var(--ease); }
-  .svc:hover { background: var(--accent); transform: translateY(-6px); }
-  .svc span { font-weight: 700; color: var(--accent); }
-  .svc:hover span { color: var(--on-accent); }
-  .svc h3 { color: var(--on-deep); font-size: 1.3rem; margin: 10px 0 6px; }
-  .svc p { margin: 0; }
-  .svc:hover p { color: var(--on-accent); }
-  .outside { margin-top: 56px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; }
-  .outside p { margin: 0; font-weight: 600; color: var(--on-deep); }
-  .outside ul { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; padding: 0; margin: 0; }
-  .outside li { padding: 8px 18px; border-radius: 999px; border: 1.5px solid var(--accent-2); color: var(--on-deep); font-weight: 500; }
+  .ide { --mono: ui-monospace, "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace; border-radius: 22px; overflow: hidden; background: color-mix(in srgb, #000 30%, var(--deep));
+    border: 1px solid color-mix(in srgb, var(--accent-2) 18%, transparent); box-shadow: 0 50px 100px -50px rgb(0 0 0 / 0.8); }
+  .ide-bar { display: flex; align-items: center; gap: 16px; padding: 12px 18px; background: color-mix(in srgb, var(--accent-2) 8%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--accent-2) 14%, transparent); font-size: 0.82rem; }
+  .dots { display: flex; gap: 7px; }
+  .dots i { width: 12px; height: 12px; border-radius: 50%; background: #ff5f57; }
+  .dots i:nth-child(2) { background: #febc2e; }
+  .dots i:nth-child(3) { background: #28c840; }
+  .ide-path { font-family: var(--mono); color: var(--deep-text); }
+  .ide-live { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: var(--on-deep); }
+  .ide-live i { width: 8px; height: 8px; border-radius: 50%; background: #28c840; box-shadow: 0 0 0 0 #28c840; animation: live 2s infinite; }
+  @keyframes live { 70% { box-shadow: 0 0 0 8px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+  .ide-body { display: grid; grid-template-columns: 250px minmax(0, 1fr); min-height: 330px; }
+  .explorer { padding: 14px 10px; border-right: 1px solid color-mix(in srgb, var(--accent-2) 12%, transparent); display: grid; align-content: start; gap: 2px; }
+  .ex-head, .term-head { margin: 0 0 8px 10px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--deep-text) 70%, transparent); }
+  .file { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; border: 0; border-radius: 10px; background: none; font: 500 0.9rem var(--mono); color: var(--deep-text); text-align: left; cursor: pointer; transition: background 0.25s, color 0.25s; }
+  .file:hover { background: color-mix(in srgb, var(--accent-2) 8%, transparent); color: var(--on-deep); }
+  .file.on { background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--on-deep); }
+  .ext { flex: none; min-width: 34px; padding: 2px 0; border-radius: 5px; font-size: 0.62rem; font-weight: 700; text-align: center; text-transform: uppercase; color: #0b1020; background: #7aa2f7; }
+  .ext.tsx { background: #61dafb; } .ext.ts { background: #7aa2f7; } .ext.sql { background: #febc2e; } .ext.json { background: #c3e88d; } .ext.md { background: var(--accent); }
+  .editor { position: relative; display: grid; }
+  .pane { grid-area: 1 / 1; visibility: hidden; }
+  .pane.on { visibility: visible; }
+  .pane-tab { display: inline-flex; gap: 14px; margin: 0; padding: 10px 18px; font: 500 0.85rem var(--mono); color: var(--on-deep); border-bottom: 2px solid var(--accent); background: color-mix(in srgb, var(--accent-2) 6%, transparent); }
+  .pane-tab span { opacity: 0.5; }
+  .code { list-style: none; counter-reset: ln; margin: 0; padding: 18px 20px 24px 0; font: 0.95rem/1.75 var(--mono); color: var(--on-deep); overflow-x: auto; }
+  .code li { counter-increment: ln; white-space: pre; min-height: 1.75em; }
+  .code li::before { content: counter(ln); display: inline-block; width: 3.2em; padding-right: 1.2em; text-align: right; color: color-mix(in srgb, var(--deep-text) 45%, transparent); }
+  .pane.on .code li { animation: line 0.45s var(--ease) both; }
+  .pane.on .code li:nth-child(2) { animation-delay: 0.06s; } .pane.on .code li:nth-child(3) { animation-delay: 0.12s; } .pane.on .code li:nth-child(4) { animation-delay: 0.18s; }
+  .pane.on .code li:nth-child(5) { animation-delay: 0.24s; } .pane.on .code li:nth-child(6) { animation-delay: 0.3s; } .pane.on .code li:nth-child(7) { animation-delay: 0.36s; } .pane.on .code li:nth-child(n + 8) { animation-delay: 0.42s; }
+  @keyframes line { from { opacity: 0; transform: translateX(-12px); } }
+  .code :global(.t-c) { color: color-mix(in srgb, var(--deep-text) 75%, transparent); font-style: italic; }
+  .code :global(.t-k) { color: #c792ea; } .code :global(.t-f) { color: #82aaff; } .code :global(.t-s) { color: #c3e88d; } .code :global(.t-p) { color: #ffcb6b; } .code :global(.t-n) { color: var(--accent); }
+  .term { padding: 14px 20px 18px; border-top: 1px solid color-mix(in srgb, var(--accent-2) 14%, transparent); font: 0.9rem/1.7 var(--mono); color: var(--deep-text); }
+  .term-head { margin-left: 0; font-family: inherit; }
+  .cmd { margin: 0; color: var(--on-deep); }
+  .prompt { color: #28c840; }
+  .ls { display: flex; flex-wrap: wrap; gap: 4px 26px; list-style: none; margin: 2px 0 6px; padding: 0; }
+  .ls li { color: #82aaff; transition: color 0.2s; }
+  .ls li:hover { color: var(--accent); }
+  .caret-t { display: inline-block; width: 9px; height: 1.1em; vertical-align: -0.2em; background: var(--on-deep); animation: caret 1s steps(1) infinite; }
+  @media (prefers-reduced-motion: reduce) { .pane.on .code li, .ide-live i, .caret-t { animation: none; } }
+  @media (max-width: 760px) {
+    .ide { margin: 0 calc(-1 * var(--gutter) + 8px); border-radius: 18px; }
+    .ide-path { display: none; }
+    .ide-body { grid-template-columns: 1fr; min-height: 0; }
+    .explorer { display: flex; overflow-x: auto; gap: 6px; padding: 10px; border-right: 0; border-bottom: 1px solid color-mix(in srgb, var(--accent-2) 12%, transparent); scrollbar-width: none; }
+    .ex-head { display: none; }
+    .file { width: auto; flex: none; font-size: 0.8rem; }
+    .editor { min-height: 290px; }
+    .code { font-size: 0.8rem; }
+    .code li::before { width: 2.4em; padding-right: 0.8em; }
+    .term { font-size: 0.8rem; }
+  }
 
   /* NEXT CHAPTER */
   .next { padding: 130px 0 40px; }
@@ -717,7 +805,7 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
     .ch-year-inline { display: inline; }
     .ch-body.split, .contact-card { grid-template-columns: minmax(0, 1fr); }
     .rank { position: static; }
-    .svc-grid, .post-grid { grid-template-columns: 1fr 1fr; }
+    .post-grid { grid-template-columns: 1fr 1fr; }
     .lesson { grid-template-columns: 130px minmax(0, 1fr); }
     .turn { grid-column: 2; grid-template-columns: auto auto 1fr; align-items: end; gap: 12px; }
     .arc { width: 64px; margin: 0 0 6px; }
@@ -740,7 +828,7 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
     .lesson-n { font-size: 4rem; }
     .turn { grid-column: 1; grid-template-columns: 1fr; gap: 2px; padding: 16px 18px; border-radius: 18px; background: var(--surface); }
     .arc { width: 90px; margin: 2px 0 0 14px; }
-    .stats, .svc-grid, .post-grid, .results { grid-template-columns: 1fr; }
+    .stats, .post-grid, .results { grid-template-columns: 1fr; }
     .asante { grid-template-columns: 1fr; }
     /* phones: the trunk runs down the left, every branch grows to the right */
     .trunk { left: 18px; top: 0; }

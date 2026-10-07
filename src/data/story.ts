@@ -180,13 +180,20 @@ export const lessons = [
   { n: "03", from: "robbed", title: "Skills are what they can't steal", then: "Laptop, phone, certificates", now: "Everything I knew", body: "I lost my laptop, phone and certificates in one night. What I knew came with me." },
 ];
 
+// Each service is a file in the "today" editor. Code lines are small, trusted HTML: k keyword, f function, s string, p property, n number.
 export const services = [
-  { title: "Web & mobile apps", body: "From idea to launch: products people enjoy using." },
-  { title: "SaaS & business systems", body: "Tools that help businesses work smarter." },
-  { title: "Systems integration", body: "Making different systems talk to each other." },
-  { title: "Data for business", body: "Dashboards, reports and insights that drive decisions." },
-  { title: "Multimedia & content", body: "Video, photography and visuals that tell a story." },
-  { title: "Tech for social good", body: "Using technology to solve real community problems." },
+  { title: "Web & mobile apps", body: "From idea to launch: products people enjoy using.", file: "web-mobile.tsx",
+    code: ['<k>export default function</k> <f>App</f>() {', '  <k>return</k> &lt;<f>Product</f> <p>users</p>=<s>"happy"</s> <p>platforms</p>={[<s>"web"</s>, <s>"android"</s>, <s>"ios"</s>]} /&gt;;', '}'] },
+  { title: "SaaS & business systems", body: "Tools that help businesses work smarter.", file: "business.ts",
+    code: ['<k>const</k> shop = <k>await</k> <f>system</f>({ <p>sales</p>: <n>true</n>, <p>stock</p>: <n>true</n>, <p>staff</p>: <n>true</n> });', 'shop.<f>work</f>({ <p>smarter</p>: <n>true</n>, <p>paperwork</p>: <n>0</n> });'] },
+  { title: "Systems integration", body: "Making different systems talk to each other.", file: "integrations.ts",
+    code: ['mobileMoney.<f>on</f>(<s>"payment"</s>, <k>async</k> (tx) =&gt; {', '  <k>await</k> accounting.<f>record</f>(tx);', '  <k>await</k> sms.<f>send</f>(tx.phone, <s>"Asante! Tumepokea malipo."</s>);', '});'] },
+  { title: "Data for business", body: "Dashboards, reports and insights that drive decisions.", file: "insights.sql",
+    code: ['<k>SELECT</k> month, <f>SUM</f>(sales) <k>AS</k> revenue', '<k>FROM</k> orders', '<k>GROUP BY</k> month', '<k>ORDER BY</k> revenue <k>DESC</k>;  <c>-- decide with numbers, not guesses</c>'] },
+  { title: "Multimedia & content", body: "Video, photography and visuals that tell a story.", file: "story.json",
+    code: ['{', '  <p>"shoot"</p>: [<s>"video"</s>, <s>"photo"</s>],', '  <p>"edit"</p>: <s>"until it feels right"</s>,', '  <p>"goal"</p>: <s>"a story people remember"</s>', '}'] },
+  { title: "Tech for social good", body: "Using technology to solve real community problems.", file: "README.md",
+    code: ['<k>#</k> Tech for the community', '', 'Works on cheap phones. Works offline.', 'Speaks <s>Kiswahili</s>. Solves a <f>real</f> problem.'] },
 ];
 
 export const outside = ["Bike rides", "Calisthenics", "Content creation", "Nature", "Gaming", "Piano & music", "Data & cloud"];
