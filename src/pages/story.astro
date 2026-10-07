@@ -69,17 +69,31 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
 
   <!-- ── STORY ────────────────────────────────────────── -->
   <section id="story" class="story wrap">
-    <aside class="rail" aria-hidden="true">
+    <nav class="rail" aria-label="Chapters">
       <div class="rail-in">
         <span class="label">The story</span>
         <p class="rail-year" data-rail-year>{chapters[0].year}</p>
-        <div class="rail-track"><span data-rail-line></span></div>
+        <p class="rail-place" data-rail-place>{chapters[0].place}</p>
+        <div class="stops">
+          <span class="stops-line" aria-hidden="true"><span data-rail-line></span></span>
+          <ol>
+            {chapters.map((c, i) => (
+              <li><a href={`#${c.id}`} data-stop={c.id} class:list={{ on: i === 0 }}><span class="dot" aria-hidden="true"></span><span class="n">{pad(i + 1)}</span><span class="t">{c.title} {c.accent}</span></a></li>
+            ))}
+          </ol>
+        </div>
       </div>
-    </aside>
+    </nav>
+    {/* phones: a small chip keeps your place in the story */}
+    <div class="ch-chip" data-ch-chip aria-hidden="true">
+      <span class="chip-n" data-chip-n>01</span>
+      <span class="chip-t" data-chip-t>{chapters[0].year} · {chapters[0].title} {chapters[0].accent}</span>
+      <i><b data-chip-bar></b></i>
+    </div>
 
     <div class="chapters">
       {chapters.map((c, i) => (
-        <article class:list={["chapter", { dark: c.tone === "dark" }]} data-chapter={c.year} id={c.id}>
+        <article class:list={["chapter", { dark: c.tone === "dark" }]} data-chapter={c.year} data-place={c.place} data-name={`${c.title} ${c.accent}`} data-n={pad(i + 1)} id={c.id}>
           {c.tone === "dark" && <div class="dark-bg deep" aria-hidden="true"></div>}
           <div class="ch-head">
             <span class="ch-num" data-drift>{pad(i + 1)}</span>
@@ -165,6 +179,9 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
           <span class="lesson-n">{l.n}</span>
           <h3>{l.title}</h3>
           <p>{l.body}</p>
+          {l.from && (() => { const i = chapters.findIndex((c) => c.id === l.from); return i >= 0 && (
+            <a class="lesson-from" href={`#${l.from}`}>Learnt in chapter {pad(i + 1)} · {chapters[i].year}<span aria-hidden="true">↑</span></a>
+          ); })()}
         </div>
       ))}
     </div>
@@ -346,8 +363,26 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
   .story { display: grid; grid-template-columns: 240px 1fr; gap: 56px; padding: 80px 0; }
   .rail-in { position: sticky; top: 120px; display: flex; flex-direction: column; gap: 20px; }
   .rail-year { font-size: 5.4rem; font-weight: 700; color: var(--accent); line-height: 1; margin: 0; letter-spacing: -0.04em; }
-  .rail-track { width: 4px; height: 46vh; background: var(--line); border-radius: 2px; overflow: hidden; }
-  .rail-track span { display: block; width: 100%; height: 100%; background: var(--deep); transform-origin: top; transform: scaleY(0); }
+  .rail-in { gap: 0; }
+  .rail-in .label { margin-bottom: 18px; }
+  .rail-place { margin: 10px 0 26px; min-height: 2.6em; font-size: 0.9rem; font-weight: 600; color: var(--heading); line-height: 1.3; }
+  .stops { position: relative; }
+  .stops-line { position: absolute; left: 6px; top: 10px; bottom: 10px; width: 2px; background: var(--line); border-radius: 2px; overflow: hidden; }
+  .stops-line span { display: block; width: 100%; height: 100%; background: var(--accent); transform-origin: top; transform: scaleY(0); }
+  .stops ol { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(2px, 0.6vh, 8px); }
+  .stops a { display: grid; grid-template-columns: 14px 22px 1fr; gap: 10px; align-items: center; padding: 4px 0; text-decoration: none; color: var(--muted); font-size: 0.84rem; line-height: 1.25; transition: color 0.3s; }
+  .stops a:hover { color: var(--heading); }
+  .stops .dot { position: relative; width: 14px; height: 14px; border-radius: 50%; background: var(--bg, var(--surface)); border: 2px solid var(--line); transition: border-color 0.3s, background 0.3s, transform 0.4s var(--ease); }
+  .stops .n { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; opacity: 0.7; }
+  .stops .t { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .stops a.past .dot { border-color: var(--accent); background: var(--accent); transform: scale(0.7); }
+  .stops a.on { color: var(--heading); font-weight: 600; }
+  .stops a.on .dot { border-color: var(--accent); background: var(--accent); transform: scale(1.15); box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 22%, transparent); }
+  .stops a.on .n { color: var(--accent); opacity: 1; }
+  .ch-chip { display: none; }
+  .lesson-from { margin-top: auto; padding-top: 10px; display: inline-flex; gap: 8px; align-items: center; font-size: 0.85rem; font-weight: 600; color: var(--accent); text-decoration: none; }
+  .lesson-from span { transition: transform 0.3s var(--ease); }
+  .lesson-from:hover span { transform: translateY(-3px); }
 
   .chapter { position: relative; padding: 70px 0 90px; border-bottom: 1px solid var(--line); }
   .chapter:last-child { border-bottom: 0; }
@@ -509,6 +544,15 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
   @media (max-width: 960px) {
     .story { grid-template-columns: 1fr; gap: 0; }
     .rail { display: none; }
+    .ch-chip { position: fixed; z-index: 40; left: 50%; bottom: 16px; display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 4px 10px; width: min(calc(100% - 32px), 420px);
+      padding: 10px 16px 12px; border-radius: 18px; background: color-mix(in srgb, var(--deep) 92%, transparent); color: var(--on-deep); backdrop-filter: blur(10px);
+      box-shadow: 0 16px 40px -18px rgb(0 0 0 / 0.6); font-size: 0.85rem; transform: translate(-50%, 140%); transition: transform 0.5s var(--ease); pointer-events: none; }
+    .ch-chip.show { transform: translate(-50%, 0); }
+    .chip-n { font-weight: 700; color: var(--accent); }
+    .chip-t { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ch-chip i { grid-column: 1 / -1; height: 3px; border-radius: 2px; background: color-mix(in srgb, var(--on-deep) 16%, transparent); overflow: hidden; }
+    .ch-chip b { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); }
+    html.menu-open .ch-chip { display: none; }
     .ch-year-inline { display: inline; }
     .ch-body.split, .contact-card { grid-template-columns: minmax(0, 1fr); }
     .rank { position: static; }

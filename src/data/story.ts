@@ -175,9 +175,9 @@ export const chapters: Chapter[] = [
 ];
 
 export const lessons = [
-  { n: "01", title: "A bad start is not the final result", body: "Second from last became second in class. Division I followed." },
-  { n: "02", title: "Your path can look wrong and still be right", body: "They said a diploma was for those who failed. It became my way into tech." },
-  { n: "03", title: "Skills are what they can't steal", body: "I lost my laptop, phone and certificates in one night. What I knew came with me." },
+  { n: "01", from: "kaisho", title: "A bad start is not the final result", body: "Second from last became second in class. Division I followed." },
+  { n: "02", from: "choice", title: "Your path can look wrong and still be right", body: "They said a diploma was for those who failed. It became my way into tech." },
+  { n: "03", from: "robbed", title: "Skills are what they can't steal", body: "I lost my laptop, phone and certificates in one night. What I knew came with me." },
 ];
 
 export const services = [

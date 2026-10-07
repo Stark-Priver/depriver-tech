@@ -48,7 +48,7 @@ body {
   line-height: 1.65;
   transition: background-color 0.4s, color 0.4s;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* fixed terrain paper behind everything */

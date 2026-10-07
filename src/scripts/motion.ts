@@ -107,33 +107,51 @@ if (reduce) {
       .fromTo(dot, { top: "92%" }, { top: "4%", duration: 2.2, ease: "power3.inOut" }, 0);
   });
 
-  // ── story rail: big year follows the chapter in view ────
+  // ── story rail: year, place and the map of stops follow the chapter in view ────
   const railYear = document.querySelector<HTMLElement>("[data-rail-year]");
+  const railPlace = document.querySelector<HTMLElement>("[data-rail-place]");
   const railLine = document.querySelector<HTMLElement>("[data-rail-line]");
+  const stops = [...document.querySelectorAll<HTMLElement>("[data-stop]")];
+  const chip = document.querySelector<HTMLElement>("[data-ch-chip]");
   const story = document.querySelector("#story");
   if (railYear && story) {
-    gsap.utils.toArray<HTMLElement>("[data-chapter]").forEach((ch) => {
+    const swap = (el: HTMLElement | null, text: string) => {
+      if (!el || el.textContent === text) return;
+      gsap.to(el, {
+        y: -24, opacity: 0, duration: 0.22, ease: "power2.in", overwrite: true,
+        onComplete: () => {
+          el.textContent = text;
+          gsap.fromTo(el, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "expo.out" });
+        },
+      });
+    };
+    const chapters = gsap.utils.toArray<HTMLElement>("[data-chapter]");
+    chapters.forEach((ch, i) => {
       ScrollTrigger.create({
         trigger: ch,
         start: "top 55%",
         end: "bottom 55%",
         onToggle: (self) => {
-          if (!self.isActive || railYear.textContent === ch.dataset.chapter) return;
-          gsap.to(railYear, {
-            y: -30, opacity: 0, duration: 0.25, ease: "power2.in",
-            onComplete: () => {
-              railYear.textContent = ch.dataset.chapter!;
-              gsap.fromTo(railYear, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "expo.out" });
-            },
-          });
+          if (!self.isActive) return;
+          swap(railYear, ch.dataset.chapter!);
+          swap(railPlace, ch.dataset.place || "");
+          stops.forEach((s, n) => { s.classList.toggle("on", n === i); s.classList.toggle("past", n < i); });
+          if (chip) {
+            chip.querySelector("[data-chip-n]")!.textContent = ch.dataset.n || "";
+            chip.querySelector("[data-chip-t]")!.textContent = `${ch.dataset.chapter} · ${ch.dataset.name}`;
+          }
         },
       });
     });
-    if (railLine)
-      gsap.fromTo(railLine, { scaleY: 0 }, {
-        scaleY: 1, ease: "none",
-        scrollTrigger: { trigger: story, start: "top 50%", end: "bottom 50%", scrub: true },
-      });
+    const fill = chip?.querySelector<HTMLElement>("[data-chip-bar]");
+    ScrollTrigger.create({
+      trigger: story, start: "top 50%", end: "bottom 50%",
+      onUpdate: (self) => {
+        if (railLine) gsap.set(railLine, { scaleY: self.progress });
+        if (fill) gsap.set(fill, { scaleX: self.progress });
+      },
+      onToggle: (self) => chip?.classList.toggle("show", self.isActive),
+    });
   }
 
   // ── big chapter numbers drift ───────────────────────────
