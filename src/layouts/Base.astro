@@ -18,6 +18,8 @@ interface Props {
   tags?: string[];
   noindex?: boolean;
   jsonLd?: object;
+  // bare: no nav, footer, assistant or progress bar (single-purpose pages like /contact)
+  bare?: boolean;
 }
 const {
   title = "Privatus Cosmas · Software Engineer & Digital Innovator",
@@ -30,6 +32,7 @@ const {
   tags = [],
   noindex = false,
   jsonLd,
+  bare = false,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const imageUrl = new URL(image, Astro.site);
@@ -85,11 +88,11 @@ const imageUrl = new URL(image, Astro.site);
     </script>
   </head>
   <body>
-    <div class="progress" aria-hidden="true"><span></span></div>
-    <Nav />
+    {!bare && <div class="progress" aria-hidden="true"><span></span></div>}
+    {!bare && <Nav />}
     <main id="top"><slot /></main>
-    <Footer />
-    <Viora />
+    {!bare && <Footer />}
+    {!bare && <Viora />}
     {site.cfAnalyticsToken && (
       <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: site.cfAnalyticsToken })}></script>
     )}
