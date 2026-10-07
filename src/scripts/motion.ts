@@ -19,7 +19,9 @@ if (!reduce) {
       const el = url.hash ? document.querySelector(url.hash) : null;
       if (el && url.pathname === location.pathname) {
         e.preventDefault();
-        lenis!.scrollTo(el as HTMLElement, { offset: -60 });
+        // targets inside a scrolling panel (the post viewer) scroll that panel, not the page
+        if (el.closest("[data-lenis-prevent]")) el.scrollIntoView({ behavior: "smooth", block: "start" });
+        else lenis!.scrollTo(el as HTMLElement, { offset: -60 });
       }
     });
   });

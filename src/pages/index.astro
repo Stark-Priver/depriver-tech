@@ -1,79 +1,433 @@
 ---
-import { livePosts } from "../lib/posts";
+import { livePosts, upcomingPosts, coverFor, formatDate } from "../lib/posts";
 import Base from "../layouts/Base.astro";
 import Title from "../components/Title.astro";
 import PostCard from "../components/PostCard.astro";
+import { series, topics, seriesOf, topicsOf } from "../data/series";
+import { talks, talkBase } from "../data/talks";
+import { chapters } from "../data/story";
 
 const posts = await livePosts();
-const [first, ...rest] = posts;
-const tags = [...new Set(posts.flatMap((p) => p.data.tags))];
+const upcoming = await upcomingPosts(4);
+const [first, second, third] = posts;
+const fan = posts.slice(0, 3).map(coverFor).filter(Boolean) as string[];
+
+// series that already have a live episode, newest episode first
+const liveSeries = series
+  .map((s) => ({ ...s, posts: posts.filter((p) => p.data.tags.includes(s.tag)) }))
+  .filter((s) => s.posts.length > 0);
+const usedTopics = topics.filter((t) => posts.some((p) => topicsOf(p.data.tags).includes(t.id)));
+const talk = [...talks].sort((a, b) => b.date.localeCompare(a.date))[0];
+const PAGE = 9;
+const marquee = ["Software", "Careers", "Students", "Kiswahili", "Security", "Code", "Mbeya", "Tanzania", "Learning in public"];
+const dayFmt = (d: Date) => d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "Africa/Dar_es_Salaam" });
 ---
 <Base title="Privatus Cosmas · Blog" description="Notes on software, learning, tech life and the journey, by Privatus Cosmas, Software Engineer & Digital Innovator in Mbeya, Tanzania.">
-  <section class="head wrap">
-    <span class="label" data-reveal>Privatus Cosmas · Blog</span>
-    <Title tag="h1" title="Notes from" accent="the journey" size="clamp(2.8rem, 8vw, 6.4rem)" />
-    <p class="intro" data-reveal>Software, learning, tech life and everything I pick up along the way. Written from Mbeya.</p>
-    <a class="author" href="/story/" data-reveal>
-      <img src="/img/me-cut.webp" alt="" width="64" height="64" />
-      <span><strong>Privatus Cosmas</strong><em>Software Engineer & Digital Innovator</em></span>
-      <span class="author-cta">From Kitwe village to writing code: read my story
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </span>
-    </a>
-    {tags.length > 0 && (
-      <ul class="tags" data-reveal>
-        <li><button class="on" data-tag="all">All</button></li>
-        {tags.map((t) => <li><button data-tag={t}>{t}</button></li>)}
+  <!-- ── HERO ─────────────────────────────────────────── -->
+  <section class="hero wrap" data-home-hero>
+    <div class="hero-copy">
+      <span class="label" data-reveal>Privatus Cosmas · Blog</span>
+      <Title tag="h1" title="Notes from" accent="the journey" size="clamp(2.8rem, 7.4vw, 6.2rem)" />
+      <p class="intro" data-reveal>Software, careers and student life in tech, in English and Kiswahili. Written from Mbeya, Tanzania.</p>
+      <div class="actions" data-reveal>
+        <a class="btn" href="#latest">Start reading
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        </a>
+        <a class="btn ghost" href="/story/">My story</a>
+      </div>
+      <dl class="stats" data-reveal>
+        <div><dt><span data-count={posts.length}>{posts.length}</span></dt><dd>Posts</dd></div>
+        <div><dt><span data-count={series.length}>{series.length}</span></dt><dd>Series</dd></div>
+        <div><dt><span data-count={talks.length}>{talks.length}</span></dt><dd>{talks.length === 1 ? "Talk" : "Talks"}</dd></div>
+      </dl>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <div class="fan" data-fan>
+        {fan.map((src, i) => <img class={`f${i}`} src={src} alt="" width="400" height="500" loading={i ? "lazy" : "eager"} />)}
+      </div>
+      <a class="me" href="/story/" tabindex="-1" data-float>
+        <img src="/img/me-cut.webp" alt="" width="56" height="56" />
+        <span><strong>Privatus Cosmas</strong><em>Software Engineer & Digital Innovator</em></span>
+      </a>
+    </div>
+  </section>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      {[0, 1].map(() => marquee.map((m) => <span>{m}<i></i></span>))}
+    </div>
+  </div>
+
+  {first && (
+    <section id="latest" class="wrap block">
+      <div class="block-head">
+        <span class="label" data-reveal>Latest</span>
+        <Title title="Fresh from" accent="the desk" size="clamp(2rem, 4.6vw, 3.4rem)" />
+      </div>
+      <div class="bento">
+        <div class="b-main"><PostCard post={first} featured /></div>
+        {second && <div class="b-side"><PostCard post={second} /></div>}
+        {third && <div class="b-side"><PostCard post={third} /></div>}
+      </div>
+    </section>
+  )}
+
+  <!-- ── SERIES ─────────────────────────────────────── -->
+  <section class="series-wrap deep" id="series">
+    <div class="wrap block">
+      <div class="block-head split">
+        <div>
+          <span class="label" data-reveal>Series</span>
+          <Title title="Come back for" accent="the next episode" size="clamp(2rem, 4.6vw, 3.4rem)" light />
+        </div>
+        <p class="block-note" data-reveal>New carousels every Tuesday, Thursday and Saturday at 19:00, plus Swali la Wiki on Sundays.</p>
+      </div>
+      <ul class="series" data-stagger>
+        {series.map((s, i) => {
+          const live = liveSeries.find((x) => x.tag === s.tag);
+          return (
+            <li class:list={["s-card", { soon: !live }]}>
+              <span class="s-num">{String(i + 1).padStart(2, "0")}</span>
+              <h3>{s.name}</h3>
+              <p>{s.blurb}</p>
+              {live
+                ? <button type="button" data-series={s.tag}>{live.posts.length} {live.posts.length === 1 ? "episode" : "episodes"} <span aria-hidden="true">→</span></button>
+                : <span class="s-soon">Starting soon</span>}
+            </li>
+          );
+        })}
       </ul>
+      {upcoming.length > 0 && (
+        <div class="upcoming" data-reveal>
+          <span class="up-title">Coming up</span>
+          <ol>
+            {upcoming.map((p) => (
+              <li><time datetime={p.data.date.toISOString()}>{dayFmt(p.data.date)}</time><span>{p.data.title}</span></li>
+            ))}
+          </ol>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- ── ARCHIVE ─────────────────────────────────────── -->
+  <section id="posts" class="wrap block">
+    <div class="block-head split">
+      <div>
+        <span class="label" data-reveal>All posts</span>
+        <Title title="Find what" accent="you need" size="clamp(2rem, 4.6vw, 3.4rem)" />
+      </div>
+      <label class="search" data-reveal>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" placeholder="Search posts" aria-label="Search posts" data-search />
+      </label>
+    </div>
+    <div class="filters" data-reveal>
+      <ul class="chips" role="list">
+        <li><button class="on" data-topic="all" aria-pressed="true">All <small>{posts.length}</small></button></li>
+        {usedTopics.map((t) => {
+          const n = posts.filter((p) => topicsOf(p.data.tags).includes(t.id)).length;
+          return <li><button data-topic={t.id} aria-pressed="false">{t.name} <small>{n}</small></button></li>;
+        })}
+      </ul>
+      <p class="active-series" hidden data-active-series>
+        <span></span><button type="button" data-clear-series>Show all</button>
+      </p>
+    </div>
+
+    <div class="grid" data-grid>
+      {posts.map((p, i) => (
+        <div class="cell" data-latest={i < 3 ? "" : undefined} data-topics={topicsOf(p.data.tags).join(",")} data-series-tag={seriesOf(p.data.tags)?.tag ?? ""}
+          data-text={`${p.data.title} ${p.data.description} ${p.data.tags.join(" ")}`.toLowerCase()} hidden={i < 3 || i >= PAGE + 3}>
+          <PostCard post={p} />
+        </div>
+      ))}
+    </div>
+    <p class="empty" hidden data-empty>Nothing matches that yet. Try another word, or ask viora in the corner.</p>
+    {posts.length > PAGE + 3 && (
+      <div class="more-row"><button class="btn ghost" data-more>Show more posts <span data-left></span></button></div>
     )}
   </section>
 
-  <section class="wrap list">
-    {first ? (
-      <>
-        <div data-post-tags={first.data.tags.join(",")}><PostCard post={first} featured /></div>
-        <div class="grid">
-          {rest.map((p) => <div data-post-tags={p.data.tags.join(",")}><PostCard post={p} /></div>)}
-        </div>
-      </>
-    ) : (
-      <p class="empty">The first post is coming soon.</p>
+  <!-- ── TALK + STORY ───────────────────────────────── -->
+  <section class="wrap block duo">
+    {talk && (
+      <a class="duo-card talk" href={talkBase(talk.slug)} data-reveal>
+        <span class="label">Latest talk</span>
+        <div class="talk-img"><img src={`${talkBase(talk.slug)}thumbs/01.webp`} alt="" width="640" height="360" loading="lazy" /></div>
+        <h3>{talk.title}</h3>
+        <p>{talk.place} · {new Date(talk.date + "T12:00:00+03:00").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</p>
+        <span class="go">Open the slides <span aria-hidden="true">→</span></span>
+      </a>
     )}
+    <a class="duo-card story deep" href="/story/" data-reveal>
+      <span class="label">My story</span>
+      <h3>From Kitwe village to writing code</h3>
+      <ol class="years">
+        {chapters.slice(0, 6).map((c) => <li>{c.year}</li>)}
+      </ol>
+      <img src="/img/me-cut-540.webp" alt="" width="540" height="720" loading="lazy" />
+      <span class="go">Read the chapters <span aria-hidden="true">→</span></span>
+    </a>
   </section>
 </Base>
 
 <script>
-  const buttons = document.querySelectorAll<HTMLButtonElement>("[data-tag]");
-  buttons.forEach((b) =>
-    b.addEventListener("click", () => {
-      buttons.forEach((x) => x.classList.toggle("on", x === b));
-      const tag = b.dataset.tag!;
-      document.querySelectorAll<HTMLElement>("[data-post-tags]").forEach((el) => {
-        el.hidden = tag !== "all" && !el.dataset.postTags!.split(",").includes(tag);
+  import gsap from "gsap";
+  import { Flip } from "gsap/Flip";
+  gsap.registerPlugin(Flip);
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const PAGE = 9;
+  const grid = document.querySelector<HTMLElement>("[data-grid]")!;
+  const cells = [...grid.querySelectorAll<HTMLElement>(".cell")];
+  const topicBtns = [...document.querySelectorAll<HTMLButtonElement>("[data-topic]")];
+  const search = document.querySelector<HTMLInputElement>("[data-search]")!;
+  const more = document.querySelector<HTMLButtonElement>("[data-more]");
+  const left = document.querySelector<HTMLElement>("[data-left]");
+  const empty = document.querySelector<HTMLElement>("[data-empty]")!;
+  const activeSeries = document.querySelector<HTMLElement>("[data-active-series]")!;
+  const state = { topic: "all", q: "", series: "", shown: PAGE };
+
+  function apply(animate = true) {
+    const flip = animate && !reduce ? Flip.getState(cells) : null;
+    // unfiltered, the archive skips the three posts already shown under Latest
+    const plain = state.topic === "all" && !state.q && !state.series;
+    const matches = cells.filter((c) =>
+      !(plain && c.hasAttribute("data-latest")) &&
+      (state.topic === "all" || c.dataset.topics!.split(",").includes(state.topic)) &&
+      (!state.series || c.dataset.seriesTag === state.series) &&
+      (!state.q || c.dataset.text!.includes(state.q)),
+    );
+    cells.forEach((c) => (c.hidden = true));
+    matches.slice(0, state.shown).forEach((c) => {
+      c.hidden = false;
+      // cards revealed by filtering skip the scroll reveal
+      const card = c.querySelector<HTMLElement>("[data-reveal]");
+      if (card) gsap.set(card, { opacity: 1, y: 0 });
+    });
+    empty.hidden = matches.length > 0;
+    if (more) {
+      more.hidden = matches.length <= state.shown;
+      left!.textContent = `(${matches.length - state.shown} more)`;
+    }
+    if (flip)
+      Flip.from(flip, {
+        duration: 0.6, ease: "expo.out", absolute: true, scale: true,
+        onEnter: (els) => gsap.fromTo(els, { opacity: 0, scale: 0.94, y: 24 }, { opacity: 1, scale: 1, y: 0, duration: 0.6, stagger: 0.04, ease: "expo.out" }),
+        onLeave: (els) => gsap.to(els, { opacity: 0, scale: 0.94, duration: 0.3 }),
       });
+  }
+
+  topicBtns.forEach((b) =>
+    b.addEventListener("click", () => {
+      topicBtns.forEach((x) => { x.classList.toggle("on", x === b); x.setAttribute("aria-pressed", String(x === b)); });
+      state.topic = b.dataset.topic!;
+      state.shown = PAGE;
+      apply();
     }),
   );
+  let t = 0;
+  search.addEventListener("input", () => {
+    clearTimeout(t);
+    t = window.setTimeout(() => { state.q = search.value.trim().toLowerCase(); state.shown = PAGE; apply(); }, 160);
+  });
+  more?.addEventListener("click", () => { state.shown += PAGE; apply(); });
+  apply(false);
+
+  // series cards jump to the archive filtered to that series
+  document.querySelectorAll<HTMLButtonElement>("[data-series]").forEach((b) =>
+    b.addEventListener("click", () => {
+      state.series = b.dataset.series!;
+      state.shown = PAGE;
+      activeSeries.hidden = false;
+      activeSeries.querySelector("span")!.textContent = `Series: ${b.closest("li")!.querySelector("h3")!.textContent}`;
+      apply(false);
+      document.getElementById("posts")!.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+    }),
+  );
+  document.querySelector("[data-clear-series]")!.addEventListener("click", () => {
+    state.series = "";
+    activeSeries.hidden = true;
+    apply();
+  });
+
+  if (!reduce) {
+    // hero: fan of the latest carousel covers settles in, then floats with the pointer
+    const fan = document.querySelector<HTMLElement>("[data-fan]");
+    if (fan) {
+      const imgs = fan.querySelectorAll("img");
+      gsap.from(imgs, { y: 120, rotate: 0, opacity: 0, duration: 1.4, ease: "expo.out", stagger: 0.12, delay: 0.2 });
+      gsap.from("[data-float]", { y: 40, opacity: 0, duration: 1.2, ease: "expo.out", delay: 0.8 });
+      gsap.to("[data-float]", { y: -10, duration: 2.6, ease: "sine.inOut", yoyo: true, repeat: -1, delay: 2 });
+      if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
+        const art = fan.parentElement!;
+        art.addEventListener("pointermove", (e) => {
+          const r = art.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+          imgs.forEach((img, i) => gsap.to(img, { x: x * (14 + i * 10), y: y * (10 + i * 8), duration: 0.8, ease: "power3.out" }));
+        });
+        art.addEventListener("pointerleave", () => gsap.to(imgs, { x: 0, y: 0, duration: 1, ease: "expo.out" }));
+      }
+    }
+
+    // series cards come in one after another
+    const sCards = document.querySelectorAll<HTMLElement>("[data-stagger] > li");
+    gsap.set(sCards, { opacity: 0, y: 50 });
+    const io = new IntersectionObserver((entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      io.disconnect();
+      gsap.to(sCards, { opacity: 1, y: 0, duration: 1, ease: "expo.out", stagger: 0.07 });
+    }, { rootMargin: "0px 0px -10% 0px" });
+    const list = document.querySelector("[data-stagger]");
+    if (list) io.observe(list);
+  }
 </script>
 
 <style>
-  .head { padding: 170px 0 50px; }
-  .head :global(.display) { margin-top: 22px; }
-  .intro { font-size: 1.2rem; color: var(--muted); max-width: 34em; margin: 24px 0 30px; }
-  .author { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 18px; padding: 12px 22px 12px 12px; margin: 0 0 34px; border-radius: 22px;
-    background: var(--surface); text-decoration: none; color: inherit; width: fit-content; max-width: 100%;
-    box-shadow: 0 1px 0 var(--line), 0 24px 50px -36px color-mix(in srgb, var(--shadow) 40%, transparent); transition: transform 0.4s var(--ease); }
-  .author:hover { transform: translateY(-3px); }
-  .author img { width: 64px; height: 64px; border-radius: 16px; object-fit: cover; object-position: top; background: var(--deep); filter: var(--photo-filter); }
-  .author strong { display: block; color: var(--heading); }
-  .author em { font-style: normal; color: var(--muted); font-size: 0.9rem; }
-  .author-cta { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: var(--accent); }
-  .tags { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; padding: 0; margin: 0; }
-  .tags button { font: inherit; font-weight: 500; padding: 8px 18px; border-radius: 999px; border: 1.5px solid var(--heading); background: transparent; color: var(--heading); cursor: pointer; text-transform: capitalize; }
-  .tags button.on, .tags button:hover { background: var(--deep); color: var(--on-deep); }
-  .list { padding-bottom: 120px; display: grid; gap: 18px; }
+  /* HERO */
+  .hero { display: grid; grid-template-columns: 1.15fr 1fr; gap: 40px; align-items: center; padding: 150px 0 70px; min-height: min(92vh, 860px); }
+  .hero :global(.display) { margin-top: 22px; }
+  .intro { font-size: 1.2rem; color: var(--muted); max-width: 30em; margin: 24px 0 30px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+  .stats { display: flex; gap: 36px; margin: 40px 0 0; }
+  .stats div { display: grid; }
+  .stats dt { font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 700; color: var(--heading); line-height: 1; }
+  .stats dd { margin: 6px 0 0; color: var(--muted); font-size: 0.85rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; }
+  .hero-art { position: relative; aspect-ratio: 1 / 1.05; display: grid; place-items: center; }
+  .hero-art::before { content: ""; position: absolute; inset: 8% 4% 6% 10%; border-radius: 40px; background: var(--deep); transform: rotate(-4deg); }
+  .fan { position: relative; width: 54%; aspect-ratio: 4 / 5; }
+  .fan img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 20px; box-shadow: 0 30px 60px -24px rgba(0, 0, 0, 0.6); }
+  .fan .f0 { z-index: 3; rotate: -3deg; }
+  .fan .f1 { z-index: 2; rotate: 9deg; translate: 18% 4%; }
+  .fan .f2 { z-index: 1; rotate: -12deg; translate: -18% 6%; }
+  .me { position: absolute; left: 0; bottom: 6%; z-index: 4; display: flex; align-items: center; gap: 12px; padding: 10px 18px 10px 10px; border-radius: 18px;
+    background: var(--surface); color: inherit; text-decoration: none; box-shadow: 0 24px 50px -24px color-mix(in srgb, var(--shadow) 60%, transparent); }
+  .me img { width: 48px; height: 48px; border-radius: 12px; object-fit: cover; object-position: top; background: var(--deep); filter: var(--photo-filter); }
+  .me strong { display: block; color: var(--heading); font-size: 0.95rem; }
+  .me em { font-style: normal; color: var(--muted); font-size: 0.78rem; }
+
+  /* MARQUEE */
+  .marquee { background: var(--accent); color: var(--on-accent); overflow: hidden; padding: 16px 0; transform: rotate(-1.2deg) scale(1.02); margin: 0 0 30px; }
+  .marquee-track { display: flex; width: max-content; animation: marquee 40s linear infinite; }
+  .marquee span { display: flex; align-items: center; gap: 28px; padding-right: 28px; font-weight: 600; font-size: 1.15rem; white-space: nowrap; }
+  .marquee i { width: 9px; height: 9px; border-radius: 50%; background: var(--deep); }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; } }
+
+  /* SECTIONS */
+  .block { padding: 90px 0; }
+  .block-head { margin-bottom: 40px; }
+  .block-head :global(.display) { margin-top: 18px; }
+  .block-head.split { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px; }
+  .block-note { max-width: 24em; margin: 0; color: var(--deep-text); }
+
+  .bento { display: grid; grid-template-columns: 1.6fr 1fr; grid-template-rows: auto auto; gap: 18px; }
+  .bento > div { display: grid; }
+  .b-main { grid-row: span 2; }
+  .b-main :global(.featured) { grid-template-columns: 1fr; }
+  .b-main :global(.featured .cover) { min-height: 380px; }
+  .b-side :global(.desc) { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+  /* SERIES */
+  .series-wrap { color: var(--deep-text); margin: 40px 0; }
+  .series { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .s-card { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 26px; border-radius: 22px; overflow: hidden;
+    background: color-mix(in srgb, var(--on-deep) 6%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--on-deep) 12%, transparent);
+    transition: transform 0.5s var(--ease), background 0.4s; }
+  .s-card:hover { transform: translateY(-5px); background: color-mix(in srgb, var(--on-deep) 10%, transparent); }
+  .s-num { font-size: 3.4rem; font-weight: 700; line-height: 1; color: transparent; -webkit-text-stroke: 1.5px var(--accent); }
+  .s-card h3 { margin: 0; color: var(--on-deep); font-size: 1.3rem; }
+  .s-card p { margin: 0; flex: 1; font-size: 0.95rem; }
+  .s-card button { align-self: flex-start; font: inherit; font-weight: 600; padding: 8px 16px; border-radius: 999px; border: 0; cursor: pointer; background: var(--accent); color: var(--on-accent); }
+  .s-card button span { display: inline-block; transition: transform 0.3s var(--ease); }
+  .s-card button:hover span { transform: translateX(4px); }
+  .s-soon { align-self: flex-start; font-size: 0.85rem; font-weight: 600; padding: 6px 14px; border-radius: 999px; box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--on-deep) 30%, transparent); }
+  .soon .s-num { -webkit-text-stroke-color: color-mix(in srgb, var(--on-deep) 35%, transparent); }
+  .upcoming { margin-top: 36px; display: grid; grid-template-columns: auto 1fr; gap: 18px 30px; align-items: start; padding-top: 30px; border-top: 1px solid color-mix(in srgb, var(--on-deep) 15%, transparent); }
+  .up-title { font-weight: 600; font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); padding-top: 4px; }
+  .upcoming ol { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+  .upcoming li { display: grid; gap: 4px; }
+  .upcoming time { font-size: 0.82rem; font-weight: 600; color: var(--on-deep); }
+  .upcoming li span { font-size: 0.92rem; line-height: 1.4; }
+
+  /* ARCHIVE */
+  .search { display: flex; align-items: center; gap: 10px; padding: 0 18px; min-height: 52px; width: min(340px, 100%); border-radius: 16px; background: var(--surface); color: var(--muted);
+    box-shadow: 0 1px 0 var(--line), 0 20px 40px -30px color-mix(in srgb, var(--shadow) 40%, transparent); }
+  .search:focus-within { box-shadow: inset 0 0 0 2px var(--accent); }
+  .search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; color: var(--heading); }
+  .filters { margin-bottom: 30px; }
+  .chips { display: flex; gap: 10px; list-style: none; padding: 0 0 4px; margin: 0; overflow-x: auto; scrollbar-width: none; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chips button { font: inherit; font-weight: 500; white-space: nowrap; padding: 8px 16px; border-radius: 999px; border: 1.5px solid var(--heading); background: transparent; color: var(--heading); cursor: pointer; transition: background 0.3s, color 0.3s; }
+  .chips small { font-size: 0.75rem; opacity: 0.65; margin-left: 2px; }
+  .chips button.on, .chips button:hover { background: var(--deep); color: var(--on-deep); border-color: var(--deep); }
+  .active-series { display: flex; align-items: center; gap: 12px; margin: 16px 0 0; font-weight: 600; color: var(--heading); }
+  .active-series button { font: inherit; font-size: 0.85rem; padding: 4px 12px; border-radius: 999px; border: 0; background: var(--accent); color: var(--on-accent); cursor: pointer; }
   .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-  .grid > div, .list > div { display: grid; }
-  .empty { color: var(--muted); font-size: 1.2rem; }
-  @media (max-width: 960px) { .grid { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+  .cell { display: grid; }
+  .empty { color: var(--muted); font-size: 1.1rem; }
+  .more-row { display: flex; justify-content: center; margin-top: 40px; }
+  .more-row .btn { font: inherit; font-weight: 600; cursor: pointer; border: 0; }
+
+  /* TALK + STORY */
+  .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding-top: 30px; padding-bottom: 120px; }
+  .duo-card { position: relative; display: flex; flex-direction: column; gap: 14px; padding: 32px; border-radius: var(--radius); overflow: hidden; text-decoration: none; color: inherit;
+    background: var(--surface); box-shadow: 0 1px 0 var(--line), 0 30px 60px -40px color-mix(in srgb, var(--shadow) 35%, transparent); transition: transform 0.5s var(--ease); }
+  .duo-card:hover { transform: translateY(-6px); }
+  .duo-card h3 { margin: 0; color: var(--heading); font-size: clamp(1.4rem, 2.6vw, 2rem); line-height: 1.2; }
+  .duo-card p { margin: 0; color: var(--muted); }
+  .go { margin-top: auto; font-weight: 600; color: var(--accent); }
+  .go span { display: inline-block; transition: transform 0.3s var(--ease); }
+  .duo-card:hover .go span { transform: translateX(5px); }
+  .talk-img { border-radius: 16px; overflow: hidden; }
+  .talk-img img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; transition: transform 0.8s var(--ease); }
+  .talk:hover .talk-img img { transform: scale(1.04); }
+  .story { color: var(--deep-text); min-height: 420px; }
+  .story h3 { color: var(--on-deep); max-width: 11em; position: relative; z-index: 1; }
+  .story .go { position: relative; z-index: 1; }
+  .years { list-style: none; padding: 0; margin: 0; display: grid; gap: 2px; font-weight: 700; font-size: 1.1rem; position: relative; z-index: 1; }
+  .years li { color: transparent; -webkit-text-stroke: 1px color-mix(in srgb, var(--on-deep) 50%, transparent); transition: color 0.4s, -webkit-text-stroke-color 0.4s; }
+  .story:hover .years li { color: var(--accent); -webkit-text-stroke-color: var(--accent); }
+  .story:hover .years li:nth-child(2) { transition-delay: 0.05s; }
+  .story:hover .years li:nth-child(3) { transition-delay: 0.1s; }
+  .story:hover .years li:nth-child(4) { transition-delay: 0.15s; }
+  .story:hover .years li:nth-child(5) { transition-delay: 0.2s; }
+  .story:hover .years li:nth-child(6) { transition-delay: 0.25s; }
+  .story img { position: absolute; right: -4%; bottom: 0; height: 92%; width: auto; filter: grayscale(1) var(--photo-filter); transition: transform 0.8s var(--ease); }
+  .story:hover img { transform: translateY(-8px) scale(1.02); }
+
+  @media (max-width: 960px) {
+    .hero { grid-template-columns: 1fr; min-height: 0; padding-top: 130px; }
+    .hero-art { max-width: 460px; width: 100%; margin: 0 auto; }
+    .grid { grid-template-columns: 1fr 1fr; }
+    .bento { grid-template-columns: 1fr 1fr; }
+    .b-main { grid-column: span 2; grid-row: auto; }
+  }
+  @media (max-width: 680px) {
+    .block { padding: 64px 0; }
+    .grid, .bento, .duo { grid-template-columns: 1fr; }
+    .b-main { grid-column: auto; }
+    .b-main :global(.featured .cover) { min-height: 260px; }
+    .stats { gap: 26px; }
+    .upcoming { grid-template-columns: 1fr; }
+    .series { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 82%; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); scrollbar-width: none; }
+    .series > li { scroll-snap-align: start; }
+    .story { min-height: 380px; }
+    .story img { height: 70%; opacity: 0.55; }
+    .search { width: 100%; }
+    .hero-art { max-width: 340px; }
+    .fan .f1 { translate: 12% 3%; } .fan .f2 { translate: -12% 5%; }
+    /* archive on phones: a compact list, cover on the left and the title beside it */
+    .grid { gap: 12px; }
+    .grid :global(.post) { flex-direction: row; border-radius: 20px; }
+    .grid :global(.cover) { flex: 0 0 34%; aspect-ratio: 4 / 5; }
+    .grid :global(.carousel .cover img) { top: 0; height: 100%; border-radius: 0; box-shadow: none; }
+    .grid :global(.stack), .grid :global(.badge), .grid :global(.desc), .grid :global(.stats) { display: none; }
+    .grid :global(.meta) { padding: 14px 16px; gap: 6px; justify-content: center; }
+    .grid :global(h3) { font-size: 1.02rem; }
+    .grid :global(.date) { font-size: 0.78rem; }
+    .grid :global(.foot) { margin-top: 2px; font-size: 0.9rem; }
+    .grid :global(.cover-fallback .script) { font-size: 1.6rem; }
+  }
 </style>

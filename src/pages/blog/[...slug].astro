@@ -5,6 +5,7 @@ import PostCard from "../../components/PostCard.astro";
 import Carousel from "../../components/Carousel.astro";
 import Engage from "../../components/Engage.astro";
 import Comments from "../../components/Comments.astro";
+import { seriesOf } from "../../data/series";
 import { livePosts, slidesFor, readingMinutes, formatDate, type Post } from "../../lib/posts";
 
 export async function getStaticPaths() {
@@ -15,7 +16,10 @@ const { post, posts } = Astro.props as { post: Post; posts: Post[] };
 const { Content } = await render(post);
 const slides = slidesFor(post.data.carousel);
 const url = new URL(`/blog/${post.id}/`, Astro.site).toString();
-const more = posts.filter((p) => p.id !== post.id).slice(0, 3);
+// keep reading: same series first, then posts sharing the most tags, then the newest
+const ser = seriesOf(post.data.tags);
+const score = (p: Post) => (ser && p.data.tags.includes(ser.tag) ? 100 : 0) + p.data.tags.filter((t) => post.data.tags.includes(t)).length;
+const more = posts.filter((p) => p.id !== post.id).map((p, i) => ({ p, s: score(p) * 1000 - i })).sort((a, b) => b.s - a.s).slice(0, 3).map((x) => x.p);
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
@@ -32,29 +36,55 @@ const jsonLd = {
 <Base title={`${post.data.title} · Privatus Cosmas`} description={post.data.description} image={`/og/blog/${post.id}.jpg`}
   imageAlt={post.data.title} type="article" published={post.data.date} modified={post.data.updated} tags={post.data.tags}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-  <article>
-    <header class="wrap head">
-      <a class="back" href="/">← All posts</a>
-      <p class="meta" data-reveal>
-        {formatDate(post.data.date, "long")} · {slides.length ? `${slides.length} slides` : `${readingMinutes(post)} min read`}
-        {post.data.tags.map((t) => <span class="tag">{t}</span>)}
-      </p>
-      <h1 class="display" data-reveal>{post.data.title}</h1>
-      <p class="desc" data-reveal>{post.data.description}</p>
-      <div class="author" data-reveal>
-        <img src="/img/me-cut.webp" alt="" width="48" height="48" />
-        <div><strong>Privatus Cosmas</strong><span>Software Engineer & Digital Innovator</span></div>
+  {/* carousel posts: slides on one side, caption, stats and comments on the other, in one screen */}
+  {slides.length > 0 ? (
+    <article class="viewer wrap">
+      <div class="v-media" data-reveal>
+        <Carousel slides={slides} captions={post.data.slides} title={post.data.title} />
       </div>
-    </header>
-
-    {slides.length > 0 && <div class="wrap"><Carousel slides={slides} captions={post.data.slides} title={post.data.title} /></div>}
-    {!slides.length && post.data.cover && <img class="cover wrap" src={post.data.cover} alt="" data-reveal />}
-
-    <div class="prose wrap" data-reveal><Content /></div>
-    <div class="wrap engage-wrap"><Engage slug={post.id} title={post.data.title} url={url} /></div>
-  </article>
-
-  <div class="wrap"><Comments slug={post.id} /></div>
+      <aside class="v-panel" data-reveal data-lenis-prevent>
+        <div class="v-top">
+          <a class="v-author" href="/story/">
+            <img src="/img/me-cut.webp" alt="" width="44" height="44" />
+            <span><strong>Privatus Cosmas</strong><em>{formatDate(post.data.date, "long")} · {slides.length} slides</em></span>
+          </a>
+          <a class="v-back" href="/#posts" aria-label="All posts">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </a>
+        </div>
+        <div class="v-scroll">
+          {ser && <a class="v-series" href="/#series">{ser.name}</a>}
+          <h1 class="v-title">{post.data.title}</h1>
+          <p class="v-desc">{post.data.description}</p>
+          <div class="prose v-prose" data-clamp><Content /></div>
+          <button class="v-more" type="button" data-more-text hidden>more</button>
+          <p class="v-tags">{post.data.tags.map((t) => <span>#{t.replace(/\s+/g, "")}</span>)}</p>
+          <Engage slug={post.id} title={post.data.title} url={url} />
+          <Comments slug={post.id} compact />
+        </div>
+      </aside>
+    </article>
+  ) : (
+    <article>
+      <header class="wrap head">
+        <a class="back" href="/#posts">← All posts</a>
+        <p class="meta" data-reveal>
+          {formatDate(post.data.date, "long")} · {readingMinutes(post)} min read
+          {post.data.tags.map((t) => <span class="tag">{t}</span>)}
+        </p>
+        <h1 class="display" data-reveal>{post.data.title}</h1>
+        <p class="desc" data-reveal>{post.data.description}</p>
+        <div class="author" data-reveal>
+          <img src="/img/me-cut.webp" alt="" width="48" height="48" />
+          <div><strong>Privatus Cosmas</strong><span>Software Engineer & Digital Innovator</span></div>
+        </div>
+      </header>
+      {post.data.cover && <img class="cover wrap" src={post.data.cover} alt="" data-reveal />}
+      <div class="prose wrap" data-reveal><Content /></div>
+      <div class="wrap engage-wrap"><Engage slug={post.id} title={post.data.title} url={url} /></div>
+      <div class="wrap"><Comments slug={post.id} /></div>
+    </article>
+  )}
 
   {more.length > 0 && (
     <section class="wrap more">
@@ -63,6 +93,21 @@ const jsonLd = {
     </section>
   )}
 </Base>
+
+<script>
+  // keep room under the scrolling text for the pinned comment box
+  const panel = document.querySelector<HTMLElement>(".v-panel");
+  const form = panel?.querySelector<HTMLElement>(".cm-form");
+  // phones: long captions fold behind "more", like Instagram, so the comments stay close to the slides
+  const text = document.querySelector<HTMLElement>("[data-clamp]");
+  const moreBtn = document.querySelector<HTMLButtonElement>("[data-more-text]");
+  if (text && moreBtn && matchMedia("(max-width: 900px)").matches && text.scrollHeight > 260) {
+    text.classList.add("clamped");
+    moreBtn.hidden = false;
+    moreBtn.addEventListener("click", () => { text.classList.remove("clamped"); moreBtn.hidden = true; });
+  }
+  if (panel && form) new ResizeObserver(() => panel.style.setProperty("--form-h", `${form.offsetHeight + 16}px`)).observe(form);
+</script>
 
 <style>
   .head { max-width: 820px; padding: 150px 0 40px; }
@@ -91,6 +136,40 @@ const jsonLd = {
   .engage-wrap { max-width: 820px; padding-bottom: 60px; }
   .more { padding: 40px 0 120px; border-top: 1px solid var(--line); }
   .more-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 30px; }
+
+  /* VIEWER (carousel posts) */
+  .viewer { --vh: calc(100svh - 112px); display: grid; grid-template-columns: auto minmax(340px, 1fr); gap: 22px; align-items: start; padding: 96px 0 30px; }
+  .v-media { width: min(calc((var(--vh) - 118px) * 0.8), 62vw); }
+  .v-media :global(.cv) { margin: 0; max-width: none; }
+  .v-media :global(.cv-caption) { min-height: 0; font-size: 0.92rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .v-panel { position: relative; height: var(--vh); display: flex; flex-direction: column; border-radius: 26px; background: var(--surface); overflow: hidden;
+    box-shadow: 0 1px 0 var(--line), 0 30px 60px -40px color-mix(in srgb, var(--shadow) 40%, transparent); }
+  .v-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px 14px 18px; border-bottom: 1px solid var(--line); }
+  .v-author { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; min-width: 0; }
+  .v-author img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; object-position: top; background: var(--deep); filter: var(--photo-filter); box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); }
+  .v-author strong { display: block; color: var(--heading); font-size: 0.95rem; }
+  .v-author em { font-style: normal; color: var(--muted); font-size: 0.8rem; }
+  .v-back { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; color: var(--heading); flex: none; }
+  .v-back:hover { background: var(--surface-2); color: var(--accent); }
+  .v-scroll { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 20px 22px var(--form-h, 180px); scrollbar-width: thin; }
+  .v-series { display: inline-block; margin-bottom: 10px; padding: 4px 12px; border-radius: 999px; background: var(--accent); color: var(--on-accent); font-size: 0.78rem; font-weight: 600; text-decoration: none; }
+  .v-title { margin: 0; color: var(--heading); font-size: clamp(1.4rem, 2vw, 1.85rem); line-height: 1.2; letter-spacing: -0.02em; }
+  .v-desc { margin: 10px 0 0; color: var(--muted); }
+  .v-prose { max-width: none; padding: 0; font-size: 1rem; line-height: 1.7; }
+  .v-prose :global(h2) { font-size: 1.25rem; margin: 1.4em 0 0.4em; }
+  .v-prose :global(h3) { font-size: 1.08rem; }
+  .v-more { display: block; margin: -6px 0 16px; padding: 0; font: inherit; font-weight: 600; color: var(--heading); background: none; border: 0; cursor: pointer; }
+  .v-tags { display: flex; flex-wrap: wrap; gap: 4px 10px; margin: 0 0 18px; font-size: 0.88rem; font-weight: 500; color: var(--accent); }
+  .v-scroll :global(.eg) { box-shadow: none; padding: 0 0 16px; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent; }
+  @media (max-width: 900px) {
+    .viewer { grid-template-columns: 1fr; padding-top: 90px; }
+    .v-media { width: min(100%, 560px); margin: 0 auto; }
+    .v-panel { position: static; height: auto; overflow: visible; }
+    .v-scroll { overflow: visible; padding-bottom: 6px; }
+    .v-scroll :global(.cm-form) { position: static; }
+    .v-prose.clamped { max-height: 9.5em; overflow: hidden; -webkit-mask: linear-gradient(#000 55%, transparent); mask: linear-gradient(#000 55%, transparent); }
+  }
+
   @media (max-width: 960px) { .more-grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 640px) { .more-grid { grid-template-columns: 1fr; } }
 </style>

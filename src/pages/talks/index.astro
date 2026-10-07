@@ -1,31 +1,75 @@
 ---
 import Base from "../../layouts/Base.astro";
+import Title from "../../components/Title.astro";
 import { talks, talkBase } from "../../data/talks";
 const sorted = [...talks].sort((a, b) => b.date.localeCompare(a.date));
+const fmt = (d: string) => new Date(d + "T12:00:00+03:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 ---
 <Base title="Talks · Privatus Cosmas" description="Slides from my talks, ready to present in the browser or download as PowerPoint and PDF.">
-  <section class="talks wrap">
-    <span class="label">Talks</span>
-    <h1 class="display">Talks &amp; <span class="accent">slides.</span></h1>
-    <ul>
-      {sorted.map((t) => (
-        <li>
-          <a href={talkBase(t.slug)}>
-            <img src={`${talkBase(t.slug)}thumbs/01.webp`} alt="" width="640" height="360" loading="lazy" />
-            <span class="t">{t.title}</span>
-            <span class="m">{new Date(t.date + "T12:00:00+03:00").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })} · {t.place}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
+  <section class="head wrap">
+    <span class="label" data-reveal>Talks</span>
+    <Title tag="h1" title="Talks &" accent="slides." size="clamp(2.6rem, 6vw, 4.8rem)" />
+    <p class="intro" data-reveal>Every talk I give lives here: present it in your browser, or download the PowerPoint and PDF.</p>
+  </section>
+
+  <section class="wrap list">
+    {sorted.map((t, i) => (
+      <article class:list={["talk", { first: i === 0 }]} data-reveal>
+        <a class="thumb" href={talkBase(t.slug)}>
+          <img src={`${talkBase(t.slug)}thumbs/01.webp`} alt="" width="640" height="360" loading={i ? "lazy" : "eager"} />
+          <span class="count">{t.slides} slides</span>
+        </a>
+        <div class="info">
+          <p class="when">{fmt(t.date)}</p>
+          <h2><a href={talkBase(t.slug)}>{t.title}</a></h2>
+          <p class="sub">{t.subtitle}</p>
+          <p class="desc">{t.description}</p>
+          <p class="where">{t.event} · {t.place}</p>
+          <div class="actions">
+            <a class="btn" href={`${talkBase(t.slug)}present/`}>Present
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4v16l13-8z"/></svg>
+            </a>
+            <a class="btn ghost" href={talkBase(t.slug)}>Details & downloads</a>
+          </div>
+        </div>
+      </article>
+    ))}
+  </section>
+
+  <section class="wrap invite" data-reveal>
+    <div class="deep invite-in">
+      <p class="label">Invite me</p>
+      <h2>Want a talk at your school, event or team?</h2>
+      <p>Careers in tech, life after university, building for Tanzania. In English or Kiswahili.</p>
+      <a class="btn" href="https://wa.me/255752747681" target="_blank" rel="noopener">Ask on WhatsApp
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
   </section>
 </Base>
+
 <style>
-  .talks { padding: 140px 0 90px; }
-  .talks h1 { margin: 18px 0 36px; font-size: clamp(2.4rem, 5vw, 4rem); }
-  ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
-  a { display: grid; gap: 8px; text-decoration: none; }
-  img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 16px; border: 2px solid var(--heading); }
-  .t { font-weight: 700; color: var(--heading); font-size: 1.15rem; }
-  .m { color: var(--muted); font-size: 0.9rem; }
+  .head { padding: 150px 0 50px; }
+  .head :global(.display) { margin-top: 20px; }
+  .intro { font-size: 1.15rem; color: var(--muted); max-width: 32em; margin: 22px 0 0; }
+  .list { display: grid; gap: 28px; padding-bottom: 60px; }
+  .talk { display: grid; grid-template-columns: 1.2fr 1fr; gap: 36px; align-items: center; padding: 22px; border-radius: var(--radius); background: var(--surface);
+    box-shadow: 0 1px 0 var(--line), 0 30px 60px -40px color-mix(in srgb, var(--shadow) 35%, transparent); }
+  .thumb { position: relative; display: block; border-radius: 18px; overflow: hidden; }
+  .thumb img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; transition: transform 0.8s var(--ease); }
+  .thumb:hover img { transform: scale(1.04); }
+  .count { position: absolute; left: 14px; bottom: 14px; padding: 6px 12px; border-radius: 999px; font-size: 0.8rem; font-weight: 600; background: var(--deep); color: var(--on-deep); }
+  .info { display: grid; gap: 10px; }
+  .when { margin: 0; color: var(--accent); font-weight: 600; font-size: 0.9rem; }
+  h2 { margin: 0; font-size: clamp(1.6rem, 3vw, 2.3rem); line-height: 1.15; letter-spacing: -0.02em; }
+  h2 a { color: var(--heading); text-decoration: none; }
+  .sub { margin: 0; font-weight: 600; color: var(--heading); }
+  .desc, .where { margin: 0; color: var(--muted); }
+  .where { font-size: 0.9rem; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+  .invite { padding-bottom: 120px; }
+  .invite-in { padding: clamp(32px, 6vw, 64px); border-radius: var(--radius); color: var(--deep-text); display: grid; gap: 14px; justify-items: start; }
+  .invite h2 { color: var(--on-deep); max-width: 16em; }
+  .invite p:not(.label) { margin: 0; max-width: 32em; }
+  @media (max-width: 860px) { .talk { grid-template-columns: 1fr; gap: 22px; } }
 </style>

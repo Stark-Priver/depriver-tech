@@ -35,3 +35,10 @@ export function readingMinutes(post: Post): number {
 
 export const formatDate = (d: Date, month: "short" | "long" = "short") =>
   d.toLocaleDateString("en-GB", { day: "numeric", month, year: "numeric" });
+
+/** Scheduled posts (live, dated in the future), soonest first: shown as "coming up" teasers without links. */
+export async function upcomingPosts(limit = 3): Promise<Post[]> {
+  const now = Date.now();
+  const posts = await getCollection("blog", ({ data }) => data.status === "live" && data.date.valueOf() > now);
+  return posts.sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf()).slice(0, limit);
+}

@@ -2,10 +2,10 @@
 import ThemePicker from "./ThemePicker.astro";
 const path = Astro.url.pathname;
 const links = [
-  { href: "/", label: "Blog", short: "Blog" },
-  { href: "/story/", label: "My story", short: "Story" },
-  { href: "/story/#next", label: "Next", short: "Next" },
-  { href: "/story/#contact", label: "Contact", short: "Contact" },
+  { href: "/", label: "Blog", match: (p: string) => p === "/" || p.startsWith("/blog") },
+  { href: "/story/", label: "My story", match: (p: string) => p.startsWith("/story") },
+  { href: "/talks/", label: "Talks", match: (p: string) => p.startsWith("/talks") },
+  { href: "/story/#contact", label: "Contact", match: () => false },
 ];
 ---
 <header class="nav" data-nav>
@@ -13,49 +13,88 @@ const links = [
     <a href="/" class="brand" aria-label="Privatus Cosmas, home">
       <span class="script">Privatus</span><span class="dot"></span>
     </a>
-    <nav aria-label="Main">
+    <nav aria-label="Main" class="links">
       <ul>
         {links.map((l) => (
-          <li><a href={l.href} aria-current={l.href === path ? "page" : undefined}><span class="long">{l.label}</span><span class="short">{l.short}</span></a></li>
+          <li><a href={l.href} aria-current={l.match(path) ? "page" : undefined}>{l.label}</a></li>
         ))}
       </ul>
     </nav>
     <div class="right">
       <ThemePicker />
       <a class="cta" href="https://wa.me/255752747681" target="_blank" rel="noopener">Let's talk</a>
+      <button class="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu" data-burger>
+        <span></span><span></span>
+      </button>
     </div>
   </div>
+  <div class="menu deep" id="menu" data-menu hidden>
+    <ul>
+      {links.map((l, i) => (
+        <li style={`--i:${i}`}><a href={l.href} aria-current={l.match(path) ? "page" : undefined}><small>0{i + 1}</small>{l.label}</a></li>
+      ))}
+    </ul>
+    <a class="menu-cta" href="https://wa.me/255752747681" target="_blank" rel="noopener" style="--i:4">Let's talk on WhatsApp →</a>
+  </div>
 </header>
+
+<script>
+  const burger = document.querySelector<HTMLButtonElement>("[data-burger]");
+  const menu = document.querySelector<HTMLElement>("[data-menu]");
+  if (burger && menu) {
+    const set = (open: boolean) => {
+      burger.setAttribute("aria-expanded", String(open));
+      document.documentElement.classList.toggle("menu-open", open);
+      if (open) { menu.hidden = false; requestAnimationFrame(() => menu.classList.add("open")); }
+      else { menu.classList.remove("open"); setTimeout(() => { if (!menu.classList.contains("open")) menu.hidden = true; }, 450); }
+    };
+    burger.addEventListener("click", () => set(burger.getAttribute("aria-expanded") !== "true"));
+    menu.addEventListener("click", (e) => { if ((e.target as HTMLElement).closest("a")) set(false); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") set(false); });
+    matchMedia("(min-width: 761px)").addEventListener("change", (m) => m.matches && set(false));
+  }
+</script>
 
 <style>
   .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; transition: background 0.4s, box-shadow 0.4s, transform 0.5s var(--ease); }
   .nav.scrolled { background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(14px) saturate(1.3); box-shadow: 0 1px 0 var(--line); }
   .nav.hidden { transform: translateY(-100%); }
-  .nav-in { display: flex; align-items: center; justify-content: space-between; height: 76px; gap: 16px; min-width: 0; }
-  nav { min-width: 0; }
-  .short { display: none; }
-  .brand { display: flex; align-items: flex-end; flex: none; min-height: 44px; padding: 6px 0; text-decoration: none; color: var(--heading); }
+  :global(.menu-open) .nav { transform: none; background: transparent; box-shadow: none; backdrop-filter: none; }
+  .nav-in { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; height: 76px; gap: 16px; min-width: 0; }
+  .brand { display: flex; align-items: flex-end; flex: none; min-height: 44px; padding: 6px 0; text-decoration: none; color: var(--heading); transition: color 0.3s; }
+  :global(.menu-open) .brand { color: var(--on-deep); }
   .brand .script { font-size: 2.1rem; line-height: 1; }
   .brand .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); margin: 0 0 6px 4px; }
-  ul { display: flex; gap: 6px; list-style: none; margin: 0; padding: 0; }
-  ul a { display: block; padding: 8px 14px; border-radius: 12px; text-decoration: none; font-weight: 500; font-size: 0.95rem; color: var(--heading); transition: background 0.3s, color 0.3s; }
-  ul a:hover, ul a[aria-current] { background: var(--deep); color: var(--on-deep); }
+  .links ul { display: flex; gap: 4px; list-style: none; margin: 0; padding: 4px; border-radius: 16px; background: color-mix(in srgb, var(--surface) 70%, transparent); box-shadow: 0 1px 0 var(--line); }
+  .links a { position: relative; display: block; padding: 8px 16px; border-radius: 12px; text-decoration: none; font-weight: 500; font-size: 0.95rem; color: var(--heading); transition: background 0.3s, color 0.3s; }
+  .links a:hover { color: var(--accent); }
+  .links a[aria-current] { background: var(--deep); color: var(--on-deep); }
   .right { display: flex; align-items: center; gap: 10px; }
-  .cta { padding: 10px 18px; border-radius: 12px; background: var(--accent); color: var(--on-accent); text-decoration: none; font-weight: 600; font-size: 0.95rem; }
+  .cta { padding: 10px 18px; border-radius: 12px; background: var(--accent); color: var(--on-accent); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: transform 0.3s var(--ease); }
+  .cta:hover { transform: translateY(-2px); }
+  .burger { display: none; position: relative; width: 44px; height: 44px; border: 0; border-radius: 12px; cursor: pointer; background: var(--deep); }
+  .burger span { position: absolute; left: 12px; right: 12px; height: 2px; border-radius: 2px; background: var(--on-deep); transition: transform 0.4s var(--ease), top 0.4s var(--ease); }
+  .burger span:first-child { top: 17px; } .burger span:last-child { top: 25px; }
+  .burger[aria-expanded="true"] { background: var(--accent); }
+  .burger[aria-expanded="true"] span:first-child { top: 21px; transform: rotate(45deg); }
+  .burger[aria-expanded="true"] span:last-child { top: 21px; transform: rotate(-45deg); }
+
+  .menu { position: fixed; inset: 0; z-index: 1; display: flex; flex-direction: column; justify-content: center; gap: 30px; padding: 100px var(--gutter) 40px;
+    clip-path: circle(0 at calc(100% - 44px) 38px); transition: clip-path 0.55s var(--ease); }
+  .menu.open { clip-path: circle(150% at calc(100% - 44px) 38px); }
+  .menu ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .menu li, .menu-cta { opacity: 0; transform: translateY(24px); transition: opacity 0.5s, transform 0.6s var(--ease); transition-delay: calc(0.12s + var(--i) * 0.06s); }
+  .menu.open li, .menu.open .menu-cta { opacity: 1; transform: none; }
+  .menu ul a { display: flex; align-items: baseline; gap: 14px; text-decoration: none; color: var(--on-deep); font-weight: 700; font-size: clamp(2.2rem, 11vw, 3.4rem); line-height: 1.15; letter-spacing: -0.03em; }
+  .menu ul a small { font-size: 0.85rem; font-weight: 600; color: var(--accent); letter-spacing: 0; }
+  .menu ul a[aria-current] { color: var(--accent); }
+  .menu-cta { align-self: flex-start; padding: 14px 22px; border-radius: 14px; background: var(--accent); color: var(--on-accent); font-weight: 600; text-decoration: none; }
+  @media (prefers-reduced-motion: reduce) { .menu, .menu li, .menu-cta { transition: none; } }
+
   @media (max-width: 760px) {
-    .cta { display: none; }
-    ul a { padding: 8px 10px; font-size: 0.88rem; }
-    ul { gap: 0; }
+    .links, .cta { display: none; }
+    .burger { display: block; }
+    .nav-in { height: 68px; }
     .brand .script { font-size: 1.8rem; }
   }
-  @media (max-width: 760px) { ul li:nth-child(3) { display: none; } }
-  @media (max-width: 560px) {
-    .nav-in { gap: 8px; height: 68px; }
-    .long { display: none; }
-    .short { display: inline; }
-    ul li:nth-child(4) { display: none; }
-    ul a { padding: 10px; min-height: 40px; display: flex; align-items: center; }
-    .brand .script { font-size: 1.65rem; }
-  }
-  @media (max-width: 340px) { .brand .dot { display: none; } ul a { padding: 10px 8px; } }
 </style>

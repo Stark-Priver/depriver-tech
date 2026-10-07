@@ -1,27 +1,65 @@
 ---
 import { contact } from "../data/story";
+import { series } from "../data/series";
 const year = new Date().getFullYear();
 ---
 <footer class="foot deep">
-  <div class="wrap foot-in">
-    <p class="script sig">Privatus Cosmas</p>
-    <p class="small">Software Engineer & Digital Innovator · Kagera → Mbeya, Tanzania</p>
-    <ul>
-      <li><a href={contact.instagramHref} target="_blank" rel="noopener">Instagram</a></li>
-      <li><a href={contact.githubHref} target="_blank" rel="noopener">GitHub</a></li>
-      <li><a href={contact.whatsappHref} target="_blank" rel="noopener">WhatsApp</a></li>
-      <li><a href="/rss.xml">RSS</a></li>
-    </ul>
-    <p class="small">© {year} depriver.tech</p>
+  <div class="wrap">
+    <div class="cta-row">
+      <p class="big">Got a project, a question or a talk idea? <span>Let's talk.</span></p>
+      <a class="btn" href={contact.whatsappHref} target="_blank" rel="noopener">Message me on WhatsApp
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+    <div class="cols">
+      <div class="who">
+        <p class="script sig">Privatus Cosmas</p>
+        <p class="small">Software Engineer & Digital Innovator · Kagera → Mbeya, Tanzania</p>
+      </div>
+      <nav aria-label="Explore">
+        <p class="h">Explore</p>
+        <ul>
+          <li><a href="/">Blog</a></li>
+          <li><a href="/story/">My story</a></li>
+          <li><a href="/talks/">Talks</a></li>
+          <li><a href="/contact/">Contact card</a></li>
+          <li><a href="/rss.xml">RSS</a></li>
+        </ul>
+      </nav>
+      <nav aria-label="Series">
+        <p class="h">Series</p>
+        <ul>{series.slice(0, 5).map((s) => <li><a href="/#series">{s.name}</a></li>)}</ul>
+      </nav>
+      <nav aria-label="Connect">
+        <p class="h">Connect</p>
+        <ul>
+          <li><a href={contact.instagramHref} target="_blank" rel="noopener">Instagram</a></li>
+          <li><a href={contact.linkedinHref} target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href={contact.githubHref} target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href={contact.emailHref}>Email</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="base">
+      <p class="small">© {year} depriver.tech</p>
+      <a class="small top" href="#top">Back to top ↑</a>
+    </div>
   </div>
 </footer>
 
 <style>
-  .foot { background: var(--deep); color: var(--deep-text); padding: 72px 0 48px; position: relative; overflow: hidden; }
-  .foot-in { position: relative; display: grid; gap: 14px; justify-items: center; text-align: center; }
-  .sig { font-size: clamp(2.8rem, 7vw, 4.5rem); color: var(--on-deep); margin: 0; line-height: 1; }
+  .foot { background: var(--deep); color: var(--deep-text); padding: 80px 0 36px; position: relative; overflow: hidden; }
+  .cta-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; padding-bottom: 56px; border-bottom: 1px solid color-mix(in srgb, var(--on-deep) 14%, transparent); }
+  .big { margin: 0; max-width: 18em; font-size: clamp(1.6rem, 3.6vw, 2.6rem); font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; color: var(--on-deep); }
+  .big span { color: var(--accent); }
+  .cols { display: grid; grid-template-columns: 1.6fr repeat(3, 1fr); gap: 36px; padding: 50px 0; }
+  .sig { font-size: clamp(2.6rem, 5vw, 3.6rem); color: var(--on-deep); margin: 0 0 8px; line-height: 1; }
   .small { margin: 0; font-size: 0.9rem; }
-  ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; list-style: none; padding: 0; margin: 12px 0; }
-  a { color: var(--on-deep); text-decoration: none; font-weight: 500; }
-  a:hover { color: var(--accent); }
+  .h { margin: 0 0 14px; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+  ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  a { color: var(--on-deep); text-decoration: none; font-weight: 500; transition: color 0.25s; }
+  ul a:hover, .top:hover { color: var(--accent); }
+  .btn { color: var(--on-accent); }
+  .base { display: flex; justify-content: space-between; gap: 16px; padding-top: 24px; border-top: 1px solid color-mix(in srgb, var(--on-deep) 14%, transparent); }
+  @media (max-width: 860px) { .cols { grid-template-columns: 1fr 1fr; } .who { grid-column: span 2; } }
 </style>
