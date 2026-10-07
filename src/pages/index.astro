@@ -322,12 +322,17 @@ const dayFmt = (d: Date) => d.toLocaleDateString("en-GB", { weekday: "short", da
   .block-head.split { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px; }
   .block-note { max-width: 24em; margin: 0; color: var(--deep-text); }
 
-  .bento { display: grid; grid-template-columns: 1.6fr 1fr; grid-template-rows: auto auto; gap: 18px; }
+  /* Latest: one wide card (cover beside the text), two compact cards under it */
+  .bento { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
   .bento > div { display: grid; }
-  .b-main { grid-row: span 2; }
-  .b-main :global(.featured) { grid-template-columns: 1fr; }
-  .b-main :global(.featured .cover) { min-height: 380px; }
-  .b-side :global(.desc) { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .b-main { grid-column: span 2; }
+  .b-main :global(.featured .cover) { min-height: 400px; }
+  .b-side :global(.post) { flex-direction: row; }
+  .b-side :global(.cover) { flex: 0 0 40%; aspect-ratio: auto; min-height: 230px; }
+  .b-side :global(.carousel .cover img) { height: 80%; top: 10%; }
+  .b-side :global(.stack i) { height: 70%; }
+  .b-side :global(.badge) { display: none; }
+  .b-side :global(.desc) { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
   /* SERIES */
   .series-wrap { color: var(--deep-text); margin: 40px 0; }
@@ -401,14 +406,14 @@ const dayFmt = (d: Date) => d.toLocaleDateString("en-GB", { weekday: "short", da
     .hero { grid-template-columns: 1fr; min-height: 0; padding-top: 130px; }
     .hero-art { max-width: 460px; width: 100%; margin: 0 auto; }
     .grid { grid-template-columns: 1fr 1fr; }
-    .bento { grid-template-columns: 1fr 1fr; }
-    .b-main { grid-column: span 2; grid-row: auto; }
   }
   @media (max-width: 680px) {
     .block { padding: 64px 0; }
     .grid, .bento, .duo { grid-template-columns: 1fr; }
     .b-main { grid-column: auto; }
     .b-main :global(.featured .cover) { min-height: 260px; }
+    .b-side :global(.post) { flex-direction: column; }
+    .b-side :global(.cover) { aspect-ratio: 16 / 10; min-height: 0; }
     .stats { gap: 26px; }
     .upcoming { grid-template-columns: 1fr; }
     .series { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 82%; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); scrollbar-width: none; }
