@@ -18,6 +18,7 @@ TOTAL = 1
 exec(open(os.path.join(STUDIO, "editorial.py")).read())
 
 POSTERS = {  # slug: (footer kicker, status header label)
+    "first-language-and-framework": ("Pick · learn · build · ship", "Beginners · Wanaoanza"),
     "uongo-au-kweli": ("Six tech myths · Hadithi sita", "Tech myths · Hadithi za tech"),
     "study-programming-for-exams": ("Trace tables · past papers · exam day", "Exam season · Msimu wa mitihani"),
     "ussd-apps": ("Jenga kwa Tanzania #01 · USSD", "Build for Tanzania"),
