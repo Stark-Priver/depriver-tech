@@ -18,6 +18,7 @@ TOTAL = 1
 exec(open(os.path.join(STUDIO, "editorial.py")).read())
 
 POSTERS = {  # slug: (footer kicker, status header label)
+    "python-roadmap": ("6 levels · 20 areas · free book", "Python roadmap · Ramani"),
     "build-a-portfolio": ("Zero to three projects that prove it", "Beginners · Portfolio"),
     "freelance-like-a-pro": ("From zero to paid · 7 stages", "Beginners · Kazi huru"),
     "first-language-and-framework": ("Pick · learn · build · ship", "Beginners · Wanaoanza"),
