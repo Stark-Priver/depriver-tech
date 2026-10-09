@@ -2,6 +2,8 @@
 import type { APIRoute } from "astro";
 import { livePosts } from "../lib/posts";
 import { services, contact } from "../data/story";
+import { guides } from "../data/guides";
+import { talks } from "../data/talks";
 
 export const GET: APIRoute = async () => {
   const posts = await livePosts();
@@ -23,7 +25,15 @@ ${services.map((s) => `- ${s.title}: ${s.body}`).join("\n")}
 ## Pages
 - [His story](https://depriver.tech/story/): from Kitwe village in Kagera to software engineer, told in chapters
 - [Blog](https://depriver.tech/): posts and carousels on software, learning and tech life
+- [Free guides](https://depriver.tech/guides/): free books for beginners, read online or download
+- [Talks](https://depriver.tech/talks/): slides from his talks, presentable in the browser
 - [Full profile for AI assistants](https://depriver.tech/llms-full.txt)
+
+## Guides
+${guides.map((g) => `- [${g.title}: ${g.subtitle}](https://depriver.tech/guides/${g.slug}.pdf): ${g.description}`).join("\n")}
+
+## Talks
+${talks.map((x) => `- [${x.title}](https://depriver.tech/talks/${x.slug}/): ${x.description}`).join("\n")}
 
 ## Posts
 ${posts.map((p) => `- [${p.data.title}](https://depriver.tech/blog/${p.id}/): ${p.data.description}`).join("\n")}
