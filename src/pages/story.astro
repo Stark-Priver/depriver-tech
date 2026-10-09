@@ -933,7 +933,6 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
     .chip-t { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .ch-chip i { grid-column: 1 / -1; height: 3px; border-radius: 2px; background: color-mix(in srgb, var(--on-deep) 16%, transparent); overflow: hidden; }
     .ch-chip b { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); }
-    html.menu-open .ch-chip { display: none; }
     .ch-year-inline { display: inline; }
     .ch-body.split, .contact-card { grid-template-columns: minmax(0, 1fr); }
     .contact-card { border-radius: 30px; }
@@ -944,7 +943,7 @@ const places = ["Kitwe", "Nyerere Primary", "Katoke Seminary", "Kaisho Secondary
   }
   @media (max-width: 760px) {
     .hero-in { grid-template-columns: 1fr; min-height: auto; }
-    .hero-copy { padding: 110px 0 20px; }
+    .hero-copy { padding: 140px 0 20px; }
     .hero-photo { position: relative; width: auto; height: 62svh; margin: 0 calc(-1 * var(--gutter)); }
     .hero-block { width: 78%; height: 150px; z-index: 2; }
     .hero-name { bottom: 22px; }

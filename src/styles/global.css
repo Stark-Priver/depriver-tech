@@ -148,4 +148,3 @@ a { color: inherit; }
 
 /* Omarchy-style theme switch: a circle wipes out from the theme button */
 ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
-html.menu-open, html.menu-open body { overflow: hidden; }
